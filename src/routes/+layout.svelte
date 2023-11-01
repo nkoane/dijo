@@ -17,7 +17,7 @@
         </h1>
         <nav class="ml-auto flex text-right font-bold text-gray-400 gap-2">
             <a href="/kitchen">KÖK</a>
-            <a href="/dash">DASHBOARD</a>
+            <a href="/admin">ADMIN</a>
         </nav>
     </header>
     <slot />

@@ -5,6 +5,15 @@ body {
     @apply bg-sky-100 font-sans text-gray-700;
 }
 
+nav {
+    @apply ml-auto flex  text-right font-bold text-gray-400 gap-2;
+}
+
+nav a {
+    @apply inline-block  transition-all duration-100 ease-in-out hover:bg-yellow-200 hover:text-gray-600;
+    @apply first:border-none uppercase;
+}
+
 @tailwind components;
 
 .btn {
@@ -14,6 +23,11 @@ body {
 }
 
 .input[type='checkbox'] {
+}
+
+nav a {
+    @apply inline-block  transition-all duration-100 ease-in-out hover:bg-yellow-200 hover:text-gray-600;
+    @apply first:border-none;
 }
 
 @tailwind utilities;

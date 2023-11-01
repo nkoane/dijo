@@ -1,26 +1,6 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 const prisma = new PrismaClient();
-
-const client = new PrismaClient();
-
-/*
-try {
-    await client.category.create({ data: { email: 'alreadyexisting@mail.com' } });
-} catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        // The .code property can be accessed in a type-safe manner
-        if (e.code === 'P2002') {
-            console.log(
-                'There is a unique constraint violation, a new user cannot be created with this email'
-            );
-        }
-    }
-    throw e;
-}
-process.exit(0);
-*/
 
 const orderStatuses = [
     {
@@ -91,18 +71,6 @@ async function main() {
         });
         console.log(orderStatus);
     }
-
-    /*
-    const category = await prisma.category.createMany({
-        data: categories,
-        skipDuplicates: true
-    });
-    /*  const category = await prisma.category.create({
-        data: {
-            name: 'starch',
-            description: 'it is either pap, rice, stampa/samp, ledombolo, etc'
-        }
-    }); */
 }
 try {
     await main();
