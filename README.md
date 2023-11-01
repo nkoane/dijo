@@ -4,7 +4,7 @@ Okay, this was a classwork task I used to demonstrate how to build a web applica
 
 ## What is DIJO?
 
-Is an application that allows the owner of the chiya-nyama to manager orders as they comein and for the kitchen staff to see the orders coming in, and clear them as they are collected by customers.
+dijo an application that allows the owner of the chiya-nyama (pop-up shop) to manager orders as they come in and for the kitchen staff to see the orders coming in, and clear them as they are collected by customers.
 
 That's it, that's the whole application. I will add more functionality as I time allows.
 
