@@ -3,11 +3,15 @@
 
     export let data, form;
 
-    console.log('form', form);
+    console.log('form', form?.errors);
+
+    let selectedCategory: number;
+
+    if (form?.categoryId) selectedCategory = form?.categoryId;
 </script>
 
 <h3 class="font-bold text-2xl">Food</h3>
-<main class="flex gap-2">
+<main class="xs:flex gap-2">
     {#if data?.foods}
         <ol>
             <li>food name</li>
@@ -16,39 +20,38 @@
         <p><em>no food</em></p>
     {/if}
     <form class="bg-gray-50 flex-grow flex gap-2 flex-col" method="post">
+        <div class="flex gap-2 justify-between">
+            <label class="flex-grow">
+                <input
+                    type="text"
+                    class="mt-1 block w-full"
+                    placeholder="Name"
+                    name="name"
+                    value={form?.name ?? ''} />
+            </label>
+            <label class="">
+                <input
+                    type="text"
+                    class="mt-1 block w-full"
+                    placeholder="Price"
+                    min="0"
+                    name="cost"
+                    value={form?.cost ?? ''} />
+            </label>
+        </div>
         <label class="block">
-            <span class="text-gray-700">Food name</span>
-            <input
-                type="text"
-                class="mt-1 block w-full"
-                placeholder="Food name"
-                name="name"
-                value={form?.name ?? ''} />
-        </label>
-        <label class="block">
-            <span class="text-gray-700">Food cost</span>
-            <input
-                type="number"
-                class="mt-1 block w-full"
-                placeholder="Food cost"
-                min="0"
-                name="cost"
-                value={form?.cost ?? 0} />
-        </label>
-        <label class="block">
-            <span class="text-gray-700">Food description</span>
             <textarea
                 class="mt-1 block w-full"
-                placeholder="Food description"
+                placeholder="Description"
                 name="description"
                 value={form?.description ?? ''}></textarea>
         </label>
-        <label>
-            <span class="text-gray-700">Food category</span>
-            <select class="mt-1 block w-full" name="categoryId" value={form?.categoryId}>
-                {#each data.categories as category}
-                    <option value={category.id ?? data.categories[0].id} class="capitalize"
-                        >{category.name}</option>
+        <label class="">
+            <select class="mt-1 block w-full" name="categoryId" bind:value={selectedCategory}>
+                {#each data.categories as category (category.id)}
+                    <option value={category.id} class="capitalize">
+                        {category.name}
+                    </option>
                 {/each}
             </select>
         </label>
@@ -60,9 +63,8 @@
                 placeholder="Food image"
                 bind:value={food?.image} />
         </label> -->
-        <button
-            type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >Submit</button>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
+            Submit
+        </button>
     </form>
 </main>
