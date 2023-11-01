@@ -1,38 +1,28 @@
-# S:KIT Starter Pack
+# DIJO Starter Pack
 
-This is just my startup kit for svelte-kit development. It's not meant to be used by anyone else, but feel free to use it if you want. I am still loking for something (a package) I can use handle form data parsing and returning json and/or array object. I tried [zod](https://zod.dev) but it's not working for me.
+Okay, this was a classwork task I used to demonstrate how to build a web application to my students, but after some serious amount of boredom, I figured I could make it an actually application that people could use to manage their chiya-nyama (pop-up shop as the Americans call it).
 
-> It is heavily opinionated. I will detail exactly what, in a later update.
+## What is DIJO?
 
-## Creating a project
+Is an application that allows the owner of the chiya-nyama to manager orders as they comein and for the kitchen staff to see the orders coming in, and clear them as they are collected by customers.
 
-And here are steps to be taken;
+That's it, that's the whole application. I will add more functionality as I time allows.
+
+### How to run the application
+
+You need to have [NodeJS](https://nodejs.org/en/) installed on your machine. Then you can run the following commands:
 
 ```bash
-# clone this repo
-gh repo clone nkoane/svelte-kit-base [scaffold-dir]
-
-# change into your scaffolded-dir then delete the .git folder
-cd [scaffold-dir]
-rm -rf .git
-
-# install all dependencies
 pnpm install
-
-# start the dev server
-pnpm run dev -- --open
+pnpm run dev
 ```
 
-## Features
+Afterwhich, you can access the dashboard, to setup the database, and create the administrator, which would then allow you to add whatever it is that you are selling.  For now, the assumption is that all foods fall into the following categories:
 
-This has the following scafolded into it:
-
-- [SvelteKit](https://kit.svelte.dev/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [Prettier](https://prettier.io/)
-- [ESLint](https://eslint.org/)
-- ~~[Feather Icons](https://feathericons.com/)~~ (removed)
-- [Lucide](https://lucide.dev/) (replaced feather icons)
+- Starch
+- Meat
+- Vegetables
+- Drinks
 
 ## Questions?
 
