@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getFoodCategories } from '$lib';
+import { createFood, getFoodCategories, foodSchema } from '$lib';
 import type { Actions } from './$types';
 import { z } from 'zod';
 
@@ -15,37 +15,37 @@ export const load = (async () => {
 
 export const actions = {
     default: async ({ request }) => {
-        const data = Object.fromEntries(await request.formData());
+        const formData = Object.fromEntries(await request.formData());
 
-        //const categoryIds = categories.map((c) => Number(c.id));
+        const data: {
+            name: string;
+            description: string;
+            categoryId: number;
+            cost: number;
+        } = {
+            name: formData.name as string,
+            description: formData.description as string,
+            categoryId: Number(formData.categoryId) as number,
+            cost: Number(formData.cost) as number
+        };
 
         try {
-            const Food = z.object({
-                name: z.string().trim().min(1),
-                description: z.string().trim().optional(),
-                categoryId: z.coerce.number(), // (categoryIds),
-                cost: z.coerce.number().positive()
-            });
-
-            const result = Food.safeParse(data);
+            const result = foodSchema.safeParse(data);
 
             if (!result.success) {
-                const errors = result.error.errors.map((error) => {
-                    return {
-                        field: error.path[0],
-                        message: error.message
-                    };
-                });
+                const errors: z.inferFlattenedErrors<typeof foodSchema> = result.error.flatten();
 
                 return fail(400, {
                     ...data,
-                    errors,
+                    errors: errors,
                     success: false
                 });
             }
 
-            console.log('we is good', result);
-            return { success: true };
+            const response = await createFood(result);
+
+            console.log('we is good', result, response);
+            // return { success: true };
         } catch (e) {
             if (e instanceof z.ZodError) {
                 const formatted = e.format();

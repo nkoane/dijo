@@ -17,9 +17,9 @@
         </h1>
         <nav class="ml-auto flex text-right font-bold text-gray-400 gap-2">
             <a href="/kitchen">KÖK</a>
+            <a href="/orders">orders</a>
             <a href="/food">food</a>
             <a href="/categories">categories</a>
-            <a href="/orders">orders</a>
             <a href="/users">users</a>
         </nav>
     </header>
