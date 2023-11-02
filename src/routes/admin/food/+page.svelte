@@ -3,11 +3,11 @@
 
     export let data, form;
 
-    console.log('form', form?.errors);
+    console.log('form', form, 'data', data);
 
     let selectedCategory: number;
 
-    if (form?.categoryId) selectedCategory = form?.categoryId;
+    if (form?.categoryId) selectedCategory = Number(form?.categoryId);
 </script>
 
 <h3 class="font-bold text-2xl">Food</h3>
@@ -47,10 +47,13 @@
                 value={form?.description ?? ''}></textarea>
         </label>
         <label class="">
-            <select class="mt-1 block w-full" name="categoryId" bind:value={selectedCategory}>
-                {#each data.categories as category (category.id)}
-                    <option value={category.id} class="capitalize">
-                        {category.name}
+            <select class="mt-1 block w-full" name="categoryId">
+                {#each data.categories as category, idx}
+                    <option
+                        value={category.id}
+                        class="capitalize"
+                        selected={category.id === selectedCategory ? 'selected' : ''}>
+                        {category.name} ? {category.id} ? {selectedCategory}
                     </option>
                 {/each}
             </select>

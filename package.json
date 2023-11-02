@@ -51,6 +51,7 @@
     },
     "dependencies": {
         "@prisma/client": "5.5.2",
-        "lucide-svelte": "^0.291.0"
+        "lucide-svelte": "^0.291.0",
+        "zod": "^3.22.4"
     }
 }

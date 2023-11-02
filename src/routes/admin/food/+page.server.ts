@@ -2,45 +2,55 @@ import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getFoodCategories } from '$lib';
 import type { Actions } from './$types';
+import { z } from 'zod';
+
+const categories = await getFoodCategories();
 
 export const load = (async () => {
     return {
         foods: [],
-        categories: getFoodCategories()
+        categories: categories
     };
 }) satisfies PageServerLoad;
 
 export const actions = {
     default: async ({ request }) => {
-        const data = await request.formData();
-        const errors = [];
+        const data = Object.fromEntries(await request.formData());
 
-        const name = (data.get('name') as string).trim();
-        const description = (data.get('description') as string).trim();
-        const categoryId = Number(data.get('categoryId'));
-        const cost = Math.abs(Number(data.get('cost')));
+        //const categoryIds = categories.map((c) => Number(c.id));
 
-        if (!name && name?.trim() == '') errors.push({ name: 'missing' });
-        if (isNaN(cost)) errors.push({ cost: 'invalid' });
-        if (isNaN(categoryId)) {
-            errors.push({ categoryId: 'invalid' });
+        try {
+            const Food = z.object({
+                name: z.string().trim().min(1),
+                description: z.string().trim().optional(),
+                categoryId: z.coerce.number(), // (categoryIds),
+                cost: z.coerce.number().positive()
+            });
+
+            const result = Food.safeParse(data);
+
+            if (!result.success) {
+                const errors = result.error.errors.map((error) => {
+                    return {
+                        field: error.path[0],
+                        message: error.message
+                    };
+                });
+
+                return fail(400, {
+                    ...data,
+                    errors,
+                    success: false
+                });
+            }
+
+            console.log('we is good', result);
+            return { success: true };
+        } catch (e) {
+            if (e instanceof z.ZodError) {
+                const formatted = e.format();
+                return fail(400, { errors: formatted, success: false });
+            }
         }
-
-        console.log(
-            `name: ${name}, description: ${description}, categoryId: ${categoryId}, cost: ${cost}`
-        );
-
-        const food = {
-            name,
-            description,
-            categoryId: Number(categoryId),
-            cost: Number(cost)
-        };
-
-        if (errors.length > 0) {
-            return fail(400, { food, errors, success: false });
-        }
-        console.info('We got food to store', food);
-        return { food, success: true };
     }
 } satisfies Actions;
