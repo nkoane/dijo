@@ -3,8 +3,6 @@
 
     export let data, form;
 
-    console.log('form', form, 'data', data);
-
     let selectedCategory: number;
 
     if (form?.categoryId) selectedCategory = Number(form?.categoryId);
