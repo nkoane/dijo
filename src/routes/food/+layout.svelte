@@ -1,6 +1,5 @@
 <script lang="ts">
     export let data;
-    console.log(data);
 </script>
 
 <svelte:head><title>dijo . food</title></svelte:head>

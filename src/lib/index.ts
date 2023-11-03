@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import type { Category } from '@prisma/client';
-import { time } from 'console';
 import { z } from 'zod';
 
 export const client = new PrismaClient();
@@ -20,6 +19,25 @@ export const foodSchema = z
     })
     .strict();
 
+export async function editFood(id: number, data: z.infer<typeof foodSchema>) {
+    const food = await client.food.update({
+        where: {
+            id: id
+        },
+        data: {
+            name: data.name,
+            description: data.description ?? '',
+            cost: data.cost,
+            category: {
+                connect: {
+                    id: data.categoryId
+                }
+            }
+        }
+    });
+
+    return food;
+}
 export async function createFood(data: z.infer<typeof foodSchema>) {
     const food = await client.food.create({
         data: {

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Food from '$lib/forms/Food.svelte';
+    import Food from '$lib/forms/FoodForm.svelte';
     export let data, form;
     let foods = data.foods;
 
