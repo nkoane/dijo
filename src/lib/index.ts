@@ -48,3 +48,13 @@ export async function getFood(id: number) {
 
     return food;
 }
+
+export async function getFoods() {
+    const foods = await client.food.findMany({
+        include: {
+            category: true
+        }
+    });
+
+    return foods;
+}

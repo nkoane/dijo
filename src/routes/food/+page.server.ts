@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getFoodCategories, foodSchema, createFood } from '$lib';
+import { getFoodCategories, foodSchema, createFood, getFoods } from '$lib';
 import type { Actions } from './$types';
 import type { z } from 'zod';
 
@@ -8,7 +8,7 @@ const categories = await getFoodCategories();
 
 export const load = (async () => {
     return {
-        foods: [],
+        foods: getFoods(),
         categories: categories
     };
 }) satisfies PageServerLoad;

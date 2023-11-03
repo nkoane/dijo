@@ -1,15 +1,19 @@
 <script lang="ts">
     export let data, form;
-
-    // console.log('page.svelte', form?.errors, form?.errors);
-    // console.log('page.svelte', form?.errors);
+    const foods = data.foods;
 </script>
 
 <h3 class="font-bold text-2xl">Food</h3>
 <main class="xs:flex gap-2">
-    {#if data?.foods}
-        <ol>
-            <li>food name</li>
+    {#if foods.length > 0}
+        <ol class=" list-decimal ml-4">
+            {#each foods as food (food.id)}
+                <li>
+                    <a href="/food/{food.id}">{food.name}</a>
+                    <span>R{food.cost}</span>
+                    <a href="/food?category={food.categoryId}">{food.category.name}</a>
+                </li>
+            {/each}
         </ol>
     {:else}
         <p><em>no food</em></p>
