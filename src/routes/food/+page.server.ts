@@ -1,8 +1,8 @@
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { createFood, getFoodCategories, foodSchema } from '$lib';
+import { getFoodCategories, foodSchema } from '$lib';
 import type { Actions } from './$types';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 const categories = await getFoodCategories();
 
@@ -29,28 +29,21 @@ export const actions = {
             cost: Number(formData.cost) as number
         };
 
-        try {
-            const result = foodSchema.safeParse(data);
+        const result = foodSchema.safeParse(data);
 
-            if (!result.success) {
-                const errors: z.inferFlattenedErrors<typeof foodSchema> = result.error.flatten();
+        if (!result.success) {
+            const errors: z.inferFlattenedErrors<typeof foodSchema> = result.error.flatten();
 
-                return fail(400, {
-                    ...data,
-                    errors: errors,
-                    success: false
-                });
-            }
-
-            const response = await createFood(result);
-
-            console.log('we is good', result, response);
-            // return { success: true };
-        } catch (e) {
-            if (e instanceof z.ZodError) {
-                const formatted = e.format();
-                return fail(400, { errors: formatted, success: false });
-            }
+            return fail(400, {
+                ...data,
+                errors: errors,
+                success: false
+            });
         }
+
+        console.log('why ar we not doing anything?');
+        // const response = await createFood(result);
+
+        return { success: true };
     }
 } satisfies Actions;

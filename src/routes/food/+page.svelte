@@ -1,10 +1,6 @@
 <script lang="ts">
     export let data, form;
 
-    let selectedCategory: number;
-
-    if (form?.categoryId) selectedCategory = Number(form?.categoryId);
-
     // console.log('page.svelte', form?.errors, form?.errors);
     // console.log('page.svelte', form?.errors);
 </script>
@@ -57,8 +53,8 @@
                     <option
                         value={category.id}
                         class="capitalize"
-                        selected={category.id === selectedCategory ? true : null}>
-                        {category.name} ? {category.id} ? {selectedCategory}
+                        selected={category.id === form?.categoryId ? true : null}>
+                        {category.name}
                     </option>
                 {/each}
             </select>
