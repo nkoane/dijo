@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import type { Category } from '@prisma/client';
+import { time } from 'console';
 import { z } from 'zod';
 
 export const client = new PrismaClient();
@@ -49,12 +50,23 @@ export async function getFood(id: number) {
     return food;
 }
 
-export async function getFoods() {
-    const foods = await client.food.findMany({
+export async function getFoods(categoryId: number | null = null) {
+    console.log('src/lib/index.ts', new Date().toLocaleTimeString(), categoryId);
+
+    if (categoryId != null) {
+        return await client.food.findMany({
+            where: {
+                categoryId: categoryId
+            },
+            include: {
+                category: true
+            }
+        });
+    }
+
+    return await client.food.findMany({
         include: {
             category: true
         }
     });
-
-    return foods;
 }

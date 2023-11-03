@@ -1,15 +1,20 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getFoodCategories, foodSchema, createFood, getFoods } from '$lib';
+import { foodSchema, createFood, getFoods } from '$lib';
 import type { Actions } from './$types';
 import type { z } from 'zod';
 
-const categories = await getFoodCategories();
+export const load = (async ({ url }) => {
+    let categoryId: number | null = null;
 
-export const load = (async () => {
+    if (url.searchParams.has('category')) {
+        categoryId = Number(url.searchParams.get('category'));
+    }
+
+    console.log('food/page-server-ts', categoryId);
+
     return {
-        foods: getFoods(),
-        categories: categories
+        foods: getFoods(categoryId)
     };
 }) satisfies PageServerLoad;
 
