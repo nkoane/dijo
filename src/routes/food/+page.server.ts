@@ -1,6 +1,6 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getFoodCategories, foodSchema } from '$lib';
+import { getFoodCategories, foodSchema, createFood } from '$lib';
 import type { Actions } from './$types';
 import type { z } from 'zod';
 
@@ -41,9 +41,13 @@ export const actions = {
             });
         }
 
-        console.log('why ar we not doing anything?');
-        // const response = await createFood(result);
+        const response = await createFood({
+            name: result.data.name,
+            description: result.data.description,
+            categoryId: result.data.categoryId,
+            cost: result.data.cost
+        });
 
-        return { success: true };
+        throw redirect(303, `/food/${response.id}`);
     }
 } satisfies Actions;

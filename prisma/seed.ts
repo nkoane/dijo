@@ -53,9 +53,28 @@ const categories = [
     }
 ];
 
-async function main() {
+async function reset() {
+    const deletedFoodsCount = await prisma.food.deleteMany({});
+    console.log(`Deleted ${deletedFoodsCount.count} foods.`);
+
+    const deletedOrdersCount = await prisma.order.deleteMany({});
+    console.log(`Deleted ${deletedOrdersCount.count} orders.`);
+
+    const deletedOrderItemsCount = await prisma.orderItem.deleteMany({});
+    console.log(`Deleted ${deletedOrderItemsCount.count} order items.`);
+
     const deletedCategoriesCount = await prisma.category.deleteMany({});
     console.log(`Deleted ${deletedCategoriesCount.count} categories.`);
+
+    const deleteOrderStatusesCount = await prisma.orderStatus.deleteMany({});
+    console.log(`Deleted ${deleteOrderStatusesCount.count} order statuses.`);
+}
+
+async function main() {
+    // empty foods, orders, orderItems, categories, orderStatuses
+
+    await reset();
+
     for (let idx = 0; idx < categories.length; idx++) {
         const category = await prisma.category.create({
             data: categories[idx]
@@ -63,8 +82,6 @@ async function main() {
         console.log(category);
     }
 
-    const deleteOrderStatusesCount = await prisma.orderStatus.deleteMany({});
-    console.log(`Deleted ${deleteOrderStatusesCount.count} order statuses.`);
     for (let idx = 0; idx < orderStatuses.length; idx++) {
         const orderStatus = await prisma.orderStatus.create({
             data: orderStatuses[idx]

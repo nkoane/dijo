@@ -35,3 +35,16 @@ export async function createFood(data: z.infer<typeof foodSchema>) {
 
     return food;
 }
+
+export async function getFood(id: number) {
+    const food = await client.food.findUnique({
+        where: {
+            id: id
+        },
+        include: {
+            category: true
+        }
+    });
+
+    return food;
+}

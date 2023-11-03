@@ -20,13 +20,13 @@ model Category {
 }
 
 model Food {
-  id          Int          @id @default(autoincrement())
-  name        String
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
   description String
   cost        Float
-  category    Category     @relation(fields: [categoryId], references: [id])
+  category    Category    @relation(fields: [categoryId], references: [id])
   categoryId  Int
-  OrderItems  OrderItems[]
+  OrderItems  OrderItem[]
 }
 
 model Order {
@@ -35,7 +35,7 @@ model Order {
   updatedAt  DateTime     @updatedAt
   Status     OrderStatus? @relation(fields: [statusId], references: [id])
   statusId   Int?
-  OrderItems OrderItems[]
+  OrderItems OrderItem[]
 }
 
 model OrderStatus {
@@ -47,7 +47,7 @@ model OrderStatus {
   Order       Order[]
 }
 
-model OrderItems {
+model OrderItem {
   id        Int      @id @default(autoincrement())
   quantity  Int
   cost      Float
