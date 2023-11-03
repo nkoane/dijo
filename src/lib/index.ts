@@ -18,3 +18,20 @@ export const foodSchema = z
         cost: z.coerce.number().positive()
     })
     .strict();
+
+export async function createFood(data: z.infer<typeof foodSchema>) {
+    const food = await client.food.create({
+        data: {
+            name: data.name,
+            description: data.description ?? '',
+            cost: data.cost,
+            category: {
+                connect: {
+                    id: data.categoryId
+                }
+            }
+        }
+    });
+
+    return food;
+}
