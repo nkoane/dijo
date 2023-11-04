@@ -1,12 +1,14 @@
 import { db } from '$lib';
 import type { PageServerLoad, Actions } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import type { z } from 'zod';
 
 export const load: PageServerLoad = async ({ params }) => {
-    //throw error(404, 'Food not found');
-
     const food = await db.getFood(Number(params.id));
+
+    if (!food) {
+        throw error(404, 'Food not found');
+    }
 
     return { food };
 };

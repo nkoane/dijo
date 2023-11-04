@@ -6,8 +6,6 @@
     export let categories: Category[];
 
     export let action: string = '';
-
-    $: console.log(form);
 </script>
 
 <form class="bg-gray-50 flex-grow flex gap-2 flex-col" method="post" {action}>

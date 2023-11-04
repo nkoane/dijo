@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib';
 import type { Actions } from './$types';
@@ -9,6 +9,12 @@ export const load = (async ({ url }) => {
 
     if (url.searchParams.has('category')) {
         categoryId = Number(url.searchParams.get('category'));
+    }
+
+    const foods = await db.getFoods(categoryId);
+
+    if (foods.length == 0) {
+        throw error(404, `Category (${categoryId}) not found`);
     }
 
     return {

@@ -19,8 +19,6 @@
             <a href="/kitchen">KÖK</a>
             <a href="/orders">orders</a>
             <a href="/food">food</a>
-            <a href="/categories">categories</a>
-            <a href="/users">users</a>
         </nav>
     </header>
     <slot />
