@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { foodSchema, createFood, getFoods } from '$lib';
+import { db } from '$lib';
 import type { Actions } from './$types';
 import type { z } from 'zod';
 
@@ -12,7 +12,7 @@ export const load = (async ({ url }) => {
     }
 
     return {
-        foods: getFoods(categoryId)
+        foods: db.getFoods(categoryId)
     };
 }) satisfies PageServerLoad;
 
@@ -32,10 +32,10 @@ export const actions = {
             cost: Number(formData.cost) as number
         };
 
-        const result = foodSchema.safeParse(data);
+        const result = db.foodSchema.safeParse(data);
 
         if (!result.success) {
-            const errors: z.inferFlattenedErrors<typeof foodSchema> = result.error.flatten();
+            const errors: z.inferFlattenedErrors<typeof db.foodSchema> = result.error.flatten();
 
             return fail(400, {
                 food: data,
@@ -44,7 +44,7 @@ export const actions = {
             });
         }
 
-        const response = await createFood({
+        const response = await db.createFood({
             name: result.data.name,
             description: result.data.description,
             categoryId: result.data.categoryId,

@@ -1,18 +1,12 @@
-import { foodSchema, getFood, editFood } from '$lib';
-import { error } from 'console';
+import { db } from '$lib';
 import type { PageServerLoad, Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import type { z } from 'zod';
 
 export const load: PageServerLoad = async ({ params }) => {
-    const food = await getFood(Number(params.id));
+    //throw error(404, 'Food not found');
 
-    console.log('food/[id]/page.server.ts', food);
-    if (!food) {
-        throw error(400, {
-            message: 'Not found'
-        });
-    }
+    const food = await db.getFood(Number(params.id));
 
     return { food };
 };
@@ -34,10 +28,10 @@ export const actions = {
             cost: Number(formData.cost) as number
         };
 
-        const result = foodSchema.safeParse(data);
+        const result = db.foodSchema.safeParse(data);
 
         if (!result.success) {
-            const errors: z.inferFlattenedErrors<typeof foodSchema> = result.error.flatten();
+            const errors: z.inferFlattenedErrors<typeof db.foodSchema> = result.error.flatten();
 
             return fail(400, {
                 food: data,
@@ -46,7 +40,7 @@ export const actions = {
             });
         }
 
-        const response = await editFood(foodId, {
+        const response = await db.editFood(foodId, {
             name: result.data.name,
             description: result.data.description,
             categoryId: result.data.categoryId,

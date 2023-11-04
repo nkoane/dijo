@@ -1,3 +1,4 @@
+/*
 import { PrismaClient } from '@prisma/client';
 import type { Category } from '@prisma/client';
 import { z } from 'zod';
@@ -85,3 +86,8 @@ export async function getFoods(categoryId: number | null = null) {
 
     return await getClient().food.findMany(query);
 }
+*/
+
+import { DB } from '$lib/db';
+
+export const db = new DB();

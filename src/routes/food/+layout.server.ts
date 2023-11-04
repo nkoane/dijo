@@ -1,7 +1,7 @@
-import { getFoodCategories } from '$lib';
+import { db } from '$lib';
 import type { LayoutServerLoad } from './$types';
 
-const categories = await getFoodCategories();
+const categories = await db.getFoodCategories();
 
 export const load = (async () => {
     return {

@@ -2,6 +2,7 @@
     import Food from '$lib/forms/FoodForm.svelte';
     export let data, form;
     let foods = data.foods;
+    let categories = data.categories;
 
     $: foods = data.foods;
 </script>
@@ -13,7 +14,8 @@
                 <li>
                     <a href="/food/{food.id}">{food.name}</a>
                     <span>R{food.cost}</span>
-                    <a href="/food?category={food.categoryId}">{food.category.name}</a>
+                    <a href="/food?category={food.categoryId}"
+                        >{categories.find((c) => c.id === food.categoryId)?.name}</a>
                 </li>
             {/each}
         </ol>
