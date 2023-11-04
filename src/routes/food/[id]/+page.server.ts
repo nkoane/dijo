@@ -5,6 +5,9 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { z } from 'zod';
 
 export const load: PageServerLoad = async ({ params }) => {
+    if (isNaN(Number(params.id)) || !/^\d+$/.test(params.id))
+        throw error(400, `Food (${params.id}) is invalid, it has to be an number`);
+
     const food = await db.getFood(Number(params.id));
 
     if (!food) {
@@ -17,6 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions = {
     edit: async ({ request, params }) => {
         const foodId = Number(params.id);
+
         const formData = Object.fromEntries(await request.formData());
 
         const data: Food = {
