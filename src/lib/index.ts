@@ -2,12 +2,18 @@ import { PrismaClient } from '@prisma/client';
 import type { Category } from '@prisma/client';
 import { z } from 'zod';
 
-export const client = new PrismaClient();
+let client: PrismaClient;
+
+export function getClient(): PrismaClient {
+    if (client == undefined) {
+        client = new PrismaClient();
+    }
+
+    return client;
+}
 
 export async function getFoodCategories(): Promise<Category[]> {
-    const categories = client.category.findMany();
-
-    return categories;
+    return getClient().category.findMany();
 }
 
 export const foodSchema = z
@@ -20,7 +26,7 @@ export const foodSchema = z
     .strict();
 
 export async function editFood(id: number, data: z.infer<typeof foodSchema>) {
-    const food = await client.food.update({
+    const food = await getClient().food.update({
         where: {
             id: id
         },
@@ -39,7 +45,7 @@ export async function editFood(id: number, data: z.infer<typeof foodSchema>) {
     return food;
 }
 export async function createFood(data: z.infer<typeof foodSchema>) {
-    const food = await client.food.create({
+    const food = await getClient().food.create({
         data: {
             name: data.name,
             description: data.description ?? '',
@@ -56,7 +62,7 @@ export async function createFood(data: z.infer<typeof foodSchema>) {
 }
 
 export async function getFood(id: number) {
-    const food = await client.food.findUnique({
+    const food = await getClient().food.findUnique({
         where: {
             id: id
         },
@@ -64,27 +70,18 @@ export async function getFood(id: number) {
             category: true
         }
     });
-
     return food;
 }
 
 export async function getFoods(categoryId: number | null = null) {
-    console.log('src/lib/index.ts', new Date().toLocaleTimeString(), categoryId);
-
-    if (categoryId != null) {
-        return await client.food.findMany({
-            where: {
-                categoryId: categoryId
-            },
-            include: {
-                category: true
-            }
-        });
-    }
-
-    return await client.food.findMany({
+    const query = {
+        where: {},
         include: {
             category: true
         }
-    });
+    };
+
+    if (categoryId != null) query.where = { categoryId: categoryId };
+
+    return await getClient().food.findMany(query);
 }

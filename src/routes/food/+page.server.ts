@@ -11,8 +11,6 @@ export const load = (async ({ url }) => {
         categoryId = Number(url.searchParams.get('category'));
     }
 
-    console.log('food/page-server-ts', categoryId);
-
     return {
         foods: getFoods(categoryId)
     };
@@ -40,7 +38,7 @@ export const actions = {
             const errors: z.inferFlattenedErrors<typeof foodSchema> = result.error.flatten();
 
             return fail(400, {
-                ...data,
+                food: data,
                 errors: errors,
                 success: false
             });

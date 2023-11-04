@@ -4,21 +4,18 @@ import type { PageServerLoad, Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import type { z } from 'zod';
 
-export const load = (async ({ params }) => {
-    const foodId = Number(params.id);
+export const load: PageServerLoad = async ({ params }) => {
+    const food = await getFood(Number(params.id));
 
-    console.log('food/id/page.ts', 'hello?', foodId, isNaN(foodId));
-
-    if (isNaN(foodId) === false) {
-        const food = await getFood(foodId);
-        if (food) {
-            return {
-                food
-            };
-        }
+    console.log('food/[id]/page.server.ts', food);
+    if (!food) {
+        throw error(400, {
+            message: 'Not found'
+        });
     }
-    throw error(404, `Food (${foodId}) not found`);
-}) satisfies PageServerLoad;
+
+    return { food };
+};
 
 export const actions = {
     edit: async ({ request, params }) => {
