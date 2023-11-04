@@ -3,6 +3,7 @@
     export let data, form;
     let foods = data.foods;
     let categories = data.categories;
+    let statuses = data.statuses;
 
     $: foods = data.foods;
 </script>
@@ -16,11 +17,11 @@
                     <span>R{food.cost}</span>
                     <a href="/food?category={food.categoryId}"
                         >{categories.find((c) => c.id === food.categoryId)?.name}</a>
+                    <a href="/food?status={food.statusId}"
+                        >{statuses.find((c) => c.id === food.statusId)?.state}</a>
                 </li>
             {/each}
         </ol>
-    {:else}
-        <p><em>no food</em></p>
     {/if}
-    <Food {form} categories={data.categories} />
+    <Food {form} {categories} {statuses} />
 </main>

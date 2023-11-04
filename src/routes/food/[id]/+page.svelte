@@ -4,8 +4,11 @@
     export let data;
     export let form;
     const food = data.food;
+    const categories = data.categories;
+    const statuses = data.statuses;
 
     const category = data.categories.find((c) => c.id === food.categoryId);
+    const status = data.statuses.find((c) => c.id === food.statusId);
 
     $: if (form == null) {
         form = {
@@ -22,8 +25,11 @@
     <dl class="w-1/2">
         <dt class="text-xl font-bold">{food.name}</dt>
         <dd>{food.description}</dd>
-        <dd>{food.cost}</dd>
-        <dd><a href="/food?category={food.categoryId}">{category?.name}</a></dd>
+        <dd>R{food.cost}</dd>
+        <dd class="lowercase">
+            <a href="/food?category={food.categoryId}">{category?.name}</a> |
+            <a href="/food?status={food.statusId}">{status?.state}</a>
+        </dd>
     </dl>
-    <FoodForm {form} categories={data.categories} action="?/edit" />
+    <FoodForm {form} {categories} {statuses} action="?/edit" />
 </div>

@@ -24,9 +24,22 @@ model Food {
   name        String      @unique
   description String
   cost        Float
+  OrderItems  OrderItem[]
   category    Category    @relation(fields: [categoryId], references: [id])
   categoryId  Int
-  OrderItems  OrderItem[]
+  status      FoodStatus? @relation(fields: [statusId], references: [id])
+  statusId    Int?        @default(1)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model FoodStatus {
+  id          Int      @id @default(autoincrement())
+  state       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Food        Food[]
 }
 
 model Order {
@@ -36,6 +49,7 @@ model Order {
   Status     OrderStatus? @relation(fields: [statusId], references: [id])
   statusId   Int?
   OrderItems OrderItem[]
+  cost       Float
 }
 
 model OrderStatus {

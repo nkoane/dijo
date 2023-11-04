@@ -1,4 +1,5 @@
 import { db } from '$lib';
+import type { Food } from '@prisma/client';
 import type { PageServerLoad, Actions } from './$types';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { z } from 'zod';
@@ -18,15 +19,11 @@ export const actions = {
         const foodId = Number(params.id);
         const formData = Object.fromEntries(await request.formData());
 
-        const data: {
-            name: string;
-            description: string;
-            categoryId: number;
-            cost: number;
-        } = {
+        const data: Food = {
             name: formData.name as string,
             description: formData.description as string,
             categoryId: Number(formData.categoryId) as number,
+            statusId: Number(formData.statusId) as number,
             cost: Number(formData.cost) as number
         };
 
@@ -42,12 +39,7 @@ export const actions = {
             });
         }
 
-        const response = await db.editFood(foodId, {
-            name: result.data.name,
-            description: result.data.description,
-            categoryId: result.data.categoryId,
-            cost: result.data.cost
-        });
+        const response = await db.editFood(foodId, result.data);
 
         throw redirect(303, `/food/${response.id}`);
     }

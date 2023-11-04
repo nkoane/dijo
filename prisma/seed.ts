@@ -2,32 +2,57 @@ import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const foodStatuses = [
+    {
+        id: 1,
+        state: 'Available',
+        description: 'Food is available'
+    },
+    {
+        id: 2,
+        state: 'SoldOut',
+        description: 'Food is sold out'
+    },
+    {
+        id: 3,
+        state: 'OutOfStock',
+        description: 'Food is out of stock'
+    },
+    {
+        id: 4,
+        state: 'Discontinued',
+        description: 'Food is discontinued'
+    }
+];
 const orderStatuses = [
     {
+        id: 1,
         state: 'Pending',
         description: 'Order has been placed but not paid for'
     },
     {
+        id: 2,
         state: 'Paid',
         description: 'Order has been paid for'
     },
     {
+        id: 3,
         state: 'Preparing',
         description: 'Order is being prepared'
     },
     {
+        id: 4,
         state: 'Ready',
         description: 'Order is ready for collection'
     },
+    { id: 5, state: 'Delivered', description: 'Order has been delivered' },
     {
-        state: 'Delivered',
-        description: 'Order has been delivered'
-    },
-    {
+        id: 6,
         state: 'Collected',
         description: 'Order has been collected'
     },
     {
+        id: 7,
         state: 'Canceled',
         description: 'Order has been canceled'
     }
@@ -56,6 +81,9 @@ const categories = [
 async function reset() {
     const deletedFoodsCount = await prisma.food.deleteMany({});
     console.log(`Deleted ${deletedFoodsCount.count} foods.`);
+
+    const deleteFoodStatusesCount = await prisma.foodStatus.deleteMany({});
+    console.log(`Deleted ${deleteFoodStatusesCount.count} food statuses.`);
 
     const deletedOrdersCount = await prisma.order.deleteMany({});
     console.log(`Deleted ${deletedOrdersCount.count} orders.`);
@@ -87,6 +115,13 @@ async function main() {
             data: orderStatuses[idx]
         });
         console.log(orderStatus);
+    }
+
+    for (let idx = 0; idx < foodStatuses.length; idx++) {
+        const foodStatus = await prisma.foodStatus.create({
+            data: foodStatuses[idx]
+        });
+        console.log(foodStatus);
     }
 }
 try {

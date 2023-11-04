@@ -1,11 +1,14 @@
 <script lang="ts">
-    import type { Food, Category } from '@prisma/client';
+    import type { Food, Category, FoodStatus } from '@prisma/client';
 
     export let form;
 
     export let categories: Category[];
+    export let statuses: FoodStatus[];
 
     export let action: string = '';
+
+    console.log('FoodForm.svelte', form);
 </script>
 
 <form class="bg-gray-50 flex-grow flex gap-2 flex-col" method="post" {action}>
@@ -41,20 +44,36 @@
             name="description"
             value={form?.food.description ?? ''}></textarea>
     </label>
-    <label class="flex-grow flex flex-col gap-1">
-        <select class="mt-1 block w-full uppercase" name="categoryId">
-            {#each categories as category, idx}
-                <option
-                    value={category.id}
-                    selected={category.id === form?.food?.categoryId ? true : null}>
-                    {category.name}
-                </option>
-            {/each}
-        </select>
-        {#if form?.errors?.fieldErrors.categoryId}
-            <span class="text-red-600 text-xs">{form?.errors?.fieldErrors.categoryId}</span>
-        {/if}
-    </label>
+    <div class="flex gap-2 justify-between">
+        <label class="flex-grow flex flex-col gap-1">
+            <select class="mt-1 block w-full uppercase" name="categoryId">
+                {#each categories as category, idx}
+                    <option
+                        value={category.id}
+                        selected={category.id === form?.food?.categoryId ? true : null}>
+                        {category.name}
+                    </option>
+                {/each}
+            </select>
+            {#if form?.errors?.fieldErrors.categoryId}
+                <span class="text-red-600 text-xs">{form?.errors?.fieldErrors.categoryId}</span>
+            {/if}
+        </label>
+        <label class="flex-grow flex flex-col gap-1">
+            <select class="mt-1 block w-full uppercase" name="statusId">
+                {#each statuses as status, ids}
+                    <option
+                        value={status.id}
+                        selected={status.id === form?.food?.statusId ? true : null}>
+                        {status.state}
+                    </option>
+                {/each}
+            </select>
+            {#if form?.errors?.fieldErrors.statusId}
+                <span class="text-red-600 text-xs">{form?.errors?.fieldErrors.statusId}</span>
+            {/if}
+        </label>
+    </div>
     <!-- <label class="block">
         <span class="text-gray-700">Food image</span>
         <input

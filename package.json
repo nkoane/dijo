@@ -22,6 +22,9 @@
         "lint": "prettier --plugin-search-dir . --check . && eslint .",
         "format": "prettier --plugin-search-dir . --write ."
     },
+    "prisma": {
+        "seed": "ts-node prisma/seed.ts"
+    },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^2.1.0",
         "@sveltejs/kit": "^1.27.2",

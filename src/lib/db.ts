@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import type { Category, Food } from '@prisma/client';
+import type { Category, Food, FoodStatus } from '@prisma/client';
 import { z } from 'zod';
 
 export class DB {
@@ -9,7 +9,8 @@ export class DB {
         .object({
             name: z.string().trim().min(1),
             description: z.string().trim().optional(),
-            categoryId: z.coerce.number(), // (categoryIds),
+            categoryId: z.coerce.number(),
+            statusId: z.coerce.number(),
             cost: z.coerce.number().positive()
         })
         .strict();
@@ -26,6 +27,10 @@ export class DB {
         return this.getClient().category.findMany();
     }
 
+    public async getFoodStatuses(): Promise<FoodStatus[]> {
+        return this.getClient().foodStatus.findMany();
+    }
+
     public async getFood(id: number): Promise<Food | null> {
         const food = await this.getClient().food.findUnique({
             where: {
@@ -35,17 +40,19 @@ export class DB {
         return food;
     }
 
-    public async getFoods(categoryId: number | null = null): Promise<Food[]> {
+    public async getFoods(where: { [key: string]: number }): Promise<Food[]> {
         const query = {
             where: {}
         };
+        query.where = where;
 
-        if (categoryId != null) query.where = { categoryId: categoryId };
-
-        return await this.getClient().food.findMany(query);
+        console.log('db.ts', where, query);
+        const results = await this.getClient().food.findMany(query);
+        return results;
     }
 
     public async editFood(id: number, data: z.infer<typeof this.foodSchema>) {
+        console.log('lib/db/', data);
         const food = await this.getClient().food.update({
             where: {
                 id: id
@@ -58,12 +65,18 @@ export class DB {
                     connect: {
                         id: data.categoryId
                     }
+                },
+                status: {
+                    connect: {
+                        id: data.statusId
+                    }
                 }
             }
         });
 
         return food;
     }
+
     public async createFood(data: z.infer<typeof this.foodSchema>) {
         const food = await this.getClient().food.create({
             data: {
@@ -73,6 +86,11 @@ export class DB {
                 category: {
                     connect: {
                         id: data.categoryId
+                    }
+                },
+                status: {
+                    connect: {
+                        id: data.statusId
                     }
                 }
             }
