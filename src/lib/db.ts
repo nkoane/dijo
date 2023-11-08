@@ -46,9 +46,22 @@ export class DB {
         };
         query.where = where;
 
-        console.log('db.ts', where, query);
-        const results = await this.getClient().food.findMany(query);
-        return results;
+        return await this.getClient().food.findMany(query);
+    }
+
+    public async getFoodsWithCategory(where: {
+        [key: string]: number;
+        //}): Promise<(Food & { category: Category; status: FoodStatus })[]> {
+    }): Promise<(Food & { category: Category })[]> {
+        const query = {
+            where: {},
+            include: {
+                category: true
+            }
+        };
+        query.where = where;
+
+        return await this.getClient().food.findMany(query);
     }
 
     public async editFood(id: number, data: z.infer<typeof this.foodSchema>) {
