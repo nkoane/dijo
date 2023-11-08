@@ -7,8 +7,6 @@
     export let statuses: FoodStatus[];
 
     export let action: string = '';
-
-    console.log('FoodForm.svelte', form);
 </script>
 
 <form class="bg-gray-50 flex-grow flex gap-2 flex-col" method="post" {action}>
