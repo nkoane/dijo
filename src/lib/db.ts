@@ -51,7 +51,6 @@ export class DB {
 
     public async getFoodsWithCategory(where: {
         [key: string]: number;
-        //}): Promise<(Food & { category: Category; status: FoodStatus })[]> {
     }): Promise<(Food & { category: Category })[]> {
         const query = {
             where: {},
@@ -65,7 +64,6 @@ export class DB {
     }
 
     public async editFood(id: number, data: z.infer<typeof this.foodSchema>) {
-        console.log('lib/db/', data);
         const food = await this.getClient().food.update({
             where: {
                 id: id
