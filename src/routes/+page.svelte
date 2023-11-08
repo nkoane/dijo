@@ -21,18 +21,18 @@
 <section class="flex justify-between gap-2">
     <ol class="categories grid gap-2 grid-cols-2 w-full">
         {#each Object.keys(categories) as category (category)}
-            <li class="category">
-                <p class="uppercase font-bold">{category}</p>
-                <ul class="foods">
+            <li class="category border-2 p-2">
+                <ul class="category-foods bg-yellow-50 grid grid-cols-2 gap-2 h-36">
                     {#each categories[category] as food (food)}
-                        <li class="food">
-                            <dl>
+                        <li class="food bg-yellow-100 place-items-center grid">
+                            <dl class="food">
                                 <dt>{food.name}</dt>
-                                <dd>{food.cost}</dd>
+                                <dd class="font-bold">R{food.cost}</dd>
                             </dl>
                         </li>
                     {/each}
                 </ul>
+                <h2 class="category-name uppercase font-bold mt-2">{category}</h2>
             </li>
         {/each}
     </ol>
