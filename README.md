@@ -10,12 +10,7 @@ That's it, that's the whole application. I will add more functionality as I time
 
 ### How to run the application
 
-You need to have [NodeJS](https://nodejs.org/en/) installed on your machine. Then you can run the following commands:
-
-```bash
-pnpm install
-pnpm run dev
-```
+This is still work in progress, I'll add this once I have a working protoype.
 
 Afterwhich, you can access the dashboard, to setup the database, and create the administrator, which would then allow you to add whatever it is that you are selling.  For now, the assumption is that all foods fall into the following categories:
 
