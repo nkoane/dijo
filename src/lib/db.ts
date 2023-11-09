@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import type { Category, Food, FoodStatus } from '@prisma/client';
+import type { Category, Food, FoodStatus, OrderStatus } from '@prisma/client';
 import { z } from 'zod';
 
 export class DB {
@@ -21,6 +21,10 @@ export class DB {
 
     private getClient(): PrismaClient {
         return this.client;
+    }
+
+    public async getStatuses(): Promise<OrderStatus[]> {
+        return this.getClient().orderStatus.findMany();
     }
 
     public async getFoodCategories(): Promise<Category[]> {

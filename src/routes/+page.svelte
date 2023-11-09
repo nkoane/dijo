@@ -1,9 +1,10 @@
 <script lang="ts">
-    import { error, fail } from '@sveltejs/kit';
+    import type { OrderStatus } from '@prisma/client';
 
     export let data;
 
     const categories = data.categories ?? [];
+    const status = data.status ?? [];
     const foods = data.foods ?? [];
 
     type OrderItem = {
@@ -12,10 +13,13 @@
         cost: number;
     };
 
-    let order: { items: OrderItem[]; total: number } = {
+    let order: { items: OrderItem[]; status: OrderStatus; total: number } = {
         items: [],
+        status: status.find((status) => status.state === 'pending') ?? status[0],
         total: 0
     };
+
+    console.log(order);
 
     function addItem(foodId: number) {
         const food = foods.find((food) => food.id === foodId);
@@ -40,23 +44,37 @@
     }
 
     $: order.total = order.items.reduce((total, item) => total + item.cost, 0);
+
+    const makePayment = async () => {
+        if (order.items.length === 0) return;
+
+        order.status = status.find((status) => status.state === 'paid') ?? status[0];
+        console.log(order.status.state);
+    };
 </script>
 
 <div class="mb-4 flex justify-between">
     <h2 class="text-2xl font-bold">ORDX</h2>
-    <dl class="order flex flex-row-reverse gap-2">
-        <dt class="total font-bold">{order.total.toFixed(2)}</dt>
+    <div class="order flex flex-row-reverse gap-2 items-center">
         {#if order.items.length > 0}
-            <dd class="items">
-                [{order.items.length}]
-            </dd>
-            {#each order.items as item (item.id)}
-                <dd class="item">
-                    {item.quantity}x {item.cost.toFixed(2)}
-                </dd>
-            {/each}
+            {#if order.status.state.toLocaleLowerCase() == 'pending'}
+                <p><button on:click={makePayment} class="order-button">PAY</button></p>
+            {:else}
+                <p><button class="order-button">ORDER</button></p>
+            {/if}
+            <p class="total font-bold">{order.total.toFixed(2)}</p>
+            <p>
+                <span class="items">
+                    [{order.items.length}]
+                </span>
+                {#each order.items as item (item.id)}
+                    <span class="item">
+                        {item.quantity}x {item.cost.toFixed(2)}
+                    </span>
+                {/each}
+            </p>
         {/if}
-    </dl>
+    </div>
 </div>
 
 <section class="flex justify-between gap-2">
@@ -89,5 +107,13 @@
 <style lang="postcss">
     .order .total::before {
         content: 'R';
+    }
+
+    .order button {
+        background-color: #f56565;
+        color: #fff;
+        border: 0;
+        border-radius: 0.25rem;
+        @apply font-bold py-1 px-2;
     }
 </style>

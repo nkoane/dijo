@@ -5,55 +5,56 @@ const prisma = new PrismaClient();
 const foodStatuses = [
     {
         id: 1,
-        state: 'Available',
+        state: 'available',
         description: 'Food is available'
     },
     {
         id: 2,
-        state: 'SoldOut',
+        state: 'soldout',
         description: 'Food is sold out'
     },
     {
         id: 3,
-        state: 'OutOfStock',
+        state: 'outofstock',
         description: 'Food is out of stock'
     },
     {
         id: 4,
-        state: 'Discontinued',
+        state: 'discontinued',
         description: 'Food is discontinued'
     }
 ];
+
 const orderStatuses = [
     {
         id: 1,
-        state: 'Pending',
+        state: 'pending',
         description: 'Order has been placed but not paid for'
     },
     {
         id: 2,
-        state: 'Paid',
+        state: 'paid',
         description: 'Order has been paid for'
     },
     {
         id: 3,
-        state: 'Preparing',
+        state: 'preparing',
         description: 'Order is being prepared'
     },
     {
         id: 4,
-        state: 'Ready',
+        state: 'ready',
         description: 'Order is ready for collection'
     },
-    { id: 5, state: 'Delivered', description: 'Order has been delivered' },
+    { id: 5, state: 'delivered', description: 'Order has been delivered' },
     {
         id: 6,
-        state: 'Collected',
+        state: 'collected',
         description: 'Order has been collected'
     },
     {
         id: 7,
-        state: 'Canceled',
+        state: 'canceled',
         description: 'Order has been canceled'
     }
 ];
