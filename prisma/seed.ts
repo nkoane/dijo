@@ -10,12 +10,12 @@ const foodStatuses = [
     },
     {
         id: 2,
-        state: 'soldout',
+        state: 'sold-out',
         description: 'Food is sold out'
     },
     {
         id: 3,
-        state: 'outofstock',
+        state: 'out-of-stock',
         description: 'Food is out of stock'
     },
     {
@@ -38,22 +38,27 @@ const orderStatuses = [
     },
     {
         id: 3,
+        state: 'placed',
+        description: 'Order has been placed'
+    },
+    {
+        id: 4,
         state: 'preparing',
         description: 'Order is being prepared'
     },
     {
-        id: 4,
+        id: 5,
         state: 'ready',
         description: 'Order is ready for collection'
     },
-    { id: 5, state: 'delivered', description: 'Order has been delivered' },
+    { id: 6, state: 'delivered', description: 'Order has been delivered' },
     {
-        id: 6,
+        id: 7,
         state: 'collected',
         description: 'Order has been collected'
     },
     {
-        id: 7,
+        id: 8,
         state: 'canceled',
         description: 'Order has been canceled'
     }
@@ -102,7 +107,7 @@ async function reset() {
 async function main() {
     // empty foods, orders, orderItems, categories, orderStatuses
 
-    await reset();
+    // await reset();
 
     for (let idx = 0; idx < categories.length; idx++) {
         const category = await prisma.category.create({

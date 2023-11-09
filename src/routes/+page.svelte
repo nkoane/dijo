@@ -51,6 +51,11 @@
         order.status = status.find((status) => status.state === 'paid') ?? status[0];
         console.log(order.status.state);
     };
+
+    const placeOrder = async () => {
+        if (order.items.length === 0) return;
+        console.log('place order in the db, and send a message to the kitchen');
+    };
 </script>
 
 <div class="mb-4 flex justify-between">
@@ -60,7 +65,7 @@
             {#if order.status.state.toLocaleLowerCase() == 'pending'}
                 <p><button on:click={makePayment} class="order-button">PAY</button></p>
             {:else}
-                <p><button class="order-button">ORDER</button></p>
+                <p><button on:click={placeOrder} class="order-button">ORDER</button></p>
             {/if}
             <p class="total font-bold">{order.total.toFixed(2)}</p>
             <p>
