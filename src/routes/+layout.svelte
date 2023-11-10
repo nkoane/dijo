@@ -1,8 +1,15 @@
 <script lang="ts">
     import '../app.postcss';
     import { FlameKindling } from 'lucide-svelte';
-    import { onMount } from 'svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
+    import { Toaster } from 'svelte-french-toast';
+    import { createAvatar } from '@dicebear/core';
+    import { avataaars } from '@dicebear/collection';
+
+    const avatar = createAvatar(avataaars, {
+        seed: 'Tommy Spinelli'
+        // ... other options
+    });
+    const svg = avatar.toString();
 </script>
 
 <!-- 
@@ -22,6 +29,7 @@
             <a href="/kitchen">KÖK</a>
             <a href="/orders">orders</a>
             <a href="/food">food</a>
+            <a href="/account" class=" w-[2rem]">{@html svg}</a>
         </nav>
     </header>
     <slot />
