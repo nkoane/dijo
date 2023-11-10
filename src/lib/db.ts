@@ -113,4 +113,21 @@ export class DB {
 
         return food;
     }
+
+    public async createOrder(data) {
+        console.log(data);
+        /*
+        const order = await this.getClient().order.create({
+            data: {
+                status: {
+                    connect: {
+                        id: 1
+                    }
+                }
+            }
+        });
+
+        return order;
+        */
+    }
 }

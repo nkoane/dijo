@@ -20,8 +20,6 @@
         total: 0
     };
 
-    console.log(order);
-
     function addItem(foodId: number) {
         const food = foods.find((food) => food.id === foodId);
         if (!food) return;
@@ -50,68 +48,92 @@
         if (order.items.length === 0) return;
 
         order.status = status.find((status) => status.state === 'paid') ?? status[0];
-        console.log(order.status.state);
 
         toast.success('Paid.');
     };
 
     const placeOrder = async () => {
         if (order.items.length === 0) return;
-        console.log('place order in the db, and send a message to the kitchen');
-        toast.success('Order placed.');
+        order.status = status.find((status) => status.state === 'placed') ?? status[1];
+
+        /*
+            store order in db, send to kitchen, and clear order
+        */
+
+        order.items = [];
+        order.status = status.find((status) => status.state === 'pending') ?? status[0];
+
+        toast.success('Placed.');
     };
 </script>
 
-<div class="mb-4 flex justify-between">
-    <h2 class="text-2xl font-bold">ORDX</h2>
-    <div class="order flex flex-row-reverse gap-2 items-center">
+<form method="post">
+    <div class="mb-4 flex justify-between">
+        <h2 class="text-2xl font-bold">ORDX</h2>
         {#if order.items.length > 0}
-            {#if order.status.state.toLocaleLowerCase() == 'pending'}
-                <p><button on:click={makePayment} class="order-button">PAY</button></p>
-            {:else}
-                <p><button on:click={placeOrder} class="order-button">ORDER</button></p>
-            {/if}
-            <p class="total font-bold">{order.total.toFixed(2)}</p>
-            <p>
-                <span class="items">
-                    [{order.items.length}]
-                </span>
-                {#each order.items as item (item.id)}
-                    <span class="item">
-                        {item.quantity}x {item.cost.toFixed(2)}
+            <div class="order flex flex-row-reverse gap-2 items-center">
+                {#if order.status.state == 'pending'}
+                    <p><button on:click={makePayment} class="order-button">PAY</button></p>
+                {/if}
+                {#if order.status.state == 'paid'}
+                    <p>
+                        <button type="submit" class="order-button">ORDER</button>
+                    </p>
+                {/if}
+                <p class="total font-bold">{order.total.toFixed(2)}</p>
+                <p>
+                    <span class="items">
+                        [{order.items.length}]
                     </span>
-                {/each}
-            </p>
+                    {#each order.items as item (item.id)}
+                        <span class="item">
+                            {item.quantity}x {item.cost.toFixed(2)}
+                        </span>
+                    {/each}
+                </p>
+            </div>
         {/if}
     </div>
-</div>
 
-<section class="flex justify-between gap-2">
-    <ol class="categories grid gap-2 grid-cols-2 w-full">
-        {#each Object.keys(categories) as category (category)}
-            <li class="category border-2 p-2">
-                <ul class="category-foods bg-yellow-50 grid grid-cols-2 gap-2 h-36">
-                    {#each categories[category] as food (food)}
-                        <li
-                            class="food bg-yellow-100 place-items-center grid aspet active:bg-red-100">
-                            <button
-                                class="w-full h-full"
-                                on:click={() => {
-                                    addItem(food.id);
-                                }}>
-                                <dl class="food">
-                                    <dt>{food.name}</dt>
-                                    <dd class="font-bold">R{food.cost}</dd>
-                                </dl>
-                            </button>
-                        </li>
-                    {/each}
-                </ul>
-                <h2 class="category-name uppercase font-bold mt-2">{category}</h2>
-            </li>
-        {/each}
-    </ol>
-</section>
+    <section class="flex justify-between gap-2">
+        <ol class="categories grid gap-2 grid-cols-2 w-full">
+            {#each Object.keys(categories) as category (category)}
+                <li class="category border-2 p-2">
+                    <ul class="category-foods bg-yellow-50 grid grid-cols-2 gap-2 h-36">
+                        {#each categories[category] as food (food)}
+                            <li
+                                class="food bg-yellow-100 place-items-center grid aspet active:bg-red-100">
+                                <button
+                                    type="button"
+                                    class="w-full h-full hover:bg-yellow-400"
+                                    on:click={() => {
+                                        addItem(food.id);
+                                    }}>
+                                    <dl class="food">
+                                        <dt>{food.name}</dt>
+                                        <dd class="font-bold">R{food.cost}</dd>
+                                        <dd class="bg-black text-white inline-block px-2">
+                                            {order.items.find((item) => item.id === food.id)
+                                                ?.quantity ?? 0}
+
+                                            <input
+                                                type="hidden"
+                                                name="items[{food.id}]"
+                                                value={order.items.find(
+                                                    (item) => item.id === food.id
+                                                )?.quantity ?? 0} />
+                                        </dd>
+                                    </dl>
+                                </button>
+                            </li>
+                        {/each}
+                    </ul>
+                    <h2 class="category-name uppercase font-bold mt-2">{category}</h2>
+                </li>
+            {/each}
+        </ol>
+    </section>
+</form>
 
 <style lang="postcss">
     .order .total::before {

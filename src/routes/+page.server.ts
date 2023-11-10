@@ -1,4 +1,4 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib';
 import type { Category, Food } from '@prisma/client';
 
@@ -16,3 +16,9 @@ export const load = (async () => {
         status: status
     };
 }) satisfies PageServerLoad;
+
+export const actions = {
+    default: async ({ request }) => {
+        console.log('pg-server-actions', await request.formData());
+    }
+} satisfies Actions;
