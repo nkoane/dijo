@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { OrderStatus } from '@prisma/client';
+    import toast from 'svelte-french-toast';
 
     export let data;
 
@@ -50,11 +51,14 @@
 
         order.status = status.find((status) => status.state === 'paid') ?? status[0];
         console.log(order.status.state);
+
+        toast.success('Paid.');
     };
 
     const placeOrder = async () => {
         if (order.items.length === 0) return;
         console.log('place order in the db, and send a message to the kitchen');
+        toast.success('Order placed.');
     };
 </script>
 

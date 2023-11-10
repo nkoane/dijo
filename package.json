@@ -20,7 +20,8 @@
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
         "test:unit": "vitest",
         "lint": "prettier --plugin-search-dir . --check . && eslint .",
-        "format": "prettier --plugin-search-dir . --write ."
+        "format": "prettier --plugin-search-dir . --write .",
+        "seed": "ts-node prisma/seed.ts"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
@@ -55,6 +56,7 @@
     "dependencies": {
         "@prisma/client": "5.5.2",
         "lucide-svelte": "^0.292.0",
+        "svelte-french-toast": "^1.2.0",
         "zod": "^3.22.4"
     }
 }
