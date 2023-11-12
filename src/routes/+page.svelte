@@ -118,7 +118,7 @@
 
                                             <input
                                                 type="hidden"
-                                                name="items[{food.id}]"
+                                                name="item[{food.id}]"
                                                 value={order.items.find(
                                                     (item) => item.id === food.id
                                                 )?.quantity ?? 0} />

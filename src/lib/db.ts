@@ -15,6 +15,19 @@ export class DB {
         })
         .strict();
 
+    public orderItemSchema = z.object({
+        quantity: z.coerce.number().positive(),
+        cost: z.coerce.number().positive(),
+        foodId: z.coerce.number(),
+        orderId: z.coerce.number()
+    });
+
+    public orderSchema = z.object({
+        statusId: z.coerce.number(),
+        items: z.array(this.orderItemSchema),
+        cost: z.coerce.number().positive()
+    });
+
     constructor() {
         this.client = new PrismaClient();
     }
@@ -116,6 +129,23 @@ export class DB {
 
     public async createOrder(data) {
         console.log(data);
+        const order = await this.getClient().order.create({
+            data: {
+                status: {
+                    connect: {
+                        id: data.statusId
+                    }
+                },
+                items: {
+                    create: data.items
+                },
+                cost: data.cost
+            }
+        });
+
+        console.log(order);
+        return order;
+
         /*
         const order = await this.getClient().order.create({
             data: {
@@ -127,7 +157,6 @@ export class DB {
             }
         });
 
-        return order;
         */
     }
 }
