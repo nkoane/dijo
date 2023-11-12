@@ -158,7 +158,11 @@ export class DB {
     > {
         const orders = await this.getClient().order.findMany({
             include: {
-                OrderItems: true,
+                OrderItems: {
+                    include: {
+                        food: true
+                    }
+                },
                 Status: true
             }
         });
