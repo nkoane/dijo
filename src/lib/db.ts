@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import type { Category, Food, FoodStatus, OrderStatus } from '@prisma/client';
+import type { Category, Food, FoodStatus, Order, OrderStatus } from '@prisma/client';
 import { z } from 'zod';
 
 export class DB {
@@ -127,36 +127,29 @@ export class DB {
         return food;
     }
 
-    public async createOrder(data) {
-        console.log(data);
+    public async createOrder(data: {
+        statusId: OrderStatus['id'];
+        orderItems: {
+            foodId: number;
+            quantity: number;
+            cost: number;
+        }[];
+        cost: number;
+    }): Promise<Order> {
         const order = await this.getClient().order.create({
             data: {
-                status: {
+                Status: {
                     connect: {
                         id: data.statusId
                     }
                 },
-                items: {
-                    create: data.items
+                OrderItems: {
+                    create: data.orderItems
                 },
                 cost: data.cost
             }
         });
 
-        console.log(order);
         return order;
-
-        /*
-        const order = await this.getClient().order.create({
-            data: {
-                status: {
-                    connect: {
-                        id: 1
-                    }
-                }
-            }
-        });
-
-        */
     }
 }

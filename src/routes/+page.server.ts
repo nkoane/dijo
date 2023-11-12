@@ -52,28 +52,14 @@ export const actions = {
         }
 
         const order = {
-            statusId: status.find((status) => status.state === 'placed')?.id,
-            items: orderItems,
+            statusId: status.find((status) => status.state === 'placed')?.id ?? 3,
+            orderItems: orderItems,
             cost: orderItems.reduce((acc, item) => acc + item.cost * item.quantity, 0)
         };
 
         const response = await db.createOrder(order);
-        console.log(order, response);
+        console.log(response);
 
-        /*
-        const result = db.orderSchema.safeParse(formData);
-
-        if (!result.success) {
-            const errors: z.inferFlattenedErrors<typeof db.orderSchema> = result.error.flatten();
-
-            console.log(errors);
-            return fail(400, {
-                errors: errors,
-                success: false
-            });
-        }
-
-        console.log('pg-server-actions', result);
-        */
+        return { success: true, order: response };
     }
 } satisfies Actions;
