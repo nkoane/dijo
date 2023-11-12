@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import type { Category, Food, FoodStatus, Order, OrderStatus } from '@prisma/client';
+import type { Category, Food, FoodStatus, Order, OrderItem, OrderStatus } from '@prisma/client';
 import { z } from 'zod';
 
 export class DB {
@@ -151,5 +151,18 @@ export class DB {
         });
 
         return order;
+    }
+
+    public async getOrders(): Promise<
+        (Order & { Status: OrderStatus } & { OrderItems: OrderItem[] })[]
+    > {
+        const orders = await this.getClient().order.findMany({
+            include: {
+                OrderItems: true,
+                Status: true
+            }
+        });
+
+        return orders;
     }
 }
