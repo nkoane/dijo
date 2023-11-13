@@ -1,9 +1,18 @@
 <script lang="ts">
+    import { io } from 'socket.io-client';
     export let data;
 
     const orders = data.orders ?? [];
 
-    console.log('kitchen/page.svelte', orders[0].createdAt);
+    const socket = io();
+
+    socket.on('connect', () => {
+        console.log('kitchen/page.svelte connect', socket.id); // x8WIv7-mJelg7on_ALbx
+    });
+
+    socket.on('disconnect', () => {
+        console.log('kitchen/page.svelte disconnect', socket.id); // undefined
+    });
 </script>
 
 <h2 class="text-2xl font-bold mb-4">The Kitchen</h2>

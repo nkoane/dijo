@@ -58,6 +58,8 @@
         "@dicebear/core": "^7.0.1",
         "@prisma/client": "5.5.2",
         "lucide-svelte": "^0.292.0",
+        "socket.io": "^4.7.2",
+        "socket.io-client": "^4.7.2",
         "svelte-french-toast": "^1.2.0",
         "zod": "^3.22.4"
     }
