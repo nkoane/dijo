@@ -23,7 +23,7 @@
             <p class=" flex-shrink">{order.createdAt}</p>
             <p class="ml-auto p-2 bg-gray-50">R{order.cost}</p>
             <p class="ml-auto bg-white p-2 text-sm uppercase self-start">
-                {order.Status.state}
+                {order.Status?.state}
             </p>
             <button class="bg-red-50 p-2 text-sm block self-start">PREPARE</button>
         </li>
