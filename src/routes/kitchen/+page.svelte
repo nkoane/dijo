@@ -3,34 +3,29 @@
 
     const orders = data.orders ?? [];
 
-    console.log('kitchen', orders[0].OrderItems);
+    console.log('kitchen/page.svelte', orders[0].createdAt);
 </script>
 
-<h2 class="text-2xl font-bold">KÖK</h2>
+<h2 class="text-2xl font-bold mb-4">The Kitchen</h2>
 <ol>
     {#each orders as order}
-        <li class="bg-gray-100 mb-2">
-            <div class="flex justify-between gap-2">
-                <div class="flex flex-col">
-                    <span class="font-bold">{order.id}</span>
-                </div>
-                <div class="items">
-                    {#each order.OrderItems as item}
-                        <div class="flex flex-row gap-2 justify-between">
-                            <span class="text-sm">{item.quantity} x</span>
-                            <span class="text-sm">{item.food.name}</span>
-                            <span class="font-bold">R{item.cost}</span>
-                        </div>
-                    {/each}
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-sm">{order.createdAt}</span>
-                    <span class="text-sm">R{order.cost}</span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-sm uppercase font-bold">{order.Status.state}</span>
-                </div>
-            </div>
+        <li class="bg-gray-100 mb-2 flex gap-4 p-2">
+            <h3 class="bg-white font-bold px-2">{order.id}</h3>
+            <ul class="food-items bg-blue-200 min-w-[30%]">
+                {#each order.OrderItems as item}
+                    <li class="food-item">
+                        <span>{item.quantity} x</span>
+                        <span>{item.food.name}</span>
+                        <!-- <span>R{item.cost}</span> -->
+                    </li>
+                {/each}
+            </ul>
+            <p class=" flex-shrink">{order.createdAt}</p>
+            <p class="ml-auto p-2 bg-gray-50">R{order.cost}</p>
+            <p class="ml-auto bg-white p-2 text-sm uppercase self-start">
+                {order.Status.state}
+            </p>
+            <button class="bg-red-50 p-2 text-sm block self-start">PREPARE</button>
         </li>
     {/each}
 </ol>
