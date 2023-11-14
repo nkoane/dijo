@@ -58,8 +58,7 @@ export const actions = {
         };
 
         const response = await db.createOrder(order);
-        console.log(response);
 
-        return { success: true, order: response };
+        return { success: true, order: await db.getOrder(response.id) };
     }
 } satisfies Actions;

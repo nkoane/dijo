@@ -2,6 +2,10 @@
     import type { OrderStatus } from '@prisma/client';
     import toast from 'svelte-french-toast';
 
+    import { io } from 'socket.io-client';
+    import { onMount } from 'svelte';
+    const socket = io();
+
     export let data;
 
     const categories = data.categories ?? [];
@@ -65,6 +69,15 @@
 
         toast.success('Placed.');
     };
+    export let form;
+
+    if (form?.success === true) {
+        socket.emit('order-placed', form?.order);
+    }
+
+    onMount(() => {
+        // get user geo location
+    });
 </script>
 
 <form method="post">

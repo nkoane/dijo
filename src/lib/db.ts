@@ -162,9 +162,30 @@ export class DB {
                     }
                 },
                 Status: true
+            },
+            orderBy: {
+                createdAt: 'asc'
             }
         });
 
         return orders;
+    }
+
+    public async getOrder(id: number) {
+        const order = await this.getClient().order.findUnique({
+            include: {
+                OrderItems: {
+                    include: {
+                        food: true
+                    }
+                },
+                Status: true
+            },
+            where: {
+                id: id
+            }
+        });
+
+        return order;
     }
 }

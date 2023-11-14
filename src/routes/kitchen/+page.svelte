@@ -1,21 +1,37 @@
 <script lang="ts">
     import { io } from 'socket.io-client';
+    import { onMount } from 'svelte';
     export let data;
+    import toast from 'svelte-french-toast';
 
-    const orders = data.orders ?? [];
+    let orders = data.orders ?? [];
 
     const socket = io();
 
-    socket.on('connect', () => {
-        console.log('kitchen/page.svelte connect', socket.id); // x8WIv7-mJelg7on_ALbx
+    socket.on('order', (order) => {
+        console.log('kitchen/page.svelte order', order);
+        orders.push(order);
+
+        toast.success(`New order: ${order.id}`);
+        orders = orders;
     });
 
-    socket.on('disconnect', () => {
-        console.log('kitchen/page.svelte disconnect', socket.id); // undefined
-    });
+    $: if (orders.length > 0) {
+        orders = orders;
+    }
+
+    function duration(createdAt: Date) {
+        const now = new Date();
+        const created = new Date(createdAt);
+        const diff = now.getTime() - created.getTime();
+        const minutes = Math.floor(diff / 1000 / 60);
+        const seconds = Math.floor(diff / 1000) % 60;
+        // pad with 0
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
 </script>
 
-<h2 class="text-2xl font-bold mb-4">The Kitchen</h2>
+<h2 class="text-2xl font-bold mb-4">The Kitchen: {orders.length}</h2>
 <ol>
     {#each orders as order}
         <li class="bg-gray-100 mb-2 flex gap-4 p-2">
@@ -29,7 +45,7 @@
                     </li>
                 {/each}
             </ul>
-            <p class=" flex-shrink">{order.createdAt}</p>
+            <p class=" flex-shrink">{duration(order.createdAt)}</p>
             <p class="ml-auto p-2 bg-gray-50">R{order.cost}</p>
             <p class="ml-auto bg-white p-2 text-sm uppercase self-start">
                 {order.Status?.state}
