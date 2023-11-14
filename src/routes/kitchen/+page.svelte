@@ -1,6 +1,6 @@
 <script lang="ts">
     import { io } from 'socket.io-client';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     export let data;
     import toast from 'svelte-french-toast';
 
@@ -16,11 +16,25 @@
         orders = orders;
     });
 
+    const orderDurations: { [key: number]: String }[] = [];
+    const orderIntervals: number[] = [];
+
+    onDestroy(() => {
+        console.log('destroying this', orderIntervals);
+        orderIntervals.forEach((interval) => {
+            clearInterval(interval);
+        });
+    });
     $: if (orders.length > 0) {
         orders = orders;
+        orders.forEach((order, index) => {
+            orderIntervals[index] = setInterval(() => {
+                orderDurations[index] = duration(order.createdAt);
+            }, 1000);
+        });
     }
 
-    function duration(createdAt: Date) {
+    const duration = (createdAt: Date): String => {
         const now = new Date();
         const created = new Date(createdAt);
         const diff = now.getTime() - created.getTime();
@@ -28,12 +42,12 @@
         const seconds = Math.floor(diff / 1000) % 60;
         // pad with 0
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
+    };
 </script>
 
 <h2 class="text-2xl font-bold mb-4">The Kitchen: {orders.length}</h2>
 <ol>
-    {#each orders as order}
+    {#each orders as order, index}
         <li class="bg-gray-100 mb-2 flex gap-4 p-2">
             <h3 class="bg-white font-bold px-2">{order.id}</h3>
             <ul class="food-items bg-blue-200 min-w-[30%]">
@@ -45,7 +59,7 @@
                     </li>
                 {/each}
             </ul>
-            <p class=" flex-shrink">{duration(order.createdAt)}</p>
+            <p class=" flex-shrink">{orderDurations[index] ?? order.createdAt.toDateString()}</p>
             <p class="ml-auto p-2 bg-gray-50">R{order.cost}</p>
             <p class="ml-auto bg-white p-2 text-sm uppercase self-start">
                 {order.Status?.state}
