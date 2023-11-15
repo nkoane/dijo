@@ -188,4 +188,29 @@ export class DB {
 
         return order;
     }
+
+    public async updateOrderStatus(id: number, statusId: number) {
+        const order = await this.getClient().order.update({
+            where: {
+                id: id
+            },
+            data: {
+                Status: {
+                    connect: {
+                        id: statusId
+                    }
+                }
+            }
+        });
+
+        return order;
+    }
+
+    public async getOrderStatus(where: { [key: string]: string }) {
+        const status = await this.getClient().orderStatus.findFirst({
+            where: where
+        });
+
+        return status;
+    }
 }
