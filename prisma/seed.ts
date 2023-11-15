@@ -59,8 +59,8 @@ const orderStatuses = [
     },
     {
         id: 8,
-        state: 'canceled',
-        description: 'Order has been canceled'
+        state: 'cancelled',
+        description: 'Order has been cancelled'
     }
 ];
 
