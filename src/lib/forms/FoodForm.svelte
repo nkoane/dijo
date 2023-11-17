@@ -1,7 +1,9 @@
 <script lang="ts">
     import type { Food, Category, FoodStatus } from '@prisma/client';
+    import type { Action } from '@sveltejs/kit';
+    import type { ActionData } from '../../routes/$types';
 
-    export let form: { food: Food; errors: { fieldErrors: Record<string, string> } };
+    export let form: ActionData;
 
     export let categories: Category[];
     export let statuses: FoodStatus[];

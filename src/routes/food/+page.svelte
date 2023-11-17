@@ -1,11 +1,14 @@
 <script lang="ts">
     import Food from '$lib/forms/FoodForm.svelte';
-    export let data, form;
+    import type { ActionData, PageData } from '../$types.js';
+    export let data;
+    export let form: ActionData;
+
     let foods = data.foods;
     let categories = data.categories;
     let statuses = data.statuses;
 
-    $: foods = data.foods;
+    console.log(data);
 </script>
 
 <main class="md:flex gap-2">
