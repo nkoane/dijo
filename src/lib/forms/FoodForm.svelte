@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Food, Category, FoodStatus } from '@prisma/client';
 
-    export let form;
+    export let form: { food: Food; errors: { fieldErrors: Record<string, string> } };
 
     export let categories: Category[];
     export let statuses: FoodStatus[];
@@ -72,14 +72,10 @@
             {/if}
         </label>
     </div>
-    <!-- <label class="block">
+    <label class="block">
         <span class="text-gray-700">Food image</span>
-        <input
-            type="file"
-            class="mt-1 block w-full"
-            placeholder="Food image"
-            bind:value={food?.image} />
-    </label> -->
+        <input type="file" class="mt-1 block w-full" placeholder="Food image" value={form?.image} />
+    </label>
     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
         Submit
     </button>
