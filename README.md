@@ -1,10 +1,10 @@
 # DIJO Starter Pack
 
-Okay, this was a classwork task I used to demonstrate how to build a web application to my students, but after some serious amount of boredom, I figured I could make it an actually application that people could use to manage their chiya-nyama (pop-up shop as the Americans call it).
+Okay, this was a classwork task I used to demonstrate how to build a web application to students, but after some serious amount of boredom, I figured I could make it an actual application that people could use to manage their chisa-nyama (pop-up shop as Americans call it).
 
-## What is DIJO?
+## What is it?
 
-dijo an application that allows the owner of the chiya-nyama (pop-up shop) to manager orders as they come in and for the kitchen staff to see the orders coming in, and clear them as they are collected by customers.
+dijo an application that allows the owner of the chisa-nyama (pop-up shop) to place orders; and for the kitchen to see the orders coming in, and clear them as they are collected by customers.
 
 That's it, that's the whole application. I will add more functionality as I time allows.
 
