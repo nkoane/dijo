@@ -24,6 +24,7 @@ model Food {
   name        String      @unique
   description String
   cost        Float
+  image       String      @default("")
   OrderItems  OrderItem[]
   category    Category    @relation(fields: [categoryId], references: [id])
   categoryId  Int
