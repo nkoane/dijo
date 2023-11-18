@@ -4,12 +4,24 @@
 	import { Toaster } from 'svelte-french-toast';
 	import { createAvatar } from '@dicebear/core';
 	import { avataaars } from '@dicebear/collection';
+	import { io } from 'socket.io-client';
+	import toast from 'svelte-french-toast';
+	import { onMount } from 'svelte';
 
 	const avatar = createAvatar(avataaars, {
 		seed: 'Tommy Spinelli'
 		// ... other options
 	});
 	const svg = avatar.toString();
+
+	onMount(() => {
+		const socket = io();
+
+		socket.on('order', (order) => {
+			console.log('root:page -> order: ', order.id);
+			toast.success(`Order ${order.id} received.`);
+		});
+	});
 </script>
 
 <!-- 
@@ -26,8 +38,8 @@
 			<a href="/">dijo</a>
 		</h1>
 		<nav class="ml-auto flex text-right font-bold text-gray-400 gap-2">
-			<a href="/kitchen">KÖK</a>
-			<a href="/orders">orders</a>
+			<a href="/">root</a>
+			<a href="/orders">kitchen</a>
 			<a href="/food">food</a>
 			<a href="/account" class=" w-[2rem]">{@html svg}</a>
 		</nav>

@@ -1,10 +1,7 @@
 <script lang="ts">
 	import type { Order } from '@prisma/client';
-	import { io } from 'socket.io-client';
 	import { onDestroy } from 'svelte';
-	import toast from 'svelte-french-toast';
 
-	export let form;
 	export let data;
 
 	let orders = data.orders ?? [];
@@ -24,18 +21,6 @@
 			sortedOrders[key].push(order);
 		});
 	};
-
-	const socket = io();
-
-	socket.on('order', (order) => {
-		console.log('kitchen/page.svelte order', order);
-		orders.push(order);
-
-		toast.success(`New order: ${order.id}`);
-		orders = orders;
-	});
-
-	console.log(form);
 
 	const orderDurations: { [key: number]: string }[] = [];
 	const orderIntervals: number[] = [];
@@ -59,8 +44,6 @@
 		});
 
 		sortOrders();
-
-		console.log(Object.keys(sortedOrders));
 	}
 
 	const duration = (createdAt: Date): string => {
@@ -80,6 +63,8 @@
 			.toString()
 			.padStart(2, '0')}s`;
 	};
+
+	console.log('kitchen:page -> orders: ', orders.length);
 </script>
 
 <h2 class="text-2xl font-bold mb-4">The Kitchen: {orders.length}</h2>

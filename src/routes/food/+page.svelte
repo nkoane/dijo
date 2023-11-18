@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Food from '$lib/forms/FoodForm.svelte';
+	import FoodForm from '$lib/forms/FoodForm.svelte';
 	import type { ActionData } from '../$types.js';
 	export let data;
 	export let form: ActionData;
@@ -8,7 +8,8 @@
 	let categories = data.categories;
 	let statuses = data.statuses;
 
-	console.log(data);
+	$: console.log('food:page -> foods: ', data.foods?.length);
+	$: foods = data.foods ?? [];
 </script>
 
 <main class="md:flex gap-2">
@@ -26,5 +27,5 @@
 			{/each}
 		</ol>
 	{/if}
-	<Food {form} {categories} {statuses} />
+	<!-- <FoodForm {form} {categories} {statuses} /> -->
 </main>
