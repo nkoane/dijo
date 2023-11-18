@@ -3,7 +3,6 @@
 	import toast from 'svelte-french-toast';
 
 	import { io } from 'socket.io-client';
-	import { onMount } from 'svelte';
 	const socket = io();
 
 	export let data;
@@ -56,28 +55,11 @@
 		toast.success('Paid.');
 	};
 
-	const placeOrder = async () => {
-		if (order.items.length === 0) return;
-		order.status = status.find((status) => status.state === 'placed') ?? status[1];
-
-		/*
-            store order in db, send to kitchen, and clear order
-        */
-
-		order.items = [];
-		order.status = status.find((status) => status.state === 'pending') ?? status[0];
-
-		toast.success('Placed.');
-	};
 	export let form;
 
 	if (form?.success === true) {
 		socket.emit('order-placed', form?.order);
 	}
-
-	onMount(() => {
-		// get user geo location
-	});
 </script>
 
 <form method="post">

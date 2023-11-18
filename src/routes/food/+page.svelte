@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Food from '$lib/forms/FoodForm.svelte';
-	import type { ActionData, PageData } from '../$types.js';
+	import type { ActionData } from '../$types.js';
 	export let data;
 	export let form: ActionData;
 

@@ -105,9 +105,12 @@ async function reset() {
 }
 
 async function main() {
-	// empty foods, orders, orderItems, categories, orderStatuses
+	if (process.env.RESET_ENV === 'true') {
+		console.log('resetting db');
+		await reset();
+	}
 
-	// await reset();
+	// empty foods, orders, orderItems, categories, orderStatuses
 
 	for (let idx = 0; idx < categories.length; idx++) {
 		const category = await prisma.category.create({

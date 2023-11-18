@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Order } from '@prisma/client';
 	import { io } from 'socket.io-client';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import toast from 'svelte-french-toast';
 
 	export let form;
@@ -37,7 +37,7 @@
 
 	console.log(form);
 
-	const orderDurations: { [key: number]: String }[] = [];
+	const orderDurations: { [key: number]: string }[] = [];
 	const orderIntervals: number[] = [];
 
 	onDestroy(() => {

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Food, Category, FoodStatus } from '@prisma/client';
-	import type { Action } from '@sveltejs/kit';
+	import type { Category, FoodStatus } from '@prisma/client';
 	import type { ActionData } from '../../routes/$types';
 
 	export let form: ActionData;
@@ -51,7 +50,7 @@
 					<option
 						value={category.id}
 						selected={category.id === form?.food?.categoryId ? true : null}>
-						{category.name}
+						{idx}: {category.name}
 					</option>
 				{/each}
 			</select>
@@ -63,7 +62,7 @@
 			<select class="mt-1 block w-full uppercase" name="statusId">
 				{#each statuses as status, ids}
 					<option value={status.id} selected={status.id === form?.food?.statusId ? true : null}>
-						{status.state}
+						{ids}: {status.state}
 					</option>
 				{/each}
 			</select>
