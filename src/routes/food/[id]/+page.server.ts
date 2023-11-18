@@ -5,46 +5,46 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { z } from 'zod';
 
 export const load: PageServerLoad = async ({ params }) => {
-    if (isNaN(Number(params.id)) || !/^\d+$/.test(params.id))
-        throw error(400, `Food (${params.id}) is invalid, it has to be an number`);
+	if (isNaN(Number(params.id)) || !/^\d+$/.test(params.id))
+		throw error(400, `Food (${params.id}) is invalid, it has to be an number`);
 
-    const food = await db.getFood(Number(params.id));
+	const food = await db.getFood(Number(params.id));
 
-    if (!food) {
-        throw error(404, 'Food not found');
-    }
+	if (!food) {
+		throw error(404, 'Food not found');
+	}
 
-    return { food };
+	return { food };
 };
 
 export const actions = {
-    edit: async ({ request, params }) => {
-        const foodId = Number(params.id);
+	edit: async ({ request, params }) => {
+		const foodId = Number(params.id);
 
-        const formData = Object.fromEntries(await request.formData());
+		const formData = Object.fromEntries(await request.formData());
 
-        const data: Food = {
-            name: formData.name as string,
-            description: formData.description as string,
-            categoryId: Number(formData.categoryId) as number,
-            statusId: Number(formData.statusId) as number,
-            cost: Number(formData.cost) as number
-        };
+		const data: Food = {
+			name: formData.name as string,
+			description: formData.description as string,
+			categoryId: Number(formData.categoryId) as number,
+			statusId: Number(formData.statusId) as number,
+			cost: Number(formData.cost) as number
+		};
 
-        const result = db.foodSchema.safeParse(data);
+		const result = db.foodSchema.safeParse(data);
 
-        if (!result.success) {
-            const errors: z.inferFlattenedErrors<typeof db.foodSchema> = result.error.flatten();
+		if (!result.success) {
+			const errors: z.inferFlattenedErrors<typeof db.foodSchema> = result.error.flatten();
 
-            return fail(400, {
-                food: data,
-                errors: errors,
-                success: false
-            });
-        }
+			return fail(400, {
+				food: data,
+				errors: errors,
+				success: false
+			});
+		}
 
-        const response = await db.editFood(foodId, result.data);
+		const response = await db.editFood(foodId, result.data);
 
-        throw redirect(303, `/food/${response.id}`);
-    }
+		throw redirect(303, `/food/${response.id}`);
+	}
 } satisfies Actions;

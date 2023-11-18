@@ -120,8 +120,7 @@
 									class="w-full h-full hover:bg-yellow-400"
 									on:click={() => {
 										addItem(food.id);
-									}}
-								>
+									}}>
 									<dl class="food">
 										<dt>{food.name}</dt>
 										<dd class="font-bold">R{food.cost}</dd>
@@ -131,8 +130,7 @@
 											<input
 												type="hidden"
 												name="item[{food.id}]"
-												value={order.items.find((item) => item.id === food.id)?.quantity ?? 0}
-											/>
+												value={order.items.find((item) => item.id === food.id)?.quantity ?? 0} />
 										</dd>
 									</dl>
 								</button>

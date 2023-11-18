@@ -5,8 +5,8 @@ const categories = await db.getFoodCategories();
 const statuses = await db.getFoodStatuses();
 
 export const load = (async () => {
-    return {
-        categories,
-        statuses
-    };
+	return {
+		categories,
+		statuses
+	};
 }) satisfies LayoutServerLoad;
