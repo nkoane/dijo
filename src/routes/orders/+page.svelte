@@ -164,8 +164,8 @@
 			<h4 class="flex-grow">{state}</h4>
 			<span>{sortedOrders[state].length.toString().padStart(2, '0')}</span>
 			<button class="state-toggle hover:opacity-60">
-				<PanelBottomOpen class="toggle-open hidden w-6 h-6" />
-				<PanelBottomClose class="toggle-close w-6 h-6" />
+				<PanelBottomOpen class="toggle-open {state != 'placed' ? 'hidden' : ''} w-6 h-6" />
+				<PanelBottomClose class="toggle-close {state != 'placed' ? '' : 'hidden'} w-6 h-6" />
 			</button>
 		</div>
 		<ol class="{state != 'placed' ? 'hidden' : ''} state-orders">
