@@ -25,7 +25,17 @@
 		});
 	};
 
-	const orderDurations: { [key: number]: string }[] = [];
+	const orderDurations: {
+		[key: number]:
+			| {
+					days: number;
+					hours: number;
+					minutes: number;
+					seconds: number;
+					toString: () => string;
+			  }
+			| undefined;
+	}[] = [];
 	const orderIntervals: number[] = [];
 
 	onDestroy(() => {
@@ -37,34 +47,81 @@
 
 	$: if (orders.length > 0) {
 		orders = orders;
-		orders.forEach((order, index) => {
-			orderIntervals[index] = setInterval(
+		orders.forEach((order) => {
+			orderIntervals[order.id] = setInterval(
 				() => {
-					orderDurations[index] = duration(order.updatedAt);
+					orderDurations[order.id] = duration(order.updatedAt);
 				},
-				1000 * Math.max(1, index)
+				1000 // * Math.max(1, index)
 			);
 		});
 
 		sortOrders();
 	}
 
-	const duration = (createdAt: Date): string => {
+	const duration = (
+		createdAt: Date
+	): {
+		days: number;
+		hours: number;
+		minutes: number;
+		seconds: number;
+		toString: () => string;
+	} => {
 		const now = new Date();
 		const created = new Date(createdAt);
 		const diff = now.getTime() - created.getTime();
 
-		// get hours
-		const hours = Math.floor(diff / 1000 / 60 / 60);
-		// get minutes
-		const minutes = Math.floor(diff / 1000 / 60) % 60;
-		// get seconds
-		const seconds = Math.floor(diff / 1000) % 60;
+		// get days
+		const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+		const daysRemainder = diff % (1000 * 60 * 60 * 24);
 
-		// pad with 0
-		return `${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds
-			.toString()
-			.padStart(2, '0')}s`;
+		// get hours
+		const hours = Math.floor(daysRemainder / (1000 * 60 * 60));
+		const hoursRemainder = daysRemainder % (1000 * 60 * 60);
+
+		// get minutes
+		const minutes = Math.floor(hoursRemainder / (1000 * 60));
+		const minutesRemainder = hoursRemainder % (1000 * 60);
+
+		// get seconds
+		const seconds = Math.floor(minutesRemainder / 1000);
+
+		return {
+			days: days,
+			hours: hours,
+			minutes: minutes,
+			seconds: seconds,
+			toString: () => {
+				return formatDuration(days, hours, minutes, seconds);
+			}
+		};
+	};
+
+	const formatDuration = (
+		days: number,
+		hours: number,
+		minutes: number,
+		seconds: number
+	): string => {
+		let duration = '';
+
+		// pad all results with 0
+
+		if (days > 0) {
+			duration += `${days.toString().padStart(2, '0')}d `;
+		}
+		if (hours > 0) {
+			duration += `${hours.toString().padStart(2, '0')}h `;
+		}
+		if (minutes > 0) {
+			duration += `${minutes.toString().padStart(2, '0')}m `;
+		}
+		if (seconds > 0) {
+			duration += `${seconds.toString().padStart(2, '0')}s`;
+		}
+
+		return duration;
 	};
 
 	$socketStore.on('order', (order) => {
@@ -77,12 +134,12 @@
 </script>
 
 <h2 class="text-2xl font-bold mb-4">The Kitchen: {orders.length}</h2>
-{#each Object.keys(sortedOrders) as state, index}
+{#each Object.keys(sortedOrders) as state, stateIndex}
 	<dl class="bg-blue-50 mb-2 p-2">
 		<dt class="bg-white p-2 text-black font-bold text-sm uppercase">
 			{state} : {sortedOrders[state].length.toString().padStart(2, '0')}
 		</dt>
-		{#each sortedOrders[state] as order}
+		{#each sortedOrders[state] as order, orderIndex}
 			<dd class="bg-gray-100 mb-2 flex gap-4 p-2 justify-between">
 				<h3 class="bg-white font-bold px-2">{order.id}</h3>
 				<ul class="food-items bg-blue-200 min-w-[30%]">
@@ -94,10 +151,7 @@
 						</li>
 					{/each}
 				</ul>
-				<p class="w-1/12">{orderDurations[index] ?? order.updatedAt.toDateString()}</p>
-				<p class="w-2/12 text-xs bg-white p-2 uppercase self-start">
-					{order.Status?.state}
-				</p>
+				<p class="w-2/12 bg-blue-200">{@html orderDurations[order.id] ?? '&empty;'}</p>
 				<form method="post" class="w-3/12 justify-between flex flex-row-reverse gap-2 text-xs">
 					<input type="hidden" name="id" value={order.id} />
 					{#if order.Status?.state == 'placed'}
