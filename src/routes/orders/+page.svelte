@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { Order } from '@prisma/client';
-	import { io } from 'socket.io-client';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import { socketStore } from '$lib/store.js';
+	import { PanelBottomClose, PanelBottomOpen, PanelTopClose, PanelTopOpen } from 'lucide-svelte';
 
 	export let data;
 
@@ -131,62 +131,90 @@
 		orders.push(order);
 		sortOrders();
 	});
+
+	onMount(() => {
+		const stateGroups = document.querySelectorAll('.state');
+
+		stateGroups.forEach((state) => {
+			const stateOrders = state.querySelector('.state > .state-orders');
+			const stateToggle = state.querySelector('.state .state-toggle');
+
+			console.log(stateOrders?.classList.contains('hidden'));
+
+			if (stateOrders && stateToggle) {
+				stateToggle.addEventListener('click', () => {
+					stateOrders?.classList.toggle('hidden');
+
+					stateToggle.querySelector('.toggle-open')?.classList.toggle('hidden');
+					stateToggle.querySelector('.toggle-close')?.classList.toggle('hidden');
+				});
+			}
+		});
+	});
 </script>
 
 <h2 class="text-2xl font-bold mb-4">The Kitchen: {orders.length}</h2>
 {#each Object.keys(sortedOrders) as state, stateIndex}
-	<dl class="bg-blue-50 mb-2 p-2">
-		<dt class="bg-white p-2 text-black font-bold text-sm uppercase">
-			{state} : {sortedOrders[state].length.toString().padStart(2, '0')}
-		</dt>
-		{#each sortedOrders[state] as order, orderIndex}
-			<dd class="bg-gray-100 mb-2 flex gap-4 p-2 justify-between">
-				<h3 class="bg-white font-bold px-2">{order.id}</h3>
-				<ul class="food-items bg-blue-200 min-w-[30%]">
-					{#each order.OrderItems as item}
-						<li class="food-item">
-							<span>{item.quantity} x</span>
-							<span>{item.food.name}</span>
-							<!-- <span>R{item.cost}</span> -->
-						</li>
-					{/each}
-				</ul>
-				<p class="w-2/12 bg-blue-200">{@html orderDurations[order.id] ?? '&empty;'}</p>
-				<form method="post" class="w-3/12 justify-between flex flex-row-reverse gap-2 text-xs">
-					<input type="hidden" name="id" value={order.id} />
-					{#if order.Status?.state == 'placed'}
-						<button
-							type="submit"
-							formaction="?/cancel"
-							class="bg-red-600 p-2 block self-start rounded text-white font-bold">
-							CANCEL
-						</button>
-						<button
-							type="submit"
-							formaction="?/prepare"
-							class="bg-blue-600 text-white font-bold p-2 block self-start rounded">PREPARE</button>
-					{/if}
+	<div class="bg-blue-50 mb-2 p-2 state">
+		<div class="bg-white p-2 text-black font-bold text-sm uppercase flex gap-2">
+			<h4 class="flex-grow">{state}</h4>
+			<span>{sortedOrders[state].length.toString().padStart(2, '0')}</span>
+			<button class="state-toggle hover:opacity-60">
+				<PanelBottomOpen class="toggle-open hidden w-6 h-6" />
+				<PanelBottomClose class="toggle-close w-6 h-6" />
+			</button>
+		</div>
+		<ol class="hidden state-orders">
+			{#each sortedOrders[state] as order, orderIndex}
+				<li class="bg-gray-100 mb-2 flex gap-4 p-2 justify-between">
+					<h3 class="bg-white font-bold px-2">{order.id}</h3>
+					<ul class="food-items bg-blue-200 min-w-[30%]">
+						{#each order.OrderItems as item}
+							<li class="food-item">
+								<span>{item.quantity} x</span>
+								<span>{item.food.name}</span>
+								<!-- <span>R{item.cost}</span> -->
+							</li>
+						{/each}
+					</ul>
+					<p class="w-2/12 bg-blue-200">{@html orderDurations[order.id] ?? '&empty;'}</p>
+					<form method="post" class="w-3/12 justify-between flex flex-row-reverse gap-2 text-xs">
+						<input type="hidden" name="id" value={order.id} />
+						{#if order.Status?.state == 'placed'}
+							<button
+								type="submit"
+								formaction="?/cancel"
+								class="bg-red-600 p-2 block self-start rounded text-white font-bold">
+								CANCEL
+							</button>
+							<button
+								type="submit"
+								formaction="?/prepare"
+								class="bg-blue-600 text-white font-bold p-2 block self-start rounded"
+								>PREPARE</button>
+						{/if}
 
-					{#if order.Status?.state == 'preparing'}
-						<button
-							type="submit"
-							formaction="?/ready"
-							class="bg-blue-600 p-2 block self-start rounded text-white font-bold">READY</button>
-					{/if}
-					{#if order.Status?.state == 'ready'}
-						<button
-							type="submit"
-							formaction="?/collected"
-							class="bg-blue-600 p-2 block self-start rounded text-white font-bold"
-							>COLLECTED</button>
-						<button
-							type="submit"
-							formaction="?/delivered"
-							class="bg-blue-600 p-2 block self-start rounded text-white font-bold"
-							>DELIVERED</button>
-					{/if}
-				</form>
-			</dd>
-		{/each}
-	</dl>
+						{#if order.Status?.state == 'preparing'}
+							<button
+								type="submit"
+								formaction="?/ready"
+								class="bg-blue-600 p-2 block self-start rounded text-white font-bold">READY</button>
+						{/if}
+						{#if order.Status?.state == 'ready'}
+							<button
+								type="submit"
+								formaction="?/collected"
+								class="bg-blue-600 p-2 block self-start rounded text-white font-bold"
+								>COLLECTED</button>
+							<button
+								type="submit"
+								formaction="?/delivered"
+								class="bg-blue-600 p-2 block self-start rounded text-white font-bold"
+								>DELIVERED</button>
+						{/if}
+					</form>
+				</li>
+			{/each}
+		</ol>
+	</div>
 {/each}
