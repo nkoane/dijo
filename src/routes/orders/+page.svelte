@@ -4,8 +4,10 @@
 	import toast from 'svelte-french-toast';
 	import { socketStore } from '$lib/store.js';
 	import { PanelBottomClose, PanelBottomOpen, PanelTopClose, PanelTopOpen } from 'lucide-svelte';
+	import { enhance } from '$app/forms';
 
 	export let data;
+	export let form;
 
 	let orders = data.orders ?? [];
 
@@ -149,6 +151,10 @@
 			}
 		});
 	});
+
+	$: if (form?.success === true) {
+		console.log('kitchen:page -> orders:form ', form.order?.id, form.status, form.order);
+	}
 </script>
 
 <h2 class="text-2xl font-bold mb-4">The Kitchen: {orders.length}</h2>
@@ -162,7 +168,7 @@
 				<PanelBottomClose class="toggle-close w-6 h-6" />
 			</button>
 		</div>
-		<ol class="hidden state-orders">
+		<ol class="{state != 'placed' ? 'hidden' : ''} state-orders">
 			{#each sortedOrders[state] as order, orderIndex}
 				<li class="bg-gray-100 mb-2 flex gap-4 p-2 justify-between">
 					<h3 class="bg-white font-bold px-2">{order.id}</h3>
@@ -176,7 +182,10 @@
 						{/each}
 					</ul>
 					<p class="w-2/12 bg-blue-200">{@html orderDurations[order.id] ?? '&empty;'}</p>
-					<form method="post" class="w-3/12 justify-between flex flex-row-reverse gap-2 text-xs">
+					<form
+						method="post"
+						class="w-3/12 justify-between flex flex-row-reverse gap-2 text-xs"
+						use:enhance>
 						<input type="hidden" name="id" value={order.id} />
 						{#if order.Status?.state == 'placed'}
 							<button

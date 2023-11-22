@@ -21,7 +21,7 @@ export const actions = {
 
 		const result = await db.updateOrderStatus(id, status.id);
 
-		return { success: true, order: result };
+		return { success: true, order: result, status: status.state };
 	},
 	ready: async ({ request }) => {
 		const data = await request.formData();
@@ -35,7 +35,7 @@ export const actions = {
 
 		const result = await db.updateOrderStatus(id, status.id);
 
-		return { success: true, order: result };
+		return { success: true, order: result, status: status.state };
 	},
 	collected: async ({ request }) => {
 		const data = await request.formData();
@@ -49,7 +49,7 @@ export const actions = {
 
 		const result = await db.updateOrderStatus(id, status.id);
 
-		return { success: true, order: result };
+		return { success: true, order: result, status: status.state };
 	},
 	delivered: async ({ request }) => {
 		const data = await request.formData();
@@ -63,7 +63,7 @@ export const actions = {
 
 		const result = await db.updateOrderStatus(id, status.id);
 
-		return { success: true, order: result };
+		return { success: true, order: result, status: status.state };
 	},
 	cancel: async ({ request }) => {
 		const data = await request.formData();
@@ -77,6 +77,8 @@ export const actions = {
 
 		const result = await db.updateOrderStatus(id, status.id);
 
-		return { success: true, order: result };
+		console.log('orders->page->server->cancel', `order: ${id} deleted`, result);
+
+		return { success: true, order: result, status: status };
 	}
 } satisfies Actions;
