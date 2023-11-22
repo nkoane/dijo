@@ -139,8 +139,6 @@
 			const stateOrders = state.querySelector('.state > .state-orders');
 			const stateToggle = state.querySelector('.state .state-toggle');
 
-			console.log(stateOrders?.classList.contains('hidden'));
-
 			if (stateOrders && stateToggle) {
 				stateToggle.addEventListener('click', () => {
 					stateOrders?.classList.toggle('hidden');

@@ -163,9 +163,14 @@ export class DB {
 				},
 				Status: true
 			},
-			orderBy: {
-				createdAt: 'asc'
-			}
+			orderBy: [
+				{
+					statusId: 'asc'
+				},
+				{
+					updatedAt: 'desc'
+				}
+			]
 		});
 
 		return orders;
