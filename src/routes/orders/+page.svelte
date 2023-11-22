@@ -110,17 +110,17 @@
 
 		// pad all results with 0
 
-		if (days > 0) {
-			duration += `${days.toString().padStart(2, '0')}d `;
-		}
-		if (hours > 0) {
-			duration += `${hours.toString().padStart(2, '0')}h `;
+		if (seconds > 0) {
+			duration += `${seconds.toString().padStart(2, '0')}s `;
 		}
 		if (minutes > 0) {
-			duration += `${minutes.toString().padStart(2, '0')}m `;
+			duration += `${minutes.toString().padStart(2, '0')}m<br/>`;
 		}
-		if (seconds > 0) {
-			duration += `${seconds.toString().padStart(2, '0')}s`;
+		if (hours > 0) {
+			duration += `${hours.toString().padStart(2, '0')}h`;
+		}
+		if (days > 0) {
+			duration += `${days.toString().padStart(2, '0')}d`;
 		}
 
 		return duration;
@@ -154,6 +154,15 @@
 
 	$: if (form?.success === true) {
 		console.log('kitchen:page -> orders:form ', form.order?.id, form.status, form.order);
+		// find the order by id in the orders array
+		if (form?.order && form.status) {
+			const order = orders.find((order) => order.id === form?.order?.id);
+			if (order) {
+				order.statusId = form.order?.statusId;
+				order.Status = form.status;
+				sortOrders();
+			}
+		}
 	}
 </script>
 
@@ -170,9 +179,9 @@
 		</div>
 		<ol class="{state != 'placed' ? 'hidden' : ''} state-orders">
 			{#each sortedOrders[state] as order, orderIndex}
-				<li class="bg-gray-100 mb-2 flex gap-4 p-2 justify-between">
-					<h3 class="bg-white font-bold px-2">{order.id}</h3>
-					<ul class="food-items bg-blue-200 min-w-[30%]">
+				<li class="bg-gray-100 mb-2 flex gap-2 p-2 justify-between">
+					<h3 class="font-bold">{order.id}</h3>
+					<ul class="food-items bg-blue-200 flex-grow">
 						{#each order.OrderItems as item}
 							<li class="food-item">
 								<span>{item.quantity} x</span>
@@ -181,7 +190,7 @@
 							</li>
 						{/each}
 					</ul>
-					<p class="w-2/12 bg-blue-200">{@html orderDurations[order.id] ?? '&empty;'}</p>
+					<p class="w-2/12 bg-blue-200 text-sm">{@html orderDurations[order.id] ?? '&empty;'}</p>
 					<form
 						method="post"
 						class="w-3/12 justify-between flex flex-row-reverse gap-2 text-xs"
