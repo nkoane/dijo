@@ -15,7 +15,7 @@ const socketIOPlugin = {
 			});
 
 			socket.on('order-placed', (order) => {
-				console.log('server->order:', order.id);
+				console.log('server->order->placed:', order.id);
 				io.emit('order', order);
 			});
 		});

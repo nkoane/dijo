@@ -3,6 +3,7 @@
 	import { io } from 'socket.io-client';
 	import { onDestroy } from 'svelte';
 	import toast from 'svelte-french-toast';
+	import { socketStore } from '$lib/store.js';
 
 	export let data;
 
@@ -66,12 +67,8 @@
 			.padStart(2, '0')}s`;
 	};
 
-	console.log('kitchen:page -> orders: ', orders.length);
-
-	const socket = io();
-
-	socket.on('order', (order) => {
-		console.log('kitchen:page -> order: ', order.id);
+	$socketStore.on('order', (order) => {
+		console.log('kitchen:page -> order -> recieved: ', order.id);
 
 		toast.success(`Order ${order.id} received.`);
 		orders.push(order);
