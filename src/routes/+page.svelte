@@ -2,6 +2,7 @@
 	import type { OrderStatus } from '@prisma/client';
 	import toast from 'svelte-french-toast';
 	import { socketStore } from '$lib/store.js';
+	import { enhance } from '$app/forms';
 
 	export let data;
 
@@ -55,12 +56,19 @@
 
 	export let form;
 
-	if (form?.success === true) {
+	$: if (form?.success === true) {
 		$socketStore.emit('order-placed', form?.order);
+
+		order = {
+			items: [],
+			status: status.find((status) => status.state === 'pending') ?? status[0],
+			total: 0
+		};
+		form = null;
 	}
 </script>
 
-<form method="post">
+<form method="post" use:enhance>
 	<div class="mb-4 flex justify-between">
 		<h2 class="text-2xl font-bold">ORDX</h2>
 		{#if order.items.length > 0}

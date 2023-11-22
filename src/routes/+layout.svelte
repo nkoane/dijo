@@ -4,31 +4,17 @@
 	import { Toaster } from 'svelte-french-toast';
 	import { createAvatar } from '@dicebear/core';
 	import { avataaars } from '@dicebear/collection';
-	import { io } from 'socket.io-client';
-	import toast from 'svelte-french-toast';
-	import { onDestroy, onMount } from 'svelte';
+	import { socketStore } from '$lib/store';
 
 	const avatar = createAvatar(avataaars, {
-		seed: 'Tommy Spinelli'
+		seed: Math.random().toString()
 		// ... other options
 	});
 	const svg = avatar.toString();
 
-	/*
-	const socket = io();
-
-	onMount(() => {
-		console.log('root:layout -> onMount:socket: ', socket.id);
-		socket.on('order', (order) => {
-			console.log('root:page -> order: ', order.id);
-			toast.success(`Order ${order.id} received.`);
-		});
-	});
-
-	onDestroy(() => {
-		console.log('root:layout -> destroy: ', socket.id);
-	});
-	*/
+	$: if ($socketStore.connected) {
+		console.log('root:layout socket->connected()', $socketStore.id);
+	}
 </script>
 
 <!-- 

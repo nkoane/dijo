@@ -162,7 +162,6 @@
 	});
 
 	$: if (form?.success === true) {
-		console.log('kitchen:page -> orders:form ', form.order?.id, form.status, form.order);
 		// find the order by id in the orders array
 		if (form?.order && form.status) {
 			const order = orders.find((order) => order.id === form?.order?.id);
