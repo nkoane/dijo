@@ -16,6 +16,15 @@
 	} = {};
 
 	const sortOrders = () => {
+		// sort orders by statusId, then by updatedAt
+		orders.sort((a, b) => {
+			if (a.statusId! < b.statusId!) return -1;
+			if (a.statusId! > b.statusId!) return 1;
+			if (a.updatedAt < b.updatedAt) return 1;
+			if (a.updatedAt > b.updatedAt) return -1;
+			return 0;
+		});
+
 		sortedOrders = {};
 		orders.forEach((order) => {
 			const key = order.Status?.state ?? 'pending';
@@ -159,6 +168,7 @@
 			const order = orders.find((order) => order.id === form?.order?.id);
 			if (order) {
 				order.statusId = form.order?.statusId;
+				order.updatedAt = form.order?.updatedAt;
 				order.Status = form.status;
 				sortOrders();
 			}
