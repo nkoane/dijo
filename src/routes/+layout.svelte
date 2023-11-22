@@ -6,7 +6,7 @@
 	import { avataaars } from '@dicebear/collection';
 	import { io } from 'socket.io-client';
 	import toast from 'svelte-french-toast';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	const avatar = createAvatar(avataaars, {
 		seed: 'Tommy Spinelli'
@@ -14,14 +14,21 @@
 	});
 	const svg = avatar.toString();
 
-	onMount(() => {
-		const socket = io();
+	/*
+	const socket = io();
 
+	onMount(() => {
+		console.log('root:layout -> onMount:socket: ', socket.id);
 		socket.on('order', (order) => {
 			console.log('root:page -> order: ', order.id);
 			toast.success(`Order ${order.id} received.`);
 		});
 	});
+
+	onDestroy(() => {
+		console.log('root:layout -> destroy: ', socket.id);
+	});
+	*/
 </script>
 
 <!-- 

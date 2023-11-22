@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Order } from '@prisma/client';
+	import { io } from 'socket.io-client';
 	import { onDestroy } from 'svelte';
+	import toast from 'svelte-french-toast';
 
 	export let data;
 
@@ -65,6 +67,16 @@
 	};
 
 	console.log('kitchen:page -> orders: ', orders.length);
+
+	const socket = io();
+
+	socket.on('order', (order) => {
+		console.log('kitchen:page -> order: ', order.id);
+
+		toast.success(`Order ${order.id} received.`);
+		orders.push(order);
+		sortOrders();
+	});
 </script>
 
 <h2 class="text-2xl font-bold mb-4">The Kitchen: {orders.length}</h2>

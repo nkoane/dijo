@@ -4,8 +4,7 @@
 	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 
-	// import { io } from 'socket.io-client';
-	// const socket = io();
+	const socket = io();
 
 	export let data;
 
@@ -60,10 +59,25 @@
 	export let form;
 
 	if (form?.success === true) {
-		//	socket.emit('order-placed', form?.order);
+		socket.emit('order-placed', form?.order);
 	}
 
+	/*
+
 	$: console.log('order:page -> form.success: ', form?.success);
+
+	import { socketStore } from '$lib/store.js';
+
+	$: if ($socketStore) {
+		console.log('order:page -> socketStore: ', $socketStore.id);
+		$socketStore.on('order', (order) => {
+			// Handle the 'order' event
+			console.log('order:page -> order: ', order.id);
+		});
+
+		// You can also emit events, e.g., $socketStore.emit('order-placed', orderData);
+	}
+	*/
 </script>
 
 <form method="post">
