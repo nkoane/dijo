@@ -46,7 +46,7 @@
 			  }
 			| undefined;
 	}[] = [];
-	const orderIntervals: number[] = [];
+	const orderIntervals: NodeJS.Timeout[] = [];
 
 	onDestroy(() => {
 		console.log('kitchen:page -> destroying this');
