@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Order } from '@prisma/client';
 	import { onDestroy, onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import { socketStore } from '$lib/store.js';
@@ -12,7 +11,7 @@
 	let orders = data.orders ?? [];
 
 	let sortedOrders: {
-		[key: string]: Order[];
+		[key: string]: typeof orders; //Order & { OrderItems: OrderItem[] }[];
 	} = {};
 
 	const sortOrders = () => {
