@@ -6,12 +6,12 @@ import type { z } from 'zod';
 
 export const load: PageServerLoad = async ({ params }) => {
 	if (isNaN(Number(params.id)) || !/^\d+$/.test(params.id))
-		throw error(400, `Food (${params.id}) is invalid, it has to be an number`);
+		error(400, `Food (${params.id}) is invalid, it has to be an number`);
 
 	const food = await db.getFood(Number(params.id));
 
 	if (!food) {
-		throw error(404, 'Food not found');
+		error(404, 'Food not found');
 	}
 
 	return { food };
@@ -45,6 +45,6 @@ export const actions = {
 
 		const response = await db.editFood(foodId, result.data);
 
-		throw redirect(303, `/food/${response.id}`);
+		redirect(303, `/food/${response.id}`);
 	}
 } satisfies Actions;

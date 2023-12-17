@@ -44,6 +44,6 @@ export const actions = {
 
 		const response = await db.createFood(result.data);
 
-		throw redirect(303, `/food/${response.id}`);
+		redirect(303, `/food/${response.id}`);
 	}
 } satisfies Actions;
