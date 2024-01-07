@@ -57,6 +57,7 @@
 	export let form;
 
 	$: if (form?.success === true) {
+		console.log('root:page socket->emit->order', $socketStore);
 		$socketStore.emit('order-placed', form?.order);
 
 		order = {
