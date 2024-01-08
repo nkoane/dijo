@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 import { Server } from 'socket.io';
 import { type ViteDevServer } from 'vite';
 
+/*
 export const socketIOPlugin = {
 	name: 'socket-io-plugin',
 	configureServer(server: ViteDevServer) {
@@ -86,14 +87,18 @@ export const socketIOPlugin = {
 		// io.disconnectSockets();
 	}
 };
-/*
+*/
+
 const SIO = () => {
 	return {
 		name: 'socket-io-plugin',
-		configureServer(server: any) {
+		configureServer(server: ViteDevServer) {
 			console.log(`vite.config->server->initialisation: (${server.httpServer})})`);
 			const io = new Server(server.httpServer, {
-				path: '/'
+				cors: {
+					origin: '*',
+					methods: ['GET', 'POST']
+				}
 			});
 
 			io.on('connection', (socket) => {
@@ -106,10 +111,9 @@ const SIO = () => {
 		}
 	};
 };
-*/
 
 export default defineConfig({
-	plugins: [sveltekit(), socketIOPlugin],
+	plugins: [sveltekit(), SIO()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	}
