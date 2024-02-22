@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.pcss';
-	import { Fingerprint } from 'lucide-svelte';
+	import { Flame, FlameKindling, Soup } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { Toaster } from 'svelte-french-toast';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -17,7 +17,7 @@
 </script>
 
 <svelte:head>
-	<title>SKA</title>
+	<title>dijo</title>
 </svelte:head>
 <Toaster />
 <main class="mx-auto mt-8 w-10/12">
@@ -26,8 +26,8 @@
 			id="logo"
 			href="/"
 			class="flex items-center gap-2 transition-colors duration-500 hover:text-yellow-500">
-			<Fingerprint />
-			<h1 class="text-4xl font-bold">SKA</h1>
+			<Soup class=" h-8 w-8 text-orange-500" />
+			<h1 class="text-4xl font-bold">dijo</h1>
 		</a>
 		<nav>
 			<ul class="flex items-center gap-4 uppercase">
