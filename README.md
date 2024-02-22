@@ -12,7 +12,21 @@ That's it, that's the whole application. I will add more functionality as I time
 
 This is still work in progress, I'll add this once I have a working protoype.
 
-Afterwhich, you can access the dashboard, to setup the database, and create the administrator, which would then allow you to add whatever it is that you are selling. For now, the assumption is that all foods fall into the following categories:
+#### Prerequisites
+
+Install all relevate packages using pnpm:
+
+```bash
+pnpm install
+```
+
+Run the following to seed the db with a roles, categories and an adminstrative user (their password will be randomly generated and printed to the console):
+
+```bash
+pnpx tsx prisma/seed.ts
+```
+
+Afterwhich, you can access the dashboard, to add food categories, the food themselves. For now, the assumption is that all foods fall into the following categories:
 
 - Starch
 - Meat
