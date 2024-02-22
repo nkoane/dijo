@@ -51,8 +51,4 @@
 	form span {
 		@apply text-sm text-red-500;
 	}
-
-	form button {
-		@apply rounded-md bg-green-500 p-2 text-white;
-	}
 </style>
