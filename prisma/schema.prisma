@@ -35,3 +35,69 @@ model Roles {
   name String @unique
   User User[]
 }
+
+// food -> category -> 
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  foods       Food[]
+}
+
+model Food {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String
+  cost        Float
+  image       String      @default("")
+  OrderItems  OrderItem[]
+  category    Category    @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  status      FoodStatus? @relation(fields: [statusId], references: [id])
+  statusId    Int?        @default(1)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model FoodStatus {
+  id          Int      @id @default(autoincrement())
+  state       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Food        Food[]
+}
+
+model Order {
+  id         Int          @id @default(autoincrement())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Status     OrderStatus? @relation(fields: [statusId], references: [id])
+  statusId   Int?
+  OrderItems OrderItem[]
+  cost       Float
+}
+
+model OrderStatus {
+  id          Int      @id @default(autoincrement())
+  state       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Order       Order[]
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  quantity  Int
+  cost      Float
+  food      Food     @relation(fields: [foodId], references: [id])
+  foodId    Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
