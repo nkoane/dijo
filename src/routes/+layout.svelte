@@ -48,10 +48,12 @@
 						</form>
 					</li>
 					<li>
-						<Avatar.Root>
-							<Avatar.Image src={avatar} alt="@shadcn" />
-							<Avatar.Fallback>{user.username}</Avatar.Fallback>
-						</Avatar.Root>
+						<a href="/profile">
+							<Avatar.Root>
+								<Avatar.Image src={avatar} alt="@shadcn" />
+								<Avatar.Fallback>{user.username}</Avatar.Fallback>
+							</Avatar.Root>
+						</a>
 					</li>
 				{:else}
 					<li><a href="/register">Register</a></li>
