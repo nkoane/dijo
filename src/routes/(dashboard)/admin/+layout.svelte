@@ -13,11 +13,7 @@
 </main>
 
 <style lang="postcss">
-	h2 {
-		@apply text-3xl font-bold;
-	}
-
 	main div {
-		@apply mb-4 flex items-center justify-between border-b pb-2 uppercase;
+		@apply mb-4 flex items-center justify-between border-b pb-2;
 	}
 </style>

@@ -51,7 +51,7 @@ model Food {
   id          Int         @id @default(autoincrement())
   name        String      @unique
   description String
-  cost        Float
+  price       Float
   image       String      @default("")
   OrderItems  OrderItem[]
   category    Category    @relation(fields: [categoryId], references: [id])
