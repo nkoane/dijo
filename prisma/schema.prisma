@@ -19,47 +19,37 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  role    Roles     @relation(fields: [roleId], references: [id])
-  Session Session[]
+  role    UserRole      @relation(fields: [roleId], references: [id])
+  Session UserSession[]
 }
 
-model Session {
+model UserSession {
   id        String   @id
   userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
-model Roles {
+// @todo we need to change this to singular form
+model UserRole {
   id   Int    @id @default(autoincrement())
   name String @unique
   User User[]
 }
 
-// food -> category -> 
-
-model Category {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  foods       Food[]
-}
-
 model Food {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
   description String
   price       Float
-  image       String      @default("")
+  image       String       @default("")
   OrderItems  OrderItem[]
-  category    Category    @relation(fields: [categoryId], references: [id])
+  category    FoodCategory @relation(fields: [categoryId], references: [id])
   categoryId  Int
-  status      FoodStatus? @relation(fields: [statusId], references: [id])
-  statusId    Int?        @default(1)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  status      FoodStatus?  @relation(fields: [statusId], references: [id])
+  statusId    Int?         @default(1)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model FoodStatus {
@@ -69,6 +59,15 @@ model FoodStatus {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   Food        Food[]
+}
+
+model FoodCategory {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  foods       Food[]
 }
 
 model Order {
