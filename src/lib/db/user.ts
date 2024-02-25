@@ -42,10 +42,13 @@ class User {
 				id: true,
 				roleId: true,
 				hashed_password: true,
-				role: { select: { id: true, name: true } }
+				role: true
 			}
+			// include: { role: true }
 		});
 
+		console.clear();
+		console.log('person', person);
 		return person;
 	}
 

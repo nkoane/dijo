@@ -13,18 +13,43 @@ class Foods {
 		return Foods.instance;
 	}
 
-	public async create(food: Food): Promise<Food> {
+	public async create(food: {
+		name: string;
+		description?: string;
+		price: number;
+		category: number;
+		status: number;
+		image?: string | null;
+	}): Promise<Food> {
 		const newFood = await dbClient.food.create({
 			data: {
-				...food
+				name: food.name,
+				description: food.description ? food.description : '',
+				price: food.price,
+				category: {
+					connect: {
+						id: food.category
+					}
+				},
+				status: {
+					connect: {
+						id: food.status
+					}
+				},
+				image: food.image ? food.image : ''
 			}
 		});
 
 		return newFood;
 	}
 
-	public async getAll(): Promise<Food[]> {
-		const foods = await dbClient.food.findMany();
+	public async getAll(): Promise<[Food & { status: FoodStatus; category: FoodCategory }]> {
+		const foods = await dbClient.food.findMany({
+			include: {
+				category: true,
+				status: true
+			}
+		});
 
 		return foods;
 	}
@@ -39,9 +64,15 @@ class Foods {
 		return categories;
 	}
 
-	public async getById(id: number): Promise<Food | null> {
+	public async getById(
+		id: number
+	): Promise<(Food & { status: FoodStatus; category: FoodCategory }) | null> {
 		const food = await dbClient.food.findUnique({
-			where: { id }
+			where: { id },
+			include: {
+				category: true,
+				status: true
+			}
 		});
 
 		return food;
