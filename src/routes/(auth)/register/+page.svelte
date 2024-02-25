@@ -1,7 +1,5 @@
 <script lang="ts">
 	export let form;
-
-	console.log(form);
 </script>
 
 <h2 class="mb-4 text-2xl font-bold">Register</h2>

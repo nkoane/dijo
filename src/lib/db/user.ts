@@ -47,8 +47,6 @@ class User {
 			// include: { role: true }
 		});
 
-		console.clear();
-		console.log('person', person);
 		return person;
 	}
 

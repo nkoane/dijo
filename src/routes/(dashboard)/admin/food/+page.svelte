@@ -1,28 +1,36 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
 	export let data, form;
-
-	$: console.log(data?.foods[0].category);
 </script>
-
-<h3>Foods</h3>
 
 <section class="mb-2 flex justify-between gap-2 border-b pb-4">
 	<div class="flex-grow rounded-md bg-gray-100 p-2">
 		{#if data?.foods?.length}
-			<ol class=" space-y-4">
-				{#each data?.foods as food}
-					<li>
-						<a href="food/{food.id}">{food.name}</a> | R{food.price} | {food.category.name} | {food
-							.status.state}
-					</li>
-				{/each}
-			</ol>
+			<table>
+				<thead>
+					<tr>
+						<th>name</th>
+						<th>price</th>
+						<th>category</th>
+						<th>status</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each data?.foods as food}
+						<tr>
+							<td><a href="food/{food.id}">{food.name}</a></td>
+							<td>R{food.price}</td>
+							<td>{food.category.name}</td>
+							<td>{food.status.state}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		{:else}
 			<p>No food found</p>
 		{/if}
 	</div>
-	<form action="?/add" method="post" class="flex flex-col gap-4">
+	<form method="post" class="flex flex-col gap-4">
 		<p>
 			<input
 				type="text"
@@ -87,5 +95,21 @@
 
 	form select option {
 		@apply capitalize;
+	}
+
+	table {
+		@apply w-full;
+	}
+
+	table th {
+		@apply border-b border-gray-300 bg-blue-100 p-2 text-left;
+	}
+
+	table tr td {
+		@apply border-b border-gray-300;
+	}
+
+	table tr:hover {
+		@apply bg-yellow-100;
 	}
 </style>

@@ -16,12 +16,15 @@
 					<a href="food/{food.id}">{food.name}</a> | R{food.price} | {food.category.name} | {food
 						.status.state}
 				</li>
+				<li class=" prose bg-white p-2">
+					{food.description}
+				</li>
 			</ol>
 		{:else}
 			<p>No food found</p>
 		{/if}
 	</div>
-	<form action="?/add" method="post" class="flex flex-col gap-4">
+	<form method="post" class="flex flex-col gap-4">
 		<p>
 			<input
 				type="text"
@@ -33,7 +36,8 @@
 				name="description"
 				id="description"
 				placeholder="description of food"
-				value={form?.food?.description ? form?.food.description.toString() : food.name}></textarea>
+				value={form?.food?.description ? form?.food.description.toString() : food.description}
+			></textarea>
 		</p>
 		<p>
 			<select name="status" id="status">
@@ -65,7 +69,7 @@
 			<input type="file" name="image" id="image" placeholder="image of food" />
 		</p>
 
-		<Button type="submit">Create</Button>
+		<Button type="submit">Edit</Button>
 	</form>
 </section>
 

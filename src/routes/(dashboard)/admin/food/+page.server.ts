@@ -15,7 +15,7 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	add: async ({ request }) => {
+	default: async ({ request }) => {
 		const data = await request.formData();
 		const name = data.get('name') as string;
 		const description = data.get('description') as string;
@@ -32,13 +32,6 @@ export const actions: Actions = {
 			status: parseFloat(status.toString()),
 			image: image ? image.toString() : null
 		};
-
-		const two = '2';
-
-		// convert two into a number
-		const twoAsNumber = parseFloat(two);
-
-		console.log(two, twoAsNumber);
 
 		const errors: { [key: string]: string | number | unknown } = {};
 
@@ -60,11 +53,8 @@ export const actions: Actions = {
 		});
 
 		if (Object.keys(errors).length > 0) {
-			console.log('errors', errors);
 			return fail(400, { food, errors });
 		}
-
-		console.clear();
 
 		const result = await foodManagement.create({
 			name: food.name as string,
@@ -74,7 +64,7 @@ export const actions: Actions = {
 			status: food.status as number,
 			image: food.image as string | null
 		});
-		console.log('new food added', result);
+
 		redirect(302, `/admin/food/${result.id}`);
 	}
 };

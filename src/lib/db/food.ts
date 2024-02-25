@@ -43,11 +43,25 @@ class Foods {
 		return newFood;
 	}
 
-	public async getAll(): Promise<[Food & { status: FoodStatus; category: FoodCategory }]> {
-		const foods = await dbClient.food.findMany({
+	public async getById(
+		id: number
+	): Promise<(Food & { status: FoodStatus; category: FoodCategory }) | null> {
+		const food = await dbClient.food.findUnique({
+			where: { id },
 			include: {
 				category: true,
 				status: true
+			}
+		});
+
+		return food;
+	}
+
+	public async getAll(): Promise<(Food & { status: FoodStatus; category: FoodCategory }[]) | null> {
+		const foods = await dbClient.food.findMany({
+			include: {
+				status: true,
+				category: true
 			}
 		});
 
@@ -64,24 +78,35 @@ class Foods {
 		return categories;
 	}
 
-	public async getById(
-		id: number
-	): Promise<(Food & { status: FoodStatus; category: FoodCategory }) | null> {
-		const food = await dbClient.food.findUnique({
-			where: { id },
-			include: {
-				category: true,
-				status: true
-			}
-		});
-
-		return food;
-	}
-
-	public async update(id: number, food: Food): Promise<Food> {
+	public async update(
+		id: number,
+		food: {
+			name: string;
+			description?: string;
+			price: number;
+			category: number;
+			status: number;
+			image?: string | null;
+		}
+	): Promise<Food> {
 		const updatedFood = await dbClient.food.update({
 			where: { id },
-			data: food
+			data: {
+				name: food.name,
+				description: food.description ? food.description : '',
+				price: food.price,
+				category: {
+					connect: {
+						id: food.category
+					}
+				},
+				status: {
+					connect: {
+						id: food.status
+					}
+				},
+				image: food.image ? food.image : ''
+			}
 		});
 
 		return updatedFood;
