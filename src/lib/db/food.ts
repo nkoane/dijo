@@ -1,5 +1,5 @@
 import { dbClient } from './client';
-import type { Food, FoodStatus, Category } from '@prisma/client';
+import type { Food, FoodStatus, FoodCategory } from '@prisma/client';
 
 class Foods {
 	private static instance: Foods;
@@ -29,9 +29,14 @@ class Foods {
 		return foods;
 	}
 
-	public async getFoodStatuses(): Promise<FoodStatus[]> {
+	public async getAllFoodStatus(): Promise<FoodStatus[]> {
 		const statuses = await dbClient.foodStatus.findMany({});
 		return statuses;
+	}
+
+	public async getAllFoodCategory(): Promise<FoodCategory[]> {
+		const categories = await dbClient.foodCategory.findMany({});
+		return categories;
 	}
 
 	public async getById(id: number): Promise<Food | null> {
