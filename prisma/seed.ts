@@ -120,28 +120,32 @@ const seedFoodStatus = async () => {
 	}
 };
 
-const seedAdminUser = async () => {
+const seedAdminUser = async (reset: boolean = false, password?: string) => {
 	const rootAlreadyExists = await dbClient.user.findFirst({
 		where: {
 			username: 'root'
 		}
 	});
 
+	password = password ?? 'dijo-tse-monate';
+
 	if (rootAlreadyExists) {
 		console.log('admin user, root already exists');
+		if (reset === true) {
+			console.log('we are bout to change the admin password with', password);
+
+			await dbClient.user.update({
+				where: {
+					id: rootAlreadyExists.id
+				},
+				data: {
+					hashed_password: await new Argon2id().hash(password)
+				}
+			});
+			console.log('admin user, root — with password', password, ' has been reset');
+		}
 		return;
 	}
-
-	const generateRandomPassword = () => {
-		const letters = 'abcdefghijklmnopqrstuvwxyz';
-		const randomLetters = Array.from(
-			{ length: 8 },
-			() => letters[Math.floor(Math.random() * letters.length)]
-		);
-		return randomLetters.join('');
-	};
-
-	const password = generateRandomPassword();
 
 	await dbClient.user.create({
 		data: {
@@ -156,12 +160,16 @@ const seedAdminUser = async () => {
 };
 
 export async function seed() {
-	console.log('seeding: user roles, food categories, order statuses, food statuses, admin user');
+	const args = process.argv.slice(2);
+	console.log(
+		'seeding: user roles, food categories, order statuses, food statuses, admin user',
+		args
+	);
 	await seedUserRoles();
 	await seedFoodCategories();
 	await seedOrderStatus();
 	await seedFoodStatus();
-	await seedAdminUser();
+	await seedAdminUser(args.includes('reset-admin-password'), args[1] ?? null);
 }
 
 await seed();
