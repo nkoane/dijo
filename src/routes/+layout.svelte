@@ -27,7 +27,7 @@
 			href="/"
 			class="flex items-center gap-2 transition-colors duration-500 hover:text-yellow-500">
 			<Soup class=" h-8 w-8 text-orange-500" />
-			<h1 class="text-4xl font-bold">dijo</h1>
+			<h1 class="text-6xl font-bold">dijo</h1>
 		</a>
 		<nav>
 			<ul class="flex items-center gap-4 uppercase">
