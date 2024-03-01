@@ -2,6 +2,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { io } from 'socket.io-client';
 	export let data;
+	const dijo = data?.dijo;
 
 	const socket = io();
 
@@ -20,14 +21,29 @@
 		if (order == undefined) {
 			order = [];
 		}
-		const existingFoodItemIndex = order.findIndex((food) => {
-			return food.foodId == foodId;
+		// find the index in orde with the same foodId so we can increment it;
+		const existingFoodItemIndex = order.findIndex((item) => item.foodId === foodId);
+
+		let foodItem;
+
+		Object.keys(dijo).forEach((category) => {
+			dijo[category].forEach((food) => {
+				if (food.id == foodId) {
+					foodItem = food;
+				}
+			});
 		});
-		if (existingFoodItemIndex) {
-			console.log(existingFoodItemIndex);
+
+		if (existingFoodItemIndex >= 0) {
+			// increment it
+			order[existingFoodItemIndex].quatitiy++;
+			console.log('incremented', order[existingFoodItemIndex]);
+
+			// find the food in  dijo variable
 		} else {
+			console.log('added new item', order, foodItem);
 			order.push({
-				foodId: foodId,
+				food: foodItem,
 				quatitiy: 1
 			});
 		}
@@ -59,8 +75,6 @@
 		form.orderId.value = crypto.randomUUID();
 		*/
 	}
-
-	const dijo = data?.dijo;
 </script>
 
 <h2>Menu</h2>
@@ -87,6 +101,18 @@
 				</div>
 			{/each}
 		</section>
-		<section id="orders" class="w-1/3 bg-green-100">And the placed orders are listed here.</section>
+		<section id="orders" class="w-1/3 bg-green-100">
+			{#if order}
+				<h3>Order</h3>
+				<ol>
+					{#each order as item}
+						<li>
+							<p>{item.foodId}</p>
+							<p>{item.quatitiy}</p>
+						</li>
+					{/each}
+				</ol>
+			{/if}
+		</section>
 	</main>
 {/if}
