@@ -68,6 +68,22 @@ class Foods {
 		return foods;
 	}
 
+	public async getAvailableFoods(): Promise<
+		(Food & { status: FoodStatus; category: FoodCategory }[]) | null
+	> {
+		const foods = await dbClient.food.findMany({
+			where: {
+				statusId: 1
+			},
+			include: {
+				status: true,
+				category: true
+			}
+		});
+
+		return foods;
+	}
+
 	public async getAllFoodStatus(): Promise<FoodStatus[]> {
 		const statuses = await dbClient.foodStatus.findMany({});
 		return statuses;

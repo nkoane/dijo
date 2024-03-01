@@ -35,33 +35,32 @@
 
 		form.orderId.value = crypto.randomUUID();
 	}
+
+	const dijo = data?.dijo;
 </script>
 
-<h2>Menu, {data.user?.username}: {data.user?.roleId}.</h2>
-<form on:submit|preventDefault={placeOrder} method="post">
-	<input
-		type="text"
-		placeholder="Enter order number"
-		name="order-id"
-		id="orderId"
-		value={crypto.randomUUID()} />
-	<Button type="submit" class="font-bold uppercase">Place Order</Button>
-</form>
+<h2>Menu</h2>
 
-<style lang="postcss">
-	h2 {
-		@apply mb-4 text-xl;
-	}
+{#if !data.user}
+	<form on:submit={placeOrder}>
+		<input type="text" name="orderId" value={crypto.randomUUID()} />
+		<Button type="submit">Place Order</Button>
+	</form>
+{/if}
 
-	form {
-		@apply flex gap-2;
-	}
-
-	input {
-		@apply flex-grow rounded-md border-2 border-gray-300 p-2;
-	}
-
-	button {
-		@apply rounded-md bg-blue-500 p-2 text-white;
-	}
-</style>
+{#if dijo}
+	<main class="flex w-full flex-col gap-2 bg-yellow-50">
+		{#each Object.keys(dijo) as category}
+			<dl class="w-1/4 bg-gray-50 p-2">
+				<dt><h3>{category}</h3></dt>
+				{#each dijo[category] as food}
+					<dd class="mb-4 flex flex-col bg-red-50 p-4 last:mb-0">
+						<h4>{food.name}</h4>
+						<p>{food.description}</p>
+						<p>R{food.price}</p>
+					</dd>
+				{/each}
+			</dl>
+		{/each}
+	</main>
+{/if}
