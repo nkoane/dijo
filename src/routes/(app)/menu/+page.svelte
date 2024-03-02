@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
+	import type { Food } from '@prisma/client';
 	import { io } from 'socket.io-client';
+	import { onMount } from 'svelte';
 	export let data;
 	const dijo = data?.dijo;
 
@@ -10,45 +12,48 @@
 		console.log('testMessage', message);
 	});
 
-	let order: {
-		foodId: number;
-		quatitiy: number;
-	}[];
+	type foodOrderItem = {
+		food: {
+			id: number;
+			name: string;
+			description: string;
+			price: number;
+		};
+		quantity: number;
+	};
 
-	function paddItemToOrder(ev: SubmitEvent) {
+	const order: { items: foodOrderItem[]; total: number } = {
+		items: [],
+		total: 0
+	};
+
+	const getOrderTotal = () => {
+		return order.items.reduce((acc, item) => {
+			return acc + item.food.price * item.quantity;
+		}, 0);
+	};
+
+	function addItemToOrder(ev: SubmitEvent) {
 		const form = ev.target as unknown as HTMLFormElement;
-		const foodId = form.foodId.value;
-		if (order == undefined) {
-			order = [];
-		}
-		// find the index in orde with the same foodId so we can increment it;
-		const existingFoodItemIndex = order.findIndex((item) => item.foodId === foodId);
+		const foodId = parseInt(form.foodId.value) as Number;
+		let existingFoodItemIndex: number | null = null;
 
-		let foodItem;
-
-		Object.keys(dijo).forEach((category) => {
-			dijo[category].forEach((food) => {
-				if (food.id == foodId) {
-					foodItem = food;
-				}
-			});
-		});
+		existingFoodItemIndex = order.items.findIndex((item) => item.food.id === foodId);
 
 		if (existingFoodItemIndex >= 0) {
-			// increment it
-			order[existingFoodItemIndex].quatitiy++;
-			console.log('incremented', order[existingFoodItemIndex]);
-
-			// find the food in  dijo variable
+			order.items[existingFoodItemIndex].quantity++;
 		} else {
-			console.log('added new item', order, foodItem);
-			order.push({
-				food: foodItem,
-				quatitiy: 1
-			});
-		}
+			const selectedFood = Object.values(dijo)
+				.flat()
+				.find((food) => food.id === foodId);
 
-		console.log(order);
+			if (selectedFood) {
+				order.items = [...order.items, { food: selectedFood, quantity: 1 }];
+			}
+		}
+		order.total = getOrderTotal();
+
+		console.log('order', order, existingFoodItemIndex);
 
 		/*
 		socket.emit('menu-order-place', {
@@ -88,7 +93,7 @@
 					<ol class="food-items flex gap-2 bg-blue-500">
 						{#each dijo[category] as food}
 							<li class="w-1/2 bg-green-400 p-4 last:mb-0">
-								<form on:submit={paddItemToOrder}>
+								<form on:submit={addItemToOrder}>
 									<input type="hidden" id="foodId" value={food.id} />
 									<h4>{food.name}</h4>
 									<p>{food.description}</p>
@@ -101,17 +106,25 @@
 				</div>
 			{/each}
 		</section>
-		<section id="orders" class="w-1/3 bg-green-100">
+		<section id="orders" class="w-1/3 bg-green-100 p-4">
 			{#if order}
 				<h3>Order</h3>
 				<ol>
-					{#each order as item}
-						<li>
-							<p>{item.foodId}</p>
-							<p>{item.quatitiy}</p>
+					{#each order.items as item}
+						<li class="flex items-center justify-between">
+							<span>{item.food.name}</span>
+							<span>{item.food.price}</span>
+							<span>x{item.quantity}</span>
+							<span>{item.food.price * item.quantity}</span>
 						</li>
 					{/each}
 				</ol>
+				<dlc class="mt-4 flex justify-between bg-black p-2 text-white">
+					<dt>total</dt>
+					<dd>R{order.total}</dd>
+				</dlc>
+			{:else}
+				<p>No order placed</p>
 			{/if}
 		</section>
 	</main>
