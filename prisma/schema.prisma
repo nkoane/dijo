@@ -71,13 +71,15 @@ model FoodCategory {
 }
 
 model Order {
-  id         Int          @id @default(autoincrement())
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Status     OrderStatus? @relation(fields: [statusId], references: [id])
-  statusId   Int?
+  id       Int   @id @default(autoincrement())
+  statusId Int
+  cost     Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status     OrderStatus? @relation(fields: [statusId], references: [id])
   OrderItems OrderItem[]
-  cost       Float
 }
 
 model OrderStatus {

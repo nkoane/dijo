@@ -13,20 +13,42 @@ class Orders {
 		return Orders.instance;
 	}
 
-	public async create(order: { items: OrderItem[]; status: number }): Promise<Order> {
-		const newOrder = await dbClient.order.create({
-			data: {
-				status: {
-					connect: {
-						id: order.status
-					}
-				},
-				items: {
-					create: order.items
-				}
-			}
+	public async getFoodPrice(foodId: number): Promise<number> {
+		const foodCost = await dbClient.food.findFirst({
+			where: { id: foodId }
 		});
 
+		if (foodCost?.price) {
+			return foodCost?.price;
+		}
+
+		return 0;
+	}
+
+	public async create(
+		items: { foodId: number; quantity: number; cost: number }[],
+		state = 'placed'
+	): Promise<Order | null> {
+		const status = await dbClient.orderStatus.findFirst({
+			where: { state }
+		});
+
+		const newOrder = await dbClient.order.create({
+			data: {
+				OrderItems: {
+					create: items.map((item) => {
+						return {
+							quantity: item.quantity,
+							food: { connect: { id: item.foodId } },
+							cost: item.cost
+						};
+					})
+				},
+				statusId: status?.id,
+
+				cost: items.reduce((acc, item) => acc + item.cost * item.quantity, 0)
+			}
+		});
 		return newOrder;
 	}
 
@@ -56,4 +78,4 @@ class Orders {
 	}
 }
 
-export const orders = Orders.getInstance();
+export const orderManagement = Orders.getInstance();

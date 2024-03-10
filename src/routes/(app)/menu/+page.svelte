@@ -1,8 +1,5 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import type { Food } from '@prisma/client';
 	import { io } from 'socket.io-client';
-	import { onMount } from 'svelte';
 	import {
 		Wheat,
 		Beef,
@@ -13,8 +10,9 @@
 		SquareMinus,
 		Trash
 	} from 'lucide-svelte';
-	import { object } from 'zod';
+
 	export let data;
+
 	const dijo = data?.dijo;
 
 	const socket = io();
@@ -87,41 +85,7 @@
 			}
 		}
 		order.total = getOrderTotal();
-
-		/*
-		socket.emit('menu-order-place', {
-			orderNumber: form.orderId.value,
-			userId: data.user?.id,
-			items: [
-				{
-					name: 'Burger',
-					foodId: 1,
-					quantity: Math.floor(Math.random() * 5),
-					price: 5.99,
-					comment: 'No pickles'
-				},
-				{
-					name: 'Fries',
-					foodId: 2,
-					quantity: Math.min(1, Math.floor(Math.random() * 5)),
-					price: 2.99,
-					comment: 'Extra salt'
-				}
-			]
-		});
-
-		form.orderId.value = crypto.randomUUID();
-		*/
 	}
-
-	const placeOrder = async (ev: SubmitEvent) => {
-		console.log('ready to place order', order);
-		socket.emit('menu-order-place', {
-			orderNumber: crypto.randomUUID(),
-			userId: data.user?.id,
-			items: order.items
-		});
-	};
 </script>
 
 <h2>Menu</h2>
@@ -197,7 +161,10 @@
 								<td></td>
 								<td>{order.total}</td>
 								<td>
-									<form on:submit|preventDefault={placeOrder}>
+									<form method="POST">
+										{#each order.items as item}
+											<input type="hidden" name="food-{item.food.id}" value={item.quantity} />
+										{/each}
 										<button type="submit"><SquareArrowRight /></button>
 									</form>
 								</td>

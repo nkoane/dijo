@@ -24,7 +24,7 @@ export const webSocketServer = {
 				console.log(`io-server -> socket ${socket.id} disconnected due to ${reason}`);
 			});
 			socket.on('menu-order-place', (data) => {
-				// console.log(`io-server -> recieved-order -> `, data);
+				console.log(`io-server -> recieved-order -> `, data);
 
 				socket.broadcast.emit('kitchen-order-new', data);
 			});
