@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { io } from 'socket.io-client';
+	import { goto } from '$app/navigation';
+	import { enhance, applyAction } from '$app/forms';
+
 	import {
 		Wheat,
 		Beef,
@@ -12,6 +15,7 @@
 	} from 'lucide-svelte';
 
 	export let data;
+	export let form;
 
 	const dijo = data?.dijo;
 
@@ -85,6 +89,11 @@
 			}
 		}
 		order.total = getOrderTotal();
+	}
+
+	$: if (form?.order) {
+		console.log('(app)/menu: form->order', form.order);
+		socket.emit('menu-order-placed', form.order);
 	}
 </script>
 
@@ -162,6 +171,18 @@
 								<td>{order.total}</td>
 								<td>
 									<form method="POST">
+										<!-- ={({ formElement, formData, action, cancel }) => {
+											return async ({ result }) => {
+												// `result` is an `ActionResult` object
+												console.log('(app)/menu: form->result', form?.order);
+												if (result.type === 'redirect') {
+													goto(result.location);
+												} else {
+													await applyAction(result);
+												}
+											};
+										}}
+										 -->
 										{#each order.items as item}
 											<input type="hidden" name="food-{item.food.id}" value={item.quantity} />
 										{/each}

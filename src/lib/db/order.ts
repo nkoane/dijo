@@ -49,7 +49,7 @@ class Orders {
 				cost: items.reduce((acc, item) => acc + item.cost * item.quantity, 0)
 			}
 		});
-		return newOrder;
+		return await this.getById(newOrder.id);
 	}
 
 	public async getById(
@@ -59,7 +59,7 @@ class Orders {
 			where: { id },
 			include: {
 				status: true,
-				items: true
+				OrderItems: true
 			}
 		});
 

@@ -76,5 +76,9 @@ export const actions = {
 		if (!order) {
 			return fail(400, { message: 'Order could not be created' });
 		}
+
+		return {
+			order
+		};
 	}
 } satisfies Actions;
