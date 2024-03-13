@@ -50,7 +50,12 @@ export const actions = {
 		if (items.length === 0) {
 			return error(400, 'No items were selected');
 		}
-		// check if the food items are available
+
+		// TODO we need to get the food price by id from here, instead of getting everything.
+		console.info(
+			'(app)/menu/+page.server.ts',
+			'we need to get the food price by id from here, instead of getting everything.'
+		);
 
 		const foods = await foodManagement.getAvailableFoods();
 		if (!foods) {

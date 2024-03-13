@@ -1,5 +1,5 @@
 import { dbClient } from './client';
-import type { Order, OrderStatus, OrderItem } from '@prisma/client';
+import type { Order, OrderItem, OrderStatus } from '@prisma/client';
 
 class Orders {
 	private static instance: Orders;
@@ -13,27 +13,25 @@ class Orders {
 		return Orders.instance;
 	}
 
-	public async getFoodPrice(foodId: number): Promise<number> {
-		const foodCost = await dbClient.food.findFirst({
-			where: { id: foodId }
+	public async getOrderStatuses(): Promise<OrderStatus[]> {
+		const statuses = await dbClient.orderStatus.findMany({
+			orderBy: {
+				id: 'asc'
+			}
 		});
 
-		if (foodCost?.price) {
-			return foodCost?.price;
-		}
-
-		return 0;
+		return statuses;
 	}
 
 	public async create(
 		items: { foodId: number; quantity: number; cost: number }[],
 		state = 'placed'
-	): Promise<Order | null> {
+	): Promise<Order> {
 		const status = await dbClient.orderStatus.findFirst({
 			where: { state }
 		});
 
-		const newOrder = await dbClient.order.create({
+		const order = await dbClient.order.create({
 			data: {
 				OrderItems: {
 					create: items.map((item) => {
@@ -49,29 +47,56 @@ class Orders {
 				cost: items.reduce((acc, item) => acc + item.cost * item.quantity, 0)
 			}
 		});
-		return await this.getById(newOrder.id);
+		return order;
 	}
 
-	public async getById(
-		id: number
-	): Promise<(Order & { status: OrderStatus; items: OrderItem[] }) | null> {
+	public async getById(id: number): Promise<Order> {
 		const order = await dbClient.order.findUnique({
-			where: { id },
+			where: { id }
+			/*
 			include: {
 				status: true,
 				OrderItems: true
-			}
+			}*/
 		});
+
+		if (!order) {
+			throw new Error(`Order, [${id}], does not exist`);
+		}
 
 		return order;
 	}
 
-	public async getAll(): Promise<(Order & { status: OrderStatus; items: OrderItem[] })[] | null> {
+	public async getOrderItems(id: number): Promise<OrderItem[]> {
+		const items = await dbClient.orderItem.findMany({
+			where: {
+				orderId: id
+			}
+		});
+
+		return items;
+	}
+
+	public async getOrderStatus(id: number): Promise<OrderStatus> {
+		const status = await dbClient.orderStatus.findUnique({
+			where: { id }
+		});
+
+		if (!status) {
+			throw new Error(`Order status, [${id}], does not exist`);
+		}
+
+		return status;
+	}
+
+	public async getAll(): Promise<Order[]> {
 		const orders = await dbClient.order.findMany({
+			/*
 			include: {
 				status: true,
 				items: true
 			}
+			*/
 		});
 
 		return orders;

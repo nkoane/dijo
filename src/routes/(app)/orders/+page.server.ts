@@ -1,6 +1,14 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { dbClient } from '$lib/db/client';
+import { orderManagement } from '$lib/db/order';
+import type { Order, OrderItem, OrderStatus, Food } from '@prisma/client';
+import { foodManagement } from '$lib/db/food';
+
+// type orderDetailed = Order & { orderStatus: OrderStatus | null; orderItems: OrderItem[] | null };
+type orderDerailed = Order & {
+	orderStatus: OrderStatus;
+	orderItems: OrderItem & { food: Food }[];
+};
 
 export const load = (async ({ locals }) => {
 	if (!locals.user) {
@@ -11,8 +19,28 @@ export const load = (async ({ locals }) => {
 		error(401, `Unauthorized: ${locals.user.roleId}`);
 	}
 
-	const orders = await dbClient.order.findMany({});
+	const orders = await orderManagement.getAll();
 
+	if (orders && orders.length > 0) {
+		const order: orderDerailed = {
+			...orders[0],
+			orderStatus: await orderManagement
+				.getOrderStatus(orders[0].statusId)
+				.then((status) => status),
+			orderItems: (await Promise.all(
+				await orderManagement.getOrderItems(orders[0].id).then((items) =>
+					items.map(async (item) => {
+						return {
+							...item,
+							food: await foodManagement.getById(item.foodId)
+						};
+					})
+				)
+			)) as OrderItem & { food: Food }[]
+		};
+
+		console.log('(app)/orders/+page.server.ts', order.orderItems);
+	}
 	return {
 		orders
 	};

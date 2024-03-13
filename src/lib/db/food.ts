@@ -43,42 +43,44 @@ class Foods {
 		return newFood;
 	}
 
-	public async getById(
-		id: number
-	): Promise<(Food & { status: FoodStatus; category: FoodCategory }) | null> {
+	public async getById(id: number): Promise<Food | null> {
 		const food = await dbClient.food.findUnique({
-			where: { id },
+			where: { id }
+			/*
 			include: {
 				category: true,
 				status: true
 			}
+			*/
 		});
 
 		return food;
 	}
 
-	public async getAll(): Promise<(Food & { status: FoodStatus; category: FoodCategory }[]) | null> {
+	public async getAll(): Promise<Food[] | null> {
 		const foods = await dbClient.food.findMany({
+			/*
 			include: {
 				status: true,
 				category: true
 			}
+			*/
 		});
 
 		return foods;
 	}
 
-	public async getAvailableFoods(): Promise<
-		(Food & { status: FoodStatus; category: FoodCategory }[]) | null
-	> {
+	public async getAvailableFoods(): Promise<Food[] | null> {
 		const foods = await dbClient.food.findMany({
 			where: {
-				statusId: 1
-			},
+				statusId: 1 // TODO - change to enum
+			}
+			/*
 			include: {
 				status: true,
 				category: true
 			}
+			*/
 		});
 
 		return foods;
