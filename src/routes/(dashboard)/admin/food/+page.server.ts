@@ -1,4 +1,4 @@
-import { foodManagement } from '$lib/db/food';
+import { foodManagement } from '$lib/db/models/food';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 

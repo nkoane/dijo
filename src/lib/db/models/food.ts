@@ -1,4 +1,4 @@
-import { dbClient } from './client';
+import { dbClient } from './../client';
 import type { Food, FoodStatus, FoodCategory } from '@prisma/client';
 
 class Foods {

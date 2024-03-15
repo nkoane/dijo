@@ -1,9 +1,9 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { foodManagement } from '$lib/db/food';
+import { foodManagement } from '$lib/db/models/food';
 import type { Food } from '@prisma/client';
 import type { Actions } from './$types';
-import { orderManagement } from '$lib/db/order';
+import { orderManagement } from '$lib/db/models/order';
 
 export const load = (async ({ locals }) => {
 	if (!locals.user) {

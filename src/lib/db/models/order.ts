@@ -1,4 +1,4 @@
-import { dbClient } from './client';
+import { dbClient } from './../client';
 import type { Order, OrderItem, OrderStatus } from '@prisma/client';
 
 class Orders {
