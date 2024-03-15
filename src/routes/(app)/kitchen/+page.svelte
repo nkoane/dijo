@@ -25,7 +25,7 @@
 		});
 
 		socket.on('kitchen-order-new', (order) => {
-			toast.success(`new: ${order.orderNumber} x ${order.items.length} items -> ${socket.id}`);
+			toast.success(`new: ${order.orderNumber} x ${order.OrderItems.length} items -> ${socket.id}`);
 			orders = [...orders, order];
 		});
 
@@ -44,11 +44,12 @@
 		{#each orders as order, orderIndex}
 			<li id="order-index-{orderIndex}">
 				<dl>
-					<dt>{order.orderNumber}: ({order.items.length})</dt>
+					<dt>{order.orderNumber}: ({order.OrderItems.length})</dt>
 					<dd>
 						<ul>
-							{#each order.items as item, itemIndex}
+							{#each order.OrderItems as item, itemIndex}
 								<li id="item-index-{itemIndex}">
+									{@debug item}
 									{item.name} x{item.quantity} = {item.price * item.quantity}
 									{#if item.comment}
 										<p>{item.comment}</p>

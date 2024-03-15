@@ -3,7 +3,7 @@ import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
 
 const seedUserRoles = async () => {
-	const rolesAlreadyExist = await dbClient.roles.findMany();
+	const rolesAlreadyExist = await dbClient.userRole.findMany();
 	const roles = ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'customer'];
 
 	for (let i = 0; i < rolesAlreadyExist.length; i++) {
@@ -20,7 +20,7 @@ const seedUserRoles = async () => {
 	}
 
 	for (let i = 0; i < roles.length; i++) {
-		const result = await dbClient.roles.create({
+		const result = await dbClient.userRole.create({
 			data: {
 				name: roles[i]
 			}
@@ -30,7 +30,7 @@ const seedUserRoles = async () => {
 };
 
 const seedFoodCategories = async () => {
-	const categoriesAlreadyExist = await dbClient.category.findMany();
+	const categoriesAlreadyExist = await dbClient.foodCategory.findMany();
 	const categories = ['Starch', 'Meat', 'Vegetables', 'Drinks'];
 
 	for (let i = 0; i < categoriesAlreadyExist.length; i++) {
@@ -47,7 +47,7 @@ const seedFoodCategories = async () => {
 	}
 
 	for (let i = 0; i < categories.length; i++) {
-		const result = await dbClient.category.create({
+		const result = await dbClient.foodCategory.create({
 			data: {
 				name: categories[i]
 			}
@@ -120,28 +120,32 @@ const seedFoodStatus = async () => {
 	}
 };
 
-const seedAdminUser = async () => {
+const seedAdminUser = async (reset: boolean = false, password?: string) => {
 	const rootAlreadyExists = await dbClient.user.findFirst({
 		where: {
 			username: 'root'
 		}
 	});
 
+	password = password ?? 'dijo-tse-monate';
+
 	if (rootAlreadyExists) {
 		console.log('admin user, root already exists');
+		if (reset === true) {
+			console.log('we are bout to change the admin password with', password);
+
+			await dbClient.user.update({
+				where: {
+					id: rootAlreadyExists.id
+				},
+				data: {
+					hashed_password: await new Argon2id().hash(password)
+				}
+			});
+			console.log('admin user, root — with password', password, ' has been reset');
+		}
 		return;
 	}
-
-	const generateRandomPassword = () => {
-		const letters = 'abcdefghijklmnopqrstuvwxyz';
-		const randomLetters = Array.from(
-			{ length: 8 },
-			() => letters[Math.floor(Math.random() * letters.length)]
-		);
-		return randomLetters.join('');
-	};
-
-	const password = generateRandomPassword();
 
 	await dbClient.user.create({
 		data: {
@@ -156,12 +160,16 @@ const seedAdminUser = async () => {
 };
 
 export async function seed() {
-	console.log('seeding: user roles, food categories, order statuses, food statuses, admin user');
+	const args = process.argv.slice(2);
+	console.log(
+		'seeding: user roles, food categories, order statuses, food statuses, admin user',
+		args
+	);
 	await seedUserRoles();
 	await seedFoodCategories();
 	await seedOrderStatus();
 	await seedFoodStatus();
-	await seedAdminUser();
+	await seedAdminUser(args.includes('reset-admin-password'), args[1] ?? null);
 }
 
 await seed();

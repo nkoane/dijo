@@ -1,9 +1,9 @@
 import type { Actions, PageServerLoad } from './$types';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { Roles } from '$lib/db/users';
+import { Roles } from '$lib/db/user';
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
-import { userManagement } from '$lib/db/users';
+import { userManagement } from '$lib/db/user';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {

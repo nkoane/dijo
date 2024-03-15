@@ -4,7 +4,7 @@ import { redirect, type Handle } from '@sveltejs/kit';
 export const handle: Handle = async ({ event, resolve }) => {
 	/*
 
-	*/
+  */
 
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
 
@@ -34,15 +34,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.session = session;
 	}
 
+	if (event.url.pathname.startsWith('/profile') && !event.locals.user) {
+		throw redirect(303, '/login?r=' + event.url.pathname);
+	}
+
 	if (event.url.pathname.startsWith('/admin')) {
 		if (!event.locals.user) {
 			throw redirect(303, '/login?r=' + event.url.pathname);
 		}
 
-		if (event.url.pathname.startsWith('/admin/magic')) {
-			if (event.locals.user.roleId !== 1) {
-				throw redirect(303, '/admin?r=' + event.url.pathname);
-			}
+		if (event.locals.user.roleId !== 1) {
+			throw redirect(303, '/admin?r=' + event.url.pathname);
 		}
 	}
 

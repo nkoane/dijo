@@ -18,8 +18,7 @@
 				name="username"
 				id="username"
 				placeholder="Your username?"
-				autocomplete="username"
-				value="ltdn" />
+				autocomplete="username" />
 			{#if form?.invalid?.username}
 				<span>Invalid username</span>
 			{/if}
@@ -30,8 +29,7 @@
 				name="password"
 				id="password"
 				placeholder="Your password?"
-				autocomplete="current-password"
-				value="tuesdays" />
+				autocomplete="current-password" />
 			{#if form?.invalid?.password}
 				<span>Invalid password</span>
 			{/if}
