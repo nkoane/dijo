@@ -3,8 +3,11 @@ import type { Order, OrderItem, OrderStatus } from '@prisma/client';
 
 class Orders {
 	private static instance: Orders;
+	private orderStatuses: OrderStatus[] = [];
 
-	private constructor() {}
+	private constructor() {
+		this.orderStatuses = this.getOrderStatuses();
+	}
 
 	public static getInstance(): Orders {
 		if (!Orders.instance) {
@@ -13,14 +16,19 @@ class Orders {
 		return Orders.instance;
 	}
 
-	public async getOrderStatuses(): Promise<OrderStatus[]> {
-		const statuses = await dbClient.orderStatus.findMany({
-			orderBy: {
-				id: 'asc'
-			}
-		});
-
-		return statuses;
+	public getOrderStatuses(): OrderStatus[] {
+		if (this.orderStatuses.length === 0) {
+			dbClient.orderStatus
+				.findMany({
+					orderBy: {
+						id: 'asc'
+					}
+				})
+				.then((statuses) => {
+					this.orderStatuses = statuses;
+				});
+		}
+		return this.orderStatuses;
 	}
 
 	public async create(
@@ -65,6 +73,26 @@ class Orders {
 		}
 
 		return order;
+	}
+
+	public async getByStatus(id?: number, state?: string): Promise<Order[]> {
+		if (!id && !state) {
+			throw new Error('Either id or state must be provided');
+		}
+
+		if (id) {
+			const orders = await dbClient.order.findMany({
+				where: { statusId: id }
+			});
+
+			return orders;
+		}
+
+		const orders = await dbClient.order.findMany({
+			where: { status: { state } }
+		});
+
+		return orders;
 	}
 
 	public async getOrderItems(id: number): Promise<OrderItem[]> {
