@@ -1,14 +1,11 @@
-import type { Food, FoodCategory, FoodStatus, Order, OrderItem, OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '@prisma/client';
+import type { FoodDetail, OrderDetail, OrderItemDetail, Orders } from './../index';
+
 import { foodManagement } from '../models/food';
 import { foodCategoryManagement } from '../models/foodCategory';
 import { foodStatusManagement } from '../models/foodStatus';
 import { orderManagement } from '../models/order';
 import { orderStatusManagement } from '../models/orderStatus';
-
-export type FoodDetail = Food & { status: FoodStatus; category: FoodCategory };
-export type OrderItemDetail = OrderItem & { food: FoodDetail };
-export type OrderDetail = Order & { items: OrderItemDetail[]; status: OrderStatus };
-export type Orders = { [key: string]: OrderDetail[] };
 
 class OrderRepository {
 	private static instance: OrderRepository;

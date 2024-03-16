@@ -1,31 +1,23 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { foodManagement } from '$lib/db/models/food';
-import type { Food } from '@prisma/client';
 import type { Actions } from './$types';
-import { orderManagement } from '$lib/db/models/order';
+import { menu } from '$lib/db/controllers/menu';
 
 export const load = (async ({ locals }) => {
 	if (!locals.user) {
 		redirect(303, '/login?redirect=/menu');
 	}
 
-	// if the user role is bigger than 3, then deny access;
 	if (!locals.user.roleId) {
 		redirect(303, '/');
 	}
 
-	const dijo: Record<string, Food[]> = {};
-	const foods = await foodManagement.getAvailableFoods();
-	foods?.forEach((food) => {
-		if (!dijo[food.category.name]) {
-			dijo[food.category.name] = [];
-		}
-		dijo[food.category.name].push(food);
-	});
+	const foodMenu = await menu.getFood();
+
+	//	console.log('(app)/menu/+page.server.ts', dijo);
 
 	return {
-		dijo
+		menu: foodMenu
 	};
 }) satisfies PageServerLoad;
 
