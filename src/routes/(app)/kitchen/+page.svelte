@@ -4,13 +4,9 @@
 	import toast from 'svelte-french-toast';
 
 	export let data;
-	const { user, orders } = data;
-	const numberOfOrders = Object.keys(orders).reduce((acc, key) => acc + orders[key].length, 0);
-
-	/*Object.keys(orders).forEach((key) => {
-		console.log('order-by-type:', key, orders[key].length);
-	});
-	*/
+	const { orders } = data;
+	const theNumberOfOrders = Object.keys(orders).reduce((acc, key) => acc + orders[key].length, 0);
+	let selectedBlock = '';
 
 	onMount(() => {
 		const socket = io();
@@ -19,6 +15,7 @@
 		socket.on('testMessage', (message) => {
 			console.log('testMessage', message);
 		});
+
 		/*
 		socket.on('kitchen-order-new', (order) => {
 			toast.success(`new: ${order.orderNumber} x ${order.OrderItems.length} items -> ${socket.id}`);
@@ -26,91 +23,116 @@
 		});
 		*/
 
+		const anchors = document.querySelectorAll('nav#kitchen-nav a');
+
+		anchors.forEach((anchor, index) => {
+			anchor.addEventListener('click', (ev) => {
+				const target = ev.target as HTMLAnchorElement;
+				anchors.forEach((a, i) => a.classList.remove('selected'));
+				target.classList.add('selected');
+			});
+		});
+
 		return () => {
 			socket.disconnect();
 		};
 	});
 
-	// $: console.log('(app)/kitchen/page.svelte -> orders:', data.orders);
+	$: console.log('selectedBlock', selectedBlock);
 </script>
 
 <h2>Kitchen, {data.user?.username}: {data.user?.roleId}.</h2>
 
-<h3>Orders: {numberOfOrders}</h3>
+<h3 class="my-3">Orders: {theNumberOfOrders}</h3>
 {#if Object.keys(orders).length === 0}
 	<p>No orders.</p>
 {:else}
-	<ol>
+	<nav id="kitchen-nav" class="flex w-full justify-between bg-gray-50 py-1">
 		{#each Object.keys(orders) as orderKey, orderIndex}
-			<li id="order-index-{orderIndex}">
-				<dl>
-					<dt>{orderKey}: ({orders[orderKey].length})</dt>
-					<dd>
-						<ul>
-							{#each orders[orderKey] as item, itemIndex}
-								<li id="item-index-{itemIndex}">??</li>
-							{/each}
-						</ul>
-					</dd>
-				</dl>
-			</li>
+			<a
+				class="block bg-yellow-50 px-2 py-1 text-xs font-bold text-black {orderIndex == 0
+					? 'selected'
+					: `select-none-${orderIndex}`}"
+				href="#order-{orderKey}">
+				{orderKey} ({orders[orderKey].length})
+			</a>
 		{/each}
-	</ol>
+	</nav>
+	<section class=" bg-yellow-50 p-2 py-1 text-sm">
+		{#each Object.keys(orders) as orderKey, orderIndex}
+			<div id="order-{orderKey}" class="block text-sm">
+				<table class="w-full">
+					<thead>
+						<tr>
+							<th class="w-1/4">#-{orderIndex}</th>
+							<th class="w-1/2">Food</th>
+							<th class="w-1/4">Cost</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each orders[orderKey] as order, orderIdex}
+							<tr id="item-index-{orderIdex}">
+								<td class="">{order.id}</td>
+								<td class="">Items</td>
+								<td>R{order.cost}</td>
+							</tr>
+						{/each}
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2">Total</td>
+							<td>
+								<strong>R{orders[orderKey].reduce((acc, order) => acc + order.cost, 0)}</strong>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		{/each}
+	</section>
 {/if}
 
-<!--
-
-	<h3>Orders: {orders.length}</h3>
-	{#if orders.length === 0}
-	<p>No orders.</p>
-	{:else}
-	<ol>
-		{#each orders as order, orderIndex}
-		<li id="order-index-{orderIndex}">
-			<dl>
-				<dt>{order.orderNumber}: ({order.items.length})</dt>
-				<dd>
-					<ul>
-						{#each order.items as item, itemIndex}
-						<li id="item-index-{itemIndex}">
-							{@debug item}
-							{item.name} x{item.quantity} = {item.price * item.quantity}
-							{#if item.comment}
-							<p>{item.comment}</p>
-							{/if}
-						</li>
-						{/each}
-					</ul>
-				</dd>
-			</dl>
-		</li>
-		{/each}
-	</ol>
-	{/if}
-	
--->
 <style lang="postcss">
-	h2 {
-		@apply mb-4 text-xl;
+	nav a.selected {
+		color: #f00;
+		background-color: #000;
+	}
+	table {
+		border-collapse: collapse;
+		width: 100%;
+		margin-bottom: 1rem;
 	}
 
-	h3 {
-		@apply mb-2 text-lg;
+	th,
+	td {
+		border: 1px solid #ddd;
+		padding: 8px;
 	}
 
-	ol {
-		@apply list-decimal;
+	th {
+		text-align: left;
 	}
 
-	li {
-		@apply mb-2;
+	tr:nth-child(even) {
+		background-color: #f2f2f2;
 	}
 
-	dt {
-		@apply font-bold;
+	section div {
+		@apply hidden;
+	}
+	section div:first-child {
+		@apply block;
 	}
 
-	dd {
-		@apply ml-4;
+	section div:target {
+		display: block;
+	}
+
+	section:has(div:target) div {
+		display: none;
+	}
+
+	section:has(div:target) div:target {
+		display: block;
 	}
 </style>

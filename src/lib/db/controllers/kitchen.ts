@@ -19,7 +19,6 @@ class Kitchen {
 		for (const status of this.orderStatuses) {
 			this.sortedOrders[status.state] = await orderManagement.getByStatus(status.id);
 		}
-
 		return this.sortedOrders;
 	}
 }
