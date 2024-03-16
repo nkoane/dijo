@@ -1,7 +1,12 @@
 {
-	"name": "svelte-authy",
+	"name": "dijo",
 	"version": "0.0.1",
-	"private": true,
+	"license": "MIT",
+	"author": {
+		"name": "lebogang nkoane",
+		"url": "https://ntho.li"
+	},
+	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -42,7 +47,6 @@
 		"typescript": "^5.4.2",
 		"vite": "^5.1.5"
 	},
-	"type": "module",
 	"dependencies": {
 		"@dicebear/collection": "^7.1.1",
 		"@dicebear/core": "^7.1.1",

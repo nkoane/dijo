@@ -10,7 +10,7 @@ That's it, that's the whole application. I will add more functionality as I time
 
 ### How to run the application
 
-This is still work in progress, I'll add this once I have a working protoype.
+This is still work in progress, so bare with me until a working prototype is ready.
 
 #### Prerequisites
 
@@ -20,11 +20,21 @@ Install all relevate packages using pnpm:
 pnpm install
 ```
 
-Run the following to seed the db with a roles, categories and an adminstrative user (their password will be randomly generated and printed to the console):
+Run the following to seed the db with a roles, categories and an adminstrative user (their password will be randomly? generated and printed to the console):
 
 ```bash
 pnpx tsx prisma/seed.ts
 ```
+
+Run the following to start the application (in development mode, production is still a work in progress):
+
+```bash
+pnpm dev
+```
+
+### How to use the application
+
+After starting the application, you can access the application at `http://localhost:5173`. You will be prompted to login, use the following credentials: root -> dijo-tse-monate
 
 Afterwhich, you can access the dashboard, to add food categories, the food themselves. For now, the assumption is that all foods fall into the following categories:
 
