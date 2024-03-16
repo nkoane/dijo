@@ -16,12 +16,12 @@
 			console.log('testMessage', message);
 		});
 
-		/*
 		socket.on('kitchen-order-new', (order) => {
-			toast.success(`new: ${order.orderNumber} x ${order.OrderItems.length} items -> ${socket.id}`);
+			console.log('we got us an order', order);
+			toast.success(`new order, it's like ${order.id} -> ${socket.id}`);
+			// toast.success(`new: ${order.orderNumber} x ${order.OrderItems.length} items -> ${socket.id}`);
 			// orders = [...orders, order];
 		});
-		*/
 
 		const anchors = document.querySelectorAll('nav#kitchen-nav a');
 
@@ -67,6 +67,7 @@
 							<th class="w-1/4">#-{orderIndex}</th>
 							<th class="w-1/2">Food</th>
 							<th class="w-1/4">Cost</th>
+							<th class="w-1/4">act</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -75,12 +76,13 @@
 								<td class="">{order.id}</td>
 								<td class="">Items</td>
 								<td>R{order.cost}</td>
+								<td><button>ACTION</button></td>
 							</tr>
 						{/each}
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="2">Total</td>
+							<td colspan="3">Total</td>
 							<td>
 								<strong>R{orders[orderKey].reduce((acc, order) => acc + order.cost, 0)}</strong>
 							</td>
