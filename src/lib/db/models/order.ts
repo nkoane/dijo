@@ -5,30 +5,13 @@ class Orders {
 	private static instance: Orders;
 	private orderStatuses: OrderStatus[] = [];
 
-	private constructor() {
-		this.orderStatuses = this.getOrderStatuses();
-	}
+	private constructor() {}
 
 	public static getInstance(): Orders {
 		if (!Orders.instance) {
 			Orders.instance = new Orders();
 		}
 		return Orders.instance;
-	}
-
-	public getOrderStatuses(): OrderStatus[] {
-		if (this.orderStatuses.length === 0) {
-			dbClient.orderStatus
-				.findMany({
-					orderBy: {
-						id: 'asc'
-					}
-				})
-				.then((statuses) => {
-					this.orderStatuses = statuses;
-				});
-		}
-		return this.orderStatuses;
 	}
 
 	public async create(
