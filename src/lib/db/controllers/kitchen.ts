@@ -38,8 +38,9 @@ class Kitchen {
 				}
 			}
 
-			this.detailedOrders[status.state] = statusOrders;
+			if (statusOrders.length > 0) this.detailedOrders[status.state] = statusOrders;
 		}
+		console.log('detailedOrders', this.detailedOrders['completed'][0]);
 		return this.detailedOrders;
 	}
 }

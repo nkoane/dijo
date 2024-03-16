@@ -65,7 +65,7 @@
 					<thead>
 						<tr>
 							<th class="w-1/4">#-{orderIndex}</th>
-							<th class="w-1/2">Food</th>
+							<th class="w-1/2">Food Items</th>
 							<th class="w-1/4">Cost</th>
 							<th class="w-1/4">act</th>
 						</tr>
@@ -74,7 +74,19 @@
 						{#each orders[orderKey] as order, orderIdex}
 							<tr id="item-index-{orderIdex}">
 								<td class="">{order.id}</td>
-								<td class="">Items</td>
+								<td class="">
+									<ul>
+										{#each order.items as item, itemIndex}
+											<li class="flex justify-between">
+												<span class="w-1/4">{item.food.name}</span>
+												<span class="w-1/4">{item.quantity > 1 ? ` x ${item.quantity}` : ''}</span>
+												<span class="w-1/4">{item.cost > 0 ? ` @ R${item.cost}` : ''}</span>
+												<span class="w-1/4"
+													>{item.cost > 0 ? ` = R${item.cost * item.quantity}` : ''}</span>
+											</li>
+										{/each}
+									</ul>
+								</td>
 								<td>R{order.cost}</td>
 								<td><button>ACTION</button></td>
 							</tr>
@@ -117,6 +129,10 @@
 
 	tr:nth-child(even) {
 		background-color: #f2f2f2;
+	}
+
+	button {
+		@apply rounded-md bg-blue-500 px-2 py-2 text-white hover:bg-blue-700;
 	}
 
 	section div {
