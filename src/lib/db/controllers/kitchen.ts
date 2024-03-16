@@ -15,7 +15,7 @@ class Kitchen {
 
 	/* limit to just: placed (placed + paid), preparing, ready */
 	public async getOrders(): Promise<Orders> {
-		const states = ['placed', 'paid', 'preparing', 'ready'];
+		const states = ['paid', 'preparing', 'ready'];
 		this.orders = await orderRepository.getOrders(states);
 
 		return this.orders;

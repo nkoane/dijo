@@ -101,14 +101,7 @@ class Orders {
 	}
 
 	public async getAll(): Promise<Order[]> {
-		const orders = await dbClient.order.findMany({
-			/*
-			include: {
-				status: true,
-				items: true
-			}
-			*/
-		});
+		const orders = await dbClient.order.findMany({});
 
 		return orders;
 	}

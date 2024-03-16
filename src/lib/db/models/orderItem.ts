@@ -34,6 +34,14 @@ class orderItem {
 
 		return statuses;
 	}
+
+	public async getByOrderId(orderId: number): Promise<OrderItem[]> {
+		const statuses = await dbClient.orderItem.findMany({
+			where: { orderId }
+		});
+
+		return statuses;
+	}
 }
 
 export const orderItemManagement = orderItem.getInstance();
