@@ -37,8 +37,6 @@
 			socket.disconnect();
 		};
 	});
-
-	$: console.log('selectedBlock', selectedBlock);
 </script>
 
 <h2>Kitchen, {data.user?.username}: {data.user?.roleId}.</h2>
@@ -47,14 +45,14 @@
 {#if Object.keys(orders).length === 0}
 	<p>No orders.</p>
 {:else}
-	<nav id="kitchen-nav" class="flex w-full justify-between bg-gray-50 py-1">
+	<nav id="kitchen-nav" class="flex w-full justify-between bg-gray-50">
 		{#each Object.keys(orders) as orderKey, orderIndex}
 			<a
-				class="block bg-yellow-50 px-2 py-1 text-xs font-bold text-black {orderIndex == 0
+				class="block bg-white px-2 py-1 font-bold text-gray-300 {orderIndex == 0
 					? 'selected'
 					: `select-none-${orderIndex}`}"
 				href="#order-{orderKey}">
-				{orderKey} ({orders[orderKey].length})
+				{orderKey}: {orders[orderKey].length}
 			</a>
 		{/each}
 	</nav>
@@ -65,7 +63,18 @@
 					<thead>
 						<tr>
 							<th class="w-1/4">#-{orderIndex}</th>
-							<th class="w-1/2">Food Items</th>
+							<th class="w-1/2">
+								<table class="w-full">
+									<thead>
+										<tr>
+											<th class="w-1/4">item</th>
+											<th class="w-1/4">qty</th>
+											<th class="w-1/4">cost</th>
+											<th class="w-1/4">total</th>
+										</tr>
+									</thead>
+								</table>
+							</th>
 							<th class="w-1/4">Cost</th>
 							<th class="w-1/4">act</th>
 						</tr>
@@ -75,17 +84,19 @@
 							<tr id="item-index-{orderIdex}">
 								<td class="">{order.id}</td>
 								<td class="">
-									<ul>
-										{#each order.items as item, itemIndex}
-											<li class="flex justify-between">
-												<span class="w-1/4">{item.food.name}</span>
-												<span class="w-1/4">{item.quantity > 1 ? ` x ${item.quantity}` : ''}</span>
-												<span class="w-1/4">{item.cost > 0 ? ` @ R${item.cost}` : ''}</span>
-												<span class="w-1/4"
-													>{item.cost > 0 ? ` = R${item.cost * item.quantity}` : ''}</span>
-											</li>
-										{/each}
-									</ul>
+									<table class="w-full">
+										<tbody>
+											{#each order.items as item, itemIndex}
+												<tr class="">
+													<td class="w-1/4">{item.food.name}</td>
+													<td class="w-1/4">{item.quantity > 1 ? ` x ${item.quantity}` : ''}</td>
+													<td class="w-1/4">{item.cost > 0 ? ` ${item.cost}` : ''}</td>
+													<td class="w-1/4"
+														>{item.cost > 0 ? `${item.cost * item.quantity}` : ''}</td>
+												</tr>
+											{/each}
+										</tbody>
+									</table>
 								</td>
 								<td>R{order.cost}</td>
 								<td><button>ACTION</button></td>
@@ -108,31 +119,38 @@
 
 <style lang="postcss">
 	nav a.selected {
-		color: #f00;
-		background-color: #000;
+		color: #000;
+		background-color: rgb(254, 253, 232);
 	}
 	table {
 		border-collapse: collapse;
 		width: 100%;
-		margin-bottom: 1rem;
 	}
 
-	th,
-	td {
+	table th,
+	table td {
 		border: 1px solid #ddd;
 		padding: 8px;
 	}
 
-	th {
+	table th {
 		text-align: left;
 	}
 
-	tr:nth-child(even) {
+	table tr:nth-child(even) {
 		background-color: #f2f2f2;
 	}
 
+	table tr td table tr:nth-child(even) {
+		background-color: #fff;
+	}
+
+	table tr:last-child td:last-child,
+	table tr:last-child td:nth-last-child(2) {
+	}
+
 	button {
-		@apply rounded-md bg-blue-500 px-2 py-2 text-white hover:bg-blue-700;
+		@apply rounded-md bg-blue-500 px-2 py-2 text-xs font-bold text-white hover:bg-blue-700;
 	}
 
 	section div {
