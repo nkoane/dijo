@@ -1,5 +1,5 @@
 import { dbClient } from './../client';
-import type { Food, FoodCategory } from '@prisma/client';
+import type { Food } from '@prisma/client';
 
 class Foods {
 	private static instance: Foods;

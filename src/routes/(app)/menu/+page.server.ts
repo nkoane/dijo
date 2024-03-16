@@ -12,12 +12,8 @@ export const load = (async ({ locals }) => {
 		redirect(303, '/');
 	}
 
-	const foodMenu = await menu.getFood();
-
-	//	console.log('(app)/menu/+page.server.ts', dijo);
-
 	return {
-		menu: foodMenu
+		menu: await menu.getFood()
 	};
 }) satisfies PageServerLoad;
 

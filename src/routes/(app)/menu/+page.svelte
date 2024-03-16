@@ -11,7 +11,8 @@
 		SquareArrowRight,
 		SquarePlus,
 		SquareMinus,
-		Trash
+		Trash,
+		Key
 	} from 'lucide-svelte';
 
 	export let data;
@@ -45,3 +46,26 @@
 </script>
 
 <h2>Menu</h2>
+
+{#if Object.keys(menu).length > 0}
+	{#each Object.keys(menu) as category}
+		<dl>
+			<dt class="border-b font-bold">{category}</dt>
+			<dd>
+				<ul class="list-decimal">
+					{#each menu[category] as foodCategories}
+						<li>
+							{foodCategories.name}
+							{#if foodCategories.description}
+								<p>{foodCategories.description}</p>
+							{/if}
+							{#if foodCategories.price}
+								<p>R{foodCategories.price}</p>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</dd>
+		</dl>
+	{/each}
+{/if}

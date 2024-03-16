@@ -14,8 +14,7 @@ class Menu {
 	}
 
 	public async getFood(): Promise<FoodMenu> {
-		const menu = await foodRepository.getMenu('available');
-		return menu;
+		return await foodRepository.getMenu('available');
 	}
 }
 
