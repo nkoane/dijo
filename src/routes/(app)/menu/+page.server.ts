@@ -20,6 +20,12 @@ export const load = (async ({ locals }) => {
 export const actions = {
 	default: async ({ request }) => {
 		const data = await request.formData();
+
+		console.log('(menu-page-server::action', data);
+		// -> FormData { "1-1": "1", "2-2": "2", "3-3": "3" }
+
+		/*
+
 		const items: { foodId: number; quantity: number; cost: number }[] = [];
 
 		for (const [key, value] of data.entries()) {
@@ -73,5 +79,6 @@ export const actions = {
 		return {
 			order
 		};
+		*/
 	}
 } satisfies Actions;
