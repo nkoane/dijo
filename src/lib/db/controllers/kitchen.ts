@@ -1,4 +1,6 @@
-import { orderRepository, type Orders } from '../repositories/OrderRepository';
+import { orderRepository } from '../repositories/OrderRepository';
+import type { Order } from '@prisma/client';
+import type { Orders } from '..';
 
 class Kitchen {
 	private static instance: Kitchen;
@@ -13,12 +15,16 @@ class Kitchen {
 		return Kitchen.instance;
 	}
 
-	/* limit to just: placed (placed + paid), preparing, ready */
-	public async getOrders(): Promise<Orders> {
-		const states = ['paid', 'preparing', 'ready'];
+	public async getOrders(states?: string[]): Promise<Orders> {
 		this.orders = await orderRepository.getOrders(states);
 
 		return this.orders;
+	}
+
+	public async updateOrder(orderId: number, state: string): Promise<Order> {
+		const result = await orderRepository.updateOrder(orderId, state);
+
+		return result;
 	}
 }
 

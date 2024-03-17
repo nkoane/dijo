@@ -42,12 +42,14 @@
 		socket.emit('menu-order-placed', form.order);
 	}
 
+	// add listen event to form submit
+
 	$: console.log('(menu/page.svelte) -> menu', menu);
 </script>
 
 <h2>Menu</h2>
 
-{#if Object.keys(menu).length > 0}
+<section id="menu">
 	{#each Object.keys(menu) as category}
 		<dl>
 			<dt class="border-b font-bold">{category}</dt>
@@ -68,4 +70,7 @@
 			</dd>
 		</dl>
 	{/each}
-{/if}
+</section>
+<section id="order">
+	<!-- display order detaisl -->
+</section>

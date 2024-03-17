@@ -41,6 +41,15 @@ class Orders {
 		return order;
 	}
 
+	public async updateStatus(id: number, statusId: number): Promise<Order> {
+		return await dbClient.order.update({
+			where: { id },
+			data: {
+				statusId
+			}
+		});
+	}
+
 	public async getById(id: number): Promise<Order> {
 		const order = await dbClient.order.findUnique({
 			where: { id }

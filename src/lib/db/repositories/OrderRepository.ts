@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@prisma/client';
+import type { Order, OrderStatus } from '@prisma/client';
 import type { FoodDetail, OrderDetail, OrderItemDetail, Orders } from './../index';
 
 import { foodManagement } from '../models/food';
@@ -40,6 +40,7 @@ class OrderRepository {
 		for (const status of statuses) {
 			const statusOrders = (await orderManagement.getByStatus(status.id)) as OrderDetail[];
 			for (const order of statusOrders) {
+				order.status = status;
 				order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
 				for (const item of order.items) {
 					item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
@@ -53,6 +54,22 @@ class OrderRepository {
 			if (statusOrders.length > 0) this.detailedOrders[status.state] = statusOrders;
 		}
 		return this.detailedOrders;
+	}
+
+	public async updateOrder(orderId: number, state: string): Promise<Order> {
+		const order = await orderManagement.getById(orderId);
+
+		if (!order) {
+			throw new Error(`Order of id [${orderId}] not found`);
+		}
+
+		const status = await orderStatusManagement.getByState(state);
+
+		if (!status) {
+			throw new Error(`Order status of state [${state}] not found`);
+		}
+
+		return await orderManagement.updateStatus(orderId, status.id);
 	}
 }
 
