@@ -1,4 +1,4 @@
-import type { Order, OrderStatus } from '@prisma/client';
+import type { OrderStatus } from '@prisma/client';
 import type { FoodDetail, OrderDetail, OrderItemDetail, Orders } from './../index';
 
 import { foodManagement } from '../models/food';
@@ -56,20 +56,21 @@ class OrderRepository {
 		return this.detailedOrders;
 	}
 
-	public async updateOrder(orderId: number, state: string): Promise<Order> {
-		const order = await orderManagement.getById(orderId);
-
-		if (!order) {
-			throw new Error(`Order of id [${orderId}] not found`);
+	public async updateOrder(
+		orderId: number,
+		state: string
+	): Promise<{ data?: unknown; errors?: unknown }> {
+		try {
+			const order = await orderManagement.getById(orderId);
+			const status = await orderStatusManagement.getByState(state);
+			return {
+				data: await orderManagement.updateStatus(order.id, status.id)
+			};
+		} catch (error) {
+			return {
+				errors: error instanceof Error ? error.message : error
+			};
 		}
-
-		const status = await orderStatusManagement.getByState(state);
-
-		if (!status) {
-			throw new Error(`Order status of state [${state}] not found`);
-		}
-
-		return await orderManagement.updateStatus(orderId, status.id);
 	}
 }
 

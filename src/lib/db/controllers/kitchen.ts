@@ -1,5 +1,4 @@
 import { orderRepository } from '../repositories/OrderRepository';
-import type { Order } from '@prisma/client';
 import type { Orders } from '..';
 
 class Kitchen {
@@ -21,10 +20,11 @@ class Kitchen {
 		return this.orders;
 	}
 
-	public async updateOrder(orderId: number, state: string): Promise<Order> {
-		const result = await orderRepository.updateOrder(orderId, state);
-
-		return result;
+	public async updateOrder(
+		orderId: number,
+		state: string
+	): Promise<{ data?: unknown; errors?: unknown }> {
+		return await orderRepository.updateOrder(orderId, state);
 	}
 }
 

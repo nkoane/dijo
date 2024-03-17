@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { io } from 'socket.io-client';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 
 	export let data;
@@ -18,7 +18,7 @@
 				];
 			case 'paid':
 				return [
-					{ action: '?/preparing', label: 'Prepare' },
+					{ action: '?/prepare', label: 'Prepare' },
 					{ action: '?/refund', label: 'Refund' }
 				];
 			case 'preparing':
@@ -35,6 +35,44 @@
 				return [];
 		}
 	};
+	let now = new Date();
+
+	let durations: {
+		orderId: number;
+		createdAt: Date;
+		updatedAt: Date;
+		diff: number;
+		words: string;
+	}[] = [];
+
+	function setTimeDifference(orderId: number, createdAt: Date, updatedAt: Date) {
+		const diff: number = now - new Date(createdAt);
+		const seconds = Math.floor(diff / 1000);
+		const minutes = Math.floor(seconds / 60);
+		const hours = Math.floor(minutes / 60);
+		const days = Math.floor(hours / 24);
+		const words = `${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`;
+
+		durations.push({
+			orderId,
+			createdAt,
+			updatedAt,
+			diff,
+			words
+		});
+
+		return words;
+	}
+
+	Object.keys(orders).forEach((orderStatus) => {
+		orders[orderStatus].forEach((order) =>
+			setTimeDifference(order.id, order.createdAt, order.updatedAt)
+		);
+	});
+
+	onDestroy(() => {
+		console.log('kitchen page destroyed');
+	});
 
 	onMount(() => {
 		const socket = io({});
@@ -55,6 +93,11 @@
 		const anchors = document.querySelectorAll('nav#kitchen-nav a');
 
 		anchors.forEach((anchor, index) => {
+			if (location.hash == (anchor as HTMLAnchorElement).hash) {
+				anchors.forEach((a, i) => a.classList.remove('selected'));
+				anchor.classList.add('selected');
+			}
+
 			anchor.addEventListener('click', (ev) => {
 				const target = ev.target as HTMLAnchorElement;
 				anchors.forEach((a, i) => a.classList.remove('selected'));
@@ -62,12 +105,21 @@
 			});
 		});
 
+		let timeInterval = setInterval(() => {
+			now = new Date();
+			/*
+			durations.forEach((d) => {
+				d.words = setTimeDifference(d.orderId, d.createdAt, now);
+			});
+			durations = [...durations];
+			*/
+		}, 1000);
+
 		return () => {
+			clearInterval(timeInterval);
 			socket.disconnect();
 		};
 	});
-
-	$: console.log('orders', orders, 'statuses', Object.keys(orders));
 </script>
 
 <h2>Kitchen, {data.user?.username}: {data.user?.roleId}.</h2>
@@ -77,13 +129,13 @@
 	<p>No orders.</p>
 {:else}
 	<nav id="kitchen-nav" class="flex w-full justify-between bg-gray-50">
-		{#each Object.keys(orders) as orderKey, orderIndex}
+		{#each Object.keys(orders) as orderStatus, orderIndex (orderStatus)}
 			<a
 				class="block bg-white px-2 py-1 font-bold text-gray-300 {orderIndex == 0
 					? 'selected'
 					: `select-none-${orderIndex}`}"
-				href="#order-{orderKey}">
-				{orderKey}: {orders[orderKey].length}
+				href="#order-{orderStatus}">
+				{orderStatus}: {orders[orderStatus].length}
 			</a>
 		{/each}
 	</nav>
@@ -113,7 +165,14 @@
 					<tbody>
 						{#each orders[orderStatus] as order (order.id)}
 							<tr id="item-index-{order.id}">
-								<td class="">{String(order.id).padStart(4, '0')}</td>
+								<td>
+									<p>{String(order.id).padStart(4, '0')}</p>
+									<p>{order.createdAt}</p>
+									<p class="my-2 bg-gray-50">
+										{durations.find((d) => d.orderId === order.id)?.words || '...'}
+									</p>
+									<p>{order.updatedAt}</p>
+								</td>
 								<td class="">
 									<table class="w-full">
 										<tbody>
@@ -134,10 +193,11 @@
 								<td class="">
 									{#if getFormOrderAction(order.status.state).length > 0}
 										<form method="post" class="flex h-full justify-between">
+											<input type="hidden" name="orderId" value={order.id} />
 											{#each getFormOrderAction(order.status.state) as option, optionIndex}
 												<button
 													id="order-action-{order.id}-{optionIndex}"
-													formaction={option.action}
+													formaction="{option.action}#order-{orderStatus}"
 													class="h-full"
 													type="submit"
 													>{option.label}

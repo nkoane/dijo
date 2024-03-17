@@ -50,6 +50,13 @@ class Orders {
 		});
 	}
 
+	/**
+	 * Get order by id
+	 *
+	 * @param {number} id
+	 * @return {*}  {Promise<Order>}
+	 * @memberof Orders
+	 */
 	public async getById(id: number): Promise<Order> {
 		const order = await dbClient.order.findUnique({
 			where: { id }

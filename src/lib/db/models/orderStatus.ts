@@ -19,7 +19,7 @@ class orderStatus {
 		});
 
 		if (!status) {
-			throw new Error(`Status ${id} not found`);
+			throw new Error(`Status [${id}] not found`);
 		}
 
 		return status;
@@ -31,7 +31,7 @@ class orderStatus {
 		});
 
 		if (!status) {
-			throw new Error(`Status ${state} not found`);
+			throw new Error(`Status [${state}] not found`);
 		}
 
 		return status;
