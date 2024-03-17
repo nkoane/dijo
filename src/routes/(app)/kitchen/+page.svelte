@@ -46,7 +46,7 @@
 	}[] = [];
 
 	function setTimeDifference(orderId: number, createdAt: Date, updatedAt: Date) {
-		const diff: number = now - new Date(createdAt);
+		const diff: number = now.getTime() - new Date(createdAt).getTime();
 		const seconds = Math.floor(diff / 1000);
 		const minutes = Math.floor(seconds / 60);
 		const hours = Math.floor(minutes / 60);
@@ -71,7 +71,7 @@
 	});
 
 	onDestroy(() => {
-		console.log('kitchen page destroyed');
+		console.log('kitchen page destroyed: cleanup crew in action.');
 	});
 
 	onMount(() => {
