@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { OrderDetail } from '$lib/db/index.js';
+	import type { OrderDetail, Orders } from '$lib/db/index.js';
 	import { io } from 'socket.io-client';
 	import { onDestroy, onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 
 	export let data;
-
-	const { orders, statuses } = data;
+	let orders: Orders = data?.orders || {};
 	const theNumberOfOrders = Object.keys(orders).reduce((acc, key) => acc + orders[key].length, 0);
 
 	// form actions
@@ -117,7 +116,7 @@
 				}
 				orders[order.status.state] = [...orders[order.status.state], order];
 
-				focusAnchor(`#order-${order.status.state}`);
+				// TODO: focusAnchor(`#order-${order.status.state}`);
 			}
 		});
 
