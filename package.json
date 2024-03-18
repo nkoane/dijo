@@ -32,7 +32,7 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"lucia": "^3.1.1",
-		"postcss": "^8.4.35",
+		"postcss": "^8.4.36",
 		"postcss-load-config": "^5.0.3",
 		"prettier": "^3.2.5",
 		"prettier-plugin-svelte": "^3.2.2",
@@ -47,8 +47,8 @@
 		"vite": "^5.1.6"
 	},
 	"dependencies": {
-		"@dicebear/collection": "^7.1.1",
-		"@dicebear/core": "^7.1.1",
+		"@dicebear/collection": "^8.0.0",
+		"@dicebear/core": "^8.0.0",
 		"@lucia-auth/adapter-prisma": "^4.0.1",
 		"@prisma/client": "^5.11.0",
 		"@types/express": "^4.17.21",
@@ -61,8 +61,8 @@
 		"socket.io": "^4.7.5",
 		"socket.io-client": "^4.7.5",
 		"svelte-french-toast": "^1.2.0",
-		"sveltekit-superforms": "^2.9.0",
-		"tailwind-merge": "^2.2.1",
+		"sveltekit-superforms": "^2.10.1",
+		"tailwind-merge": "^2.2.2",
 		"tailwind-variants": "^0.2.1",
 		"zod": "^3.22.4"
 	}
