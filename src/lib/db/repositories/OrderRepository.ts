@@ -72,6 +72,19 @@ class OrderRepository {
 			};
 		}
 	}
+
+	public async createOrder(order: {
+		orderItems: { foodId: number; quantity: number }[];
+		state?: string;
+		cost: number;
+	}) {
+		if (!order.state) {
+			order.state = 'placed';
+		}
+		console.log('(lib/db/order-repository) -> createOrder', order);
+
+		return await orderManagement.create(order.orderItems, order.cost, order.state);
+	}
 }
 
 export const orderRepository = OrderRepository.getInstance();

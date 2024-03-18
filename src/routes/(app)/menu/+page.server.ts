@@ -1,7 +1,10 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Actions } from './$types';
 import { menu } from '$lib/db/controllers/menu';
+import type { FoodMenu } from '$lib/db';
+
+let foodMenu: FoodMenu = {};
 
 export const load = (async ({ locals }) => {
 	if (!locals.user) {
@@ -12,73 +15,61 @@ export const load = (async ({ locals }) => {
 		redirect(303, '/');
 	}
 
+	foodMenu = await menu.getMenu();
 	return {
-		menu: await menu.getFood()
+		menu: foodMenu
 	};
 }) satisfies PageServerLoad;
 
 export const actions = {
 	default: async ({ request }) => {
-		const data = await request.formData();
+		const formData = await request.formData();
 
-		console.log('(menu-page-server::action', data);
-		// -> FormData { "1-1": "1", "2-2": "2", "3-3": "3" }
+		const order: {
+			orderItems: { foodId: number; quantity: number; cost: number }[];
+			cost: number;
+			state: string;
+		} = {
+			orderItems: [],
+			cost: 0,
+			state: 'paid'
+		};
 
-		/*
-
-		const items: { foodId: number; quantity: number; cost: number }[] = [];
-
-		for (const [key, value] of data.entries()) {
-			const index = key as string;
-			const foodId = parseInt(index.split('-')[1]);
+		Array.from(formData.entries()).forEach(([key, value]) => {
+			const foodId = parseInt(key.replace(/[^0-9]+/g, ''));
 			const quantity = parseInt(value as string);
-			if (!isNaN(foodId) && !isNaN(quantity)) {
-				items.push({
-					foodId,
-					quantity,
-					cost: 0
-				});
+
+			if (isNaN(foodId) || isNaN(quantity)) {
+				fail(400, { success: false, message: 'Invalid order item' });
 			}
-		}
-
-		if (items.length === 0) {
-			return error(400, 'No items were selected');
-		}
-
-		// TODO we need to get the food price by id from here, instead of getting everything.
-		console.info(
-			'(app)/menu/+page.server.ts',
-			'we need to get the food price by id from here, instead of getting everything.'
-		);
-
-		const foods = await foodManagement.getAvailableFoods();
-		if (!foods) {
-			return fail(400, { message: 'Foods are not available' });
-		}
-
-		items.filter((item, index) => {
-			foods.find((food) => {
-				if (food.id === item.foodId) {
-					items[index].cost = food.price * item.quantity;
-					return true;
+			if (quantity > 0) {
+				const food = Object.values(foodMenu)
+					.flat()
+					.find((food) => food.id === foodId);
+				if (food == undefined) {
+					fail(400, { success: false, message: `Invalid food ${foodId} item` });
+				} else {
+					order.orderItems.push({ foodId: foodId, quantity: quantity, cost: food.price });
 				}
-				return false;
-			});
+			}
 		});
 
-		if (items.length <= 0) {
-			return fail(400, { message: 'Food iItems are not available' });
+		if (order.orderItems.length === 0) {
+			fail(400, { success: false, message: 'No order items' });
 		}
 
-		const order = await orderManagement.create(items);
+		order.cost = order.orderItems.reduce((acc, item) => acc + item.cost * item.quantity, 0);
+		order.state = 'paid';
 
-		if (!order) {
-			return fail(400, { message: 'Order could not be created' });
-		}
+		console.log('(menu-page-server, order', order.orderItems, order.cost, order.state);
+		console.clear();
+
+		const result = await menu.placeOrder(order);
+
+		console.log('(menu-page-server, results', result);
 
 		return {
 			order
 		};
-		*/
 	}
 } satisfies Actions;

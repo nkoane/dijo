@@ -15,27 +15,21 @@ class Orders {
 	}
 
 	public async create(
-		items: { foodId: number; quantity: number; cost: number }[],
-		state = 'placed'
+		orderItems: { foodId: number; quantity: number; cost: number }[],
+		cost: number,
+		state: string
 	): Promise<Order> {
-		const status = await dbClient.orderStatus.findFirst({
-			where: { state }
-		});
-
 		const order = await dbClient.order.create({
 			data: {
 				OrderItems: {
-					create: items.map((item) => {
-						return {
-							quantity: item.quantity,
-							food: { connect: { id: item.foodId } },
-							cost: item.cost
-						};
-					})
+					create: orderItems
 				},
-				statusId: status?.id,
-
-				cost: items.reduce((acc, item) => acc + item.cost * item.quantity, 0)
+				status: {
+					connect: {
+						state: state
+					}
+				},
+				cost: cost
 			}
 		});
 		return order;
@@ -60,11 +54,6 @@ class Orders {
 	public async getById(id: number): Promise<Order> {
 		const order = await dbClient.order.findUnique({
 			where: { id }
-			/*
-			include: {
-				status: true,
-				OrderItems: true
-			}*/
 		});
 
 		if (!order) {

@@ -36,3 +36,9 @@ export function createTimeDifference(
 		words
 	};
 }
+
+export type Result<T> = {
+	success: boolean;
+	errors?: T[];
+	data?: T[];
+};
