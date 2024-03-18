@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { OrderDetail } from '$lib/db/index.js';
 	import { io } from 'socket.io-client';
 	import { onDestroy, onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 
 	export let data;
+
 	const { orders, statuses } = data;
 	const theNumberOfOrders = Object.keys(orders).reduce((acc, key) => acc + orders[key].length, 0);
 
@@ -70,10 +72,6 @@
 		);
 	});
 
-	onDestroy(() => {
-		console.log('kitchen page destroyed: cleanup crew in action.');
-	});
-
 	onMount(() => {
 		const socket = io({});
 
@@ -82,15 +80,18 @@
 			console.log('testMessage', message);
 		});
 
-		// TODO: socket notifications of a new order;
-		socket.on('kitchen-order-new', (order) => {
-			console.log('we got us an order', order);
-			toast.success(`new order, it's like ${order.id} -> ${socket.id}`);
-			// toast.success(`new: ${order.orderNumber} x ${order.OrderItems.length} items -> ${socket.id}`);
-			// orders = [...orders, order];
-		});
-
 		const anchors = document.querySelectorAll('nav#kitchen-nav a');
+
+		function focusAnchor(hash: string) {
+			anchors.forEach((anchor) => {
+				if ((anchor as HTMLAnchorElement).hash == hash) {
+					anchor.classList.add('selected');
+				} else {
+					anchor.classList.remove('selected');
+				}
+			});
+			location.hash = hash;
+		}
 
 		anchors.forEach((anchor, index) => {
 			if (location.hash == (anchor as HTMLAnchorElement).hash) {
@@ -105,14 +106,23 @@
 			});
 		});
 
+		socket.on('kitchen-order-new', (data) => {
+			if (data.order) {
+				const order = data.order as OrderDetail;
+				const msg = `new order (${order.id}-${order.status.state}) from (${socket.id}) with ${order.items.length} items`;
+				toast.success(msg);
+				// orders = [...orders, order];
+				if (orders[order.status.state] == undefined) {
+					orders[order.status.state] = [];
+				}
+				orders[order.status.state] = [...orders[order.status.state], order];
+
+				focusAnchor(`#order-${order.status.state}`);
+			}
+		});
+
 		let timeInterval = setInterval(() => {
 			now = new Date();
-			/*
-			durations.forEach((d) => {
-				d.words = setTimeDifference(d.orderId, d.createdAt, now);
-			});
-			durations = [...durations];
-			*/
 		}, 1000);
 
 		return () => {
@@ -167,11 +177,11 @@
 							<tr id="item-index-{order.id}">
 								<td>
 									<p>{String(order.id).padStart(4, '0')}</p>
-									<p>{order.createdAt}</p>
+									<!-- <p>{order.createdAt}</p> -->
 									<p class="my-2 bg-gray-50">
 										{durations.find((d) => d.orderId === order.id)?.words || '...'}
 									</p>
-									<p>{order.updatedAt}</p>
+									<!-- <p>{order.updatedAt}</p> -->
 								</td>
 								<td class="">
 									<table class="w-full">

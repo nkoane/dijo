@@ -1,4 +1,4 @@
-import type { FoodMenu } from '../index';
+import type { FoodMenu, OrderDetail } from '../index';
 import { foodRepository } from '../repositories/FoodRepository';
 import { orderRepository } from '../repositories/OrderRepository';
 
@@ -24,6 +24,10 @@ class Menu {
 		state: string;
 	}) {
 		return await orderRepository.createOrder(order);
+	}
+
+	public async getOrder(id: number): Promise<OrderDetail | null> {
+		return await orderRepository.getOrder(id);
 	}
 }
 

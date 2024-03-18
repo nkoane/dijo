@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import type { Actions } from './$types';
 import { menu } from '$lib/db/controllers/menu';
 import type { FoodMenu } from '$lib/db';
+import type { Order } from '@prisma/client';
 
 let foodMenu: FoodMenu = {};
 
@@ -61,15 +62,14 @@ export const actions = {
 		order.cost = order.orderItems.reduce((acc, item) => acc + item.cost * item.quantity, 0);
 		order.state = 'paid';
 
-		console.log('(menu-page-server, order', order.orderItems, order.cost, order.state);
-		console.clear();
+		const { data, errors } = await menu.placeOrder(order);
 
-		const result = await menu.placeOrder(order);
-
-		console.log('(menu-page-server, results', result);
+		if (errors) {
+			return fail(400, { errors, message: 'I have a bad feeling about this.' });
+		}
 
 		return {
-			order
+			order: await menu.getOrder((data as Order).id)
 		};
 	}
 } satisfies Actions;

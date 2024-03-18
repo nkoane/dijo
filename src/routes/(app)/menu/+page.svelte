@@ -116,9 +116,12 @@
 		order.cost = order.orderItems.reduce((acc, item) => acc + item.cost, 0);
 	};
 
-	$: console.log('(menu/page) -> form:', form);
 	$: if (order.cost > 0) {
 		order.isItPaid = order.change() >= 0;
+	}
+
+	$: if (form?.order) {
+		socket.emit('menu-order-placed', { order: form.order });
 	}
 </script>
 

@@ -30,6 +30,25 @@ class OrderRepository {
 		return this.orderStates;
 	}
 
+	public async getOrder(id: number): Promise<OrderDetail | null> {
+		try {
+			const order = (await orderManagement.getById(id)) as OrderDetail;
+
+			order.status = await orderStatusManagement.getById(order.statusId as number);
+			order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
+			for (const item of order.items) {
+				item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
+				if (item.food) {
+					item.food.status = await foodStatusManagement.getById(item.food.statusId as number);
+					item.food.category = await foodCategoryManagement.getById(item.food.categoryId);
+				}
+			}
+			return order;
+		} catch (error) {
+			return null;
+		}
+	}
+
 	public async getOrders(states?: string[]): Promise<Orders> {
 		await this.getOrderStates();
 
@@ -74,16 +93,23 @@ class OrderRepository {
 	}
 
 	public async createOrder(order: {
-		orderItems: { foodId: number; quantity: number }[];
+		orderItems: { foodId: number; quantity: number; cost: number }[];
 		state?: string;
 		cost: number;
-	}) {
+	}): Promise<{ data?: unknown; errors?: unknown }> {
 		if (!order.state) {
 			order.state = 'placed';
 		}
-		console.log('(lib/db/order-repository) -> createOrder', order);
 
-		return await orderManagement.create(order.orderItems, order.cost, order.state);
+		try {
+			return {
+				data: await orderManagement.create(order.orderItems, order.cost, order.state)
+			};
+		} catch (error) {
+			return {
+				errors: error instanceof Error ? error.message : error
+			};
+		}
 	}
 }
 
