@@ -2,7 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { lucia } from '$lib/server/auth';
 import { Argon2id } from 'oslo/password';
-import { userManagement } from '$lib/db/user';
+import { userManagement } from '$lib/db/models/user';
 
 export const load = (async ({ locals }) => {
 	if (locals.user) {

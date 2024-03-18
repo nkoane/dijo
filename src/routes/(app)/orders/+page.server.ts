@@ -1,8 +1,8 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { orderManagement } from '$lib/db/order';
+import { orderManagement } from '$lib/db/models/order';
 import type { Order, OrderItem, OrderStatus, Food } from '@prisma/client';
-import { foodManagement } from '$lib/db/food';
+import { foodManagement } from '$lib/db/models/food';
 
 // type orderDetailed = Order & { orderStatus: OrderStatus | null; orderItems: OrderItem[] | null };
 type orderDerailed = Order & {

@@ -1,89 +1,75 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { foodManagement } from '$lib/db/food';
-import type { Food } from '@prisma/client';
 import type { Actions } from './$types';
-import { orderManagement } from '$lib/db/order';
+import { menu } from '$lib/db/controllers/menu';
+import type { FoodMenu } from '$lib/db';
+import type { Order } from '@prisma/client';
+
+let foodMenu: FoodMenu = {};
 
 export const load = (async ({ locals }) => {
 	if (!locals.user) {
 		redirect(303, '/login?redirect=/menu');
 	}
 
-	// if the user role is bigger than 3, then deny access;
 	if (!locals.user.roleId) {
 		redirect(303, '/');
 	}
 
-	const dijo: Record<string, Food[]> = {};
-	const foods = await foodManagement.getAvailableFoods();
-	foods?.forEach((food) => {
-		if (!dijo[food.category.name]) {
-			dijo[food.category.name] = [];
-		}
-		dijo[food.category.name].push(food);
-	});
-
+	foodMenu = await menu.getMenu();
 	return {
-		dijo
+		menu: foodMenu
 	};
 }) satisfies PageServerLoad;
 
 export const actions = {
 	default: async ({ request }) => {
-		const data = await request.formData();
-		const items: { foodId: number; quantity: number; cost: number }[] = [];
+		const formData = await request.formData();
 
-		for (const [key, value] of data.entries()) {
-			const index = key as string;
-			const foodId = parseInt(index.split('-')[1]);
+		const order: {
+			orderItems: { foodId: number; quantity: number; cost: number }[];
+			cost: number;
+			state: string;
+		} = {
+			orderItems: [],
+			cost: 0,
+			state: 'paid'
+		};
+
+		Array.from(formData.entries()).forEach(([key, value]) => {
+			const foodId = parseInt(key.replace(/[^0-9]+/g, ''));
 			const quantity = parseInt(value as string);
-			if (!isNaN(foodId) && !isNaN(quantity)) {
-				items.push({
-					foodId,
-					quantity,
-					cost: 0
-				});
+
+			if (isNaN(foodId) || isNaN(quantity)) {
+				fail(400, { success: false, message: 'Invalid order item' });
 			}
-		}
-
-		if (items.length === 0) {
-			return error(400, 'No items were selected');
-		}
-
-		// TODO we need to get the food price by id from here, instead of getting everything.
-		console.info(
-			'(app)/menu/+page.server.ts',
-			'we need to get the food price by id from here, instead of getting everything.'
-		);
-
-		const foods = await foodManagement.getAvailableFoods();
-		if (!foods) {
-			return fail(400, { message: 'Foods are not available' });
-		}
-
-		items.filter((item, index) => {
-			foods.find((food) => {
-				if (food.id === item.foodId) {
-					items[index].cost = food.price * item.quantity;
-					return true;
+			if (quantity > 0) {
+				const food = Object.values(foodMenu)
+					.flat()
+					.find((food) => food.id === foodId);
+				if (food == undefined) {
+					fail(400, { success: false, message: `Invalid food ${foodId} item` });
+				} else {
+					order.orderItems.push({ foodId: foodId, quantity: quantity, cost: food.price });
 				}
-				return false;
-			});
+			}
 		});
 
-		if (items.length <= 0) {
-			return fail(400, { message: 'Food iItems are not available' });
+		if (order.orderItems.length === 0) {
+			fail(400, { success: false, message: 'No order items' });
 		}
 
-		const order = await orderManagement.create(items);
+		order.cost = order.orderItems.reduce((acc, item) => acc + item.cost * item.quantity, 0);
+		order.state = 'paid';
 
-		if (!order) {
-			return fail(400, { message: 'Order could not be created' });
+		const { data, errors } = await menu.placeOrder(order);
+
+		if (errors) {
+			return fail(400, { errors, message: 'I have a bad feeling about this.' });
 		}
 
 		return {
-			order
+			order: await menu.getOrder((data as Order).id)
 		};
 	}
 } satisfies Actions;

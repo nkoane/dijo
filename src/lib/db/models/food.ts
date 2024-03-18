@@ -1,5 +1,5 @@
-import { dbClient } from './client';
-import type { Food, FoodStatus, FoodCategory } from '@prisma/client';
+import { dbClient } from './../client';
+import type { Food } from '@prisma/client';
 
 class Foods {
 	private static instance: Foods;
@@ -43,57 +43,34 @@ class Foods {
 		return newFood;
 	}
 
-	public async getById(id: number): Promise<Food | null> {
+	public async getById(id: number): Promise<Food> {
 		const food = await dbClient.food.findUnique({
 			where: { id }
-			/*
-			include: {
-				category: true,
-				status: true
-			}
-			*/
 		});
+
+		if (!food) {
+			throw new Error(`food of id [${id}] not found`);
+		}
 
 		return food;
 	}
 
-	public async getAll(): Promise<Food[] | null> {
-		const foods = await dbClient.food.findMany({
-			/*
-			include: {
-				status: true,
-				category: true
-			}
-			*/
-		});
+	public async getAll(): Promise<Food[]> {
+		const foods = await dbClient.food.findMany({});
 
 		return foods;
 	}
 
-	public async getAvailableFoods(): Promise<Food[] | null> {
+	public async getBy(options: { categoryId?: number; statusId?: number; state?: string }) {
 		const foods = await dbClient.food.findMany({
 			where: {
-				statusId: 1 // TODO - change to enum
+				categoryId: options.categoryId,
+				statusId: options.statusId,
+				status: { state: options.state }
 			}
-			/*
-			include: {
-				status: true,
-				category: true
-			}
-			*/
 		});
 
 		return foods;
-	}
-
-	public async getAllFoodStatus(): Promise<FoodStatus[]> {
-		const statuses = await dbClient.foodStatus.findMany({});
-		return statuses;
-	}
-
-	public async getAllFoodCategory(): Promise<FoodCategory[]> {
-		const categories = await dbClient.foodCategory.findMany({});
-		return categories;
 	}
 
 	public async update(

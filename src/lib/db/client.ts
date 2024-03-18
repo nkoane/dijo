@@ -6,7 +6,7 @@ class Database {
 
 	private constructor() {
 		this.prismaClient = new prisma.PrismaClient({
-			//	log: ['query', 'info', 'warn', 'error']
+			// log: ['query', 'info', 'warn', 'error']
 		});
 	}
 

@@ -1,4 +1,4 @@
-import { dbClient } from './client';
+import { dbClient } from './../client';
 
 export enum Roles {
 	ADMIN = 'admin',

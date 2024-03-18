@@ -1,8 +1,9 @@
-import { dbClient } from './client';
+import { dbClient } from './../client';
 import type { Order, OrderItem, OrderStatus } from '@prisma/client';
 
 class Orders {
 	private static instance: Orders;
+	private orderStatuses: OrderStatus[] = [];
 
 	private constructor() {}
 
@@ -13,51 +14,46 @@ class Orders {
 		return Orders.instance;
 	}
 
-	public async getOrderStatuses(): Promise<OrderStatus[]> {
-		const statuses = await dbClient.orderStatus.findMany({
-			orderBy: {
-				id: 'asc'
-			}
-		});
-
-		return statuses;
-	}
-
 	public async create(
-		items: { foodId: number; quantity: number; cost: number }[],
-		state = 'placed'
+		orderItems: { foodId: number; quantity: number; cost: number }[],
+		cost: number,
+		state: string
 	): Promise<Order> {
-		const status = await dbClient.orderStatus.findFirst({
-			where: { state }
-		});
-
 		const order = await dbClient.order.create({
 			data: {
 				OrderItems: {
-					create: items.map((item) => {
-						return {
-							quantity: item.quantity,
-							food: { connect: { id: item.foodId } },
-							cost: item.cost
-						};
-					})
+					create: orderItems
 				},
-				statusId: status?.id,
-
-				cost: items.reduce((acc, item) => acc + item.cost * item.quantity, 0)
+				status: {
+					connect: {
+						state: state
+					}
+				},
+				cost: cost
 			}
 		});
 		return order;
 	}
 
+	public async updateStatus(id: number, statusId: number): Promise<Order> {
+		return await dbClient.order.update({
+			where: { id },
+			data: {
+				statusId
+			}
+		});
+	}
+
+	/**
+	 * Get order by id
+	 *
+	 * @param {number} id
+	 * @return {*}  {Promise<Order>}
+	 * @memberof Orders
+	 */
 	public async getById(id: number): Promise<Order> {
 		const order = await dbClient.order.findUnique({
 			where: { id }
-			/*
-			include: {
-				status: true,
-				OrderItems: true
-			}*/
 		});
 
 		if (!order) {
@@ -65,6 +61,26 @@ class Orders {
 		}
 
 		return order;
+	}
+
+	public async getByStatus(id?: number, state?: string): Promise<Order[]> {
+		if (!id && !state) {
+			throw new Error('Either id or state must be provided');
+		}
+
+		if (id) {
+			const orders = await dbClient.order.findMany({
+				where: { statusId: id }
+			});
+
+			return orders;
+		}
+
+		const orders = await dbClient.order.findMany({
+			where: { status: { state } }
+		});
+
+		return orders;
 	}
 
 	public async getOrderItems(id: number): Promise<OrderItem[]> {
@@ -90,14 +106,7 @@ class Orders {
 	}
 
 	public async getAll(): Promise<Order[]> {
-		const orders = await dbClient.order.findMany({
-			/*
-			include: {
-				status: true,
-				items: true
-			}
-			*/
-		});
+		const orders = await dbClient.order.findMany({});
 
 		return orders;
 	}
