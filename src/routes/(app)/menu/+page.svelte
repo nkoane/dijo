@@ -4,6 +4,8 @@
 	import { enhance, applyAction } from '$app/forms';
 	import type { FoodDetail, OrderItemDetail } from '$lib/db/index.js';
 
+	import socket from '$lib/stores/socket.js';
+
 	import {
 		Wheat,
 		Beef,
@@ -21,9 +23,7 @@
 
 	const { menu } = data;
 
-	const socket = io();
-
-	socket.on('testMessage', (message) => {
+	$socket.on('testMessage', (message) => {
 		console.log('testMessage', message);
 	});
 
@@ -121,7 +121,7 @@
 	}
 
 	$: if (form?.order) {
-		socket.emit('menu-order-placed', { order: form.order });
+		$socket.emit('menu-order-placed', { order: form.order });
 	}
 </script>
 
