@@ -72,11 +72,6 @@
 	});
 
 	onMount(() => {
-		// TODO: remove this
-		$socket.on('testMessage', (message) => {
-			console.log('testMessage', message);
-		});
-
 		const anchors = document.querySelectorAll('nav#kitchen-nav a');
 
 		anchors.forEach((anchor, index) => {
@@ -102,8 +97,6 @@
 					orders[order.status.state] = [];
 				}
 				orders[order.status.state] = [...orders[order.status.state], order];
-
-				// TODO: focusAnchor(`#order-${order.status.state}`);
 			}
 		});
 
