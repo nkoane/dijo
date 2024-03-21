@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { OrderDetail } from '$lib/db/index.js';
-	import { io } from 'socket.io-client';
-	import { onDestroy, onMount } from 'svelte';
+	import type { OrderDetail, Orders } from '$lib/db/index.js';
+	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
+	import socket from '$lib/stores/socket.js';
 
 	export let data;
-
-	const { orders, statuses } = data;
+	let orders: Orders = data?.orders || {};
 	const theNumberOfOrders = Object.keys(orders).reduce((acc, key) => acc + orders[key].length, 0);
 
 	// form actions
@@ -73,25 +72,12 @@
 	});
 
 	onMount(() => {
-		const socket = io({});
-
 		// TODO: remove this
-		socket.on('testMessage', (message) => {
+		$socket.on('testMessage', (message) => {
 			console.log('testMessage', message);
 		});
 
 		const anchors = document.querySelectorAll('nav#kitchen-nav a');
-
-		function focusAnchor(hash: string) {
-			anchors.forEach((anchor) => {
-				if ((anchor as HTMLAnchorElement).hash == hash) {
-					anchor.classList.add('selected');
-				} else {
-					anchor.classList.remove('selected');
-				}
-			});
-			location.hash = hash;
-		}
 
 		anchors.forEach((anchor, index) => {
 			if (location.hash == (anchor as HTMLAnchorElement).hash) {
@@ -106,10 +92,10 @@
 			});
 		});
 
-		socket.on('kitchen-order-new', (data) => {
+		$socket.on('kitchen-order-new', (data) => {
 			if (data.order) {
 				const order = data.order as OrderDetail;
-				const msg = `new order (${order.id}-${order.status.state}) from (${socket.id}) with ${order.items.length} items`;
+				const msg = `new order (${order.id}-${order.status.state}) from (${$socket.id}) with ${order.items.length} items`;
 				toast.success(msg);
 				// orders = [...orders, order];
 				if (orders[order.status.state] == undefined) {
@@ -117,7 +103,7 @@
 				}
 				orders[order.status.state] = [...orders[order.status.state], order];
 
-				focusAnchor(`#order-${order.status.state}`);
+				// TODO: focusAnchor(`#order-${order.status.state}`);
 			}
 		});
 
@@ -127,7 +113,6 @@
 
 		return () => {
 			clearInterval(timeInterval);
-			socket.disconnect();
 		};
 	});
 </script>

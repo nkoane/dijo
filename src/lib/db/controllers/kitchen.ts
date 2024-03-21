@@ -3,7 +3,6 @@ import type { Orders } from '..';
 
 class Kitchen {
 	private static instance: Kitchen;
-	private orders: Orders = {};
 
 	private constructor() {}
 
@@ -15,9 +14,7 @@ class Kitchen {
 	}
 
 	public async getOrders(states?: string[]): Promise<Orders> {
-		this.orders = await orderRepository.getOrders(states);
-
-		return this.orders;
+		return await orderRepository.getOrders(states);
 	}
 
 	public async updateOrder(

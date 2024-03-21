@@ -15,6 +15,7 @@ export const load = (async ({ locals }) => {
 
 	const states = undefined; // ['paid', 'preparing', 'ready'];
 	const orders = await kitchen.getOrders(states);
+
 	const statuses = await orderStatusManagement.getAll();
 
 	return {

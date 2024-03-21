@@ -7,6 +7,7 @@
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { createAvatar, type Result } from '@dicebear/core';
 	import { lorelei } from '@dicebear/collection';
+	import socket from '$lib/stores/socket.js';
 
 	const user = $page.data.user;
 
