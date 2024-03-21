@@ -10,7 +10,6 @@ import { orderStatusManagement } from '../models/orderStatus';
 class OrderRepository {
 	private static instance: OrderRepository;
 	private orderStates: OrderStatus[] = [];
-	private detailedOrders: Orders = {};
 
 	private constructor() {}
 
@@ -52,27 +51,31 @@ class OrderRepository {
 	public async getOrders(states?: string[]): Promise<Orders> {
 		await this.getOrderStates();
 
+		const orders: Orders = {};
+
 		const statuses = states
 			? this.orderStates.filter((status) => states.includes(status.state))
 			: this.orderStates;
 
 		for (const status of statuses) {
 			const statusOrders = (await orderManagement.getByStatus(status.id)) as OrderDetail[];
-			for (const order of statusOrders) {
-				order.status = status;
-				order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
-				for (const item of order.items) {
-					item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
-					if (item.food) {
-						item.food.status = await foodStatusManagement.getById(item.food.statusId as number);
-						item.food.category = await foodCategoryManagement.getById(item.food.categoryId);
+			if (statusOrders.length != 0) {
+				for (const order of statusOrders) {
+					order.status = status;
+					order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
+					for (const item of order.items) {
+						item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
+						if (item.food) {
+							item.food.status = await foodStatusManagement.getById(item.food.statusId as number);
+							item.food.category = await foodCategoryManagement.getById(item.food.categoryId);
+						}
 					}
 				}
-			}
 
-			if (statusOrders.length > 0) this.detailedOrders[status.state] = statusOrders;
+				orders[status.state] = statusOrders;
+			}
 		}
-		return this.detailedOrders;
+		return orders;
 	}
 
 	public async updateOrder(
