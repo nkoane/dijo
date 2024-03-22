@@ -13,7 +13,7 @@ class Database {
 	public static getInstance(): Database {
 		if (!Database.instance) {
 			Database.instance = new Database();
-			console.log('lib/db/client: database instance created.');
+			console.log('(lib/db/client) -> database instance created.');
 		}
 		return Database.instance;
 	}
