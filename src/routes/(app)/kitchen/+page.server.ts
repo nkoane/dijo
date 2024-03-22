@@ -13,14 +13,15 @@ export const load = (async ({ locals }) => {
 		error(401, `Unauthorized: ${locals.user.roleId}`);
 	}
 
-	const states = undefined; // ['paid', 'preparing', 'ready'];
+	const states = ['paid', 'preparing', 'ready'];
 	const orders = await kitchen.getOrders(states);
 
 	const statuses = await orderStatusManagement.getAll();
 
 	return {
 		orders,
-		statuses
+		statuses,
+		total: Object.keys(orders).reduce((acc, key) => acc + orders[key].length, 0)
 	};
 }) satisfies PageServerLoad;
 

@@ -95,4 +95,36 @@
 	h4 {
 		@apply text-xl font-bold;
 	}
+
+	table.orders th,
+	table.orders td {
+		border: 1px solid #ddd;
+		padding: 8px;
+	}
+
+	table.orders th {
+		text-align: left;
+	}
+
+	table.orders tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+
+	table.orders tr td table tr:nth-child(even) {
+		background-color: #fff;
+	}
+
+	table.orders tr:last-child td:last-child {
+	}
+	table.orders tr td table tr td {
+		border-color: black;
+	}
+
+	table.orders button {
+		@apply rounded-md bg-blue-500 px-2 py-2 text-xs font-bold uppercase text-white hover:bg-blue-700;
+	}
+
+	table.orders button:hover {
+		@apply bg-blue-700;
+	}
 }

@@ -4,7 +4,7 @@ import { webSocketServer } from './sockets.js';
 
 import { handler } from '../build/handler.js';
 
-const port = 3000;
+const port = 5173;
 const app = express();
 const server = createServer(app);
 
@@ -14,4 +14,6 @@ webSocketServer.configureServer({ httpServer: server });
 // https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
 
 app.use(handler);
+
+console.info(`Server running at: http://localhost:${port}/`);
 server.listen(port);

@@ -23,10 +23,6 @@
 
 	const { menu } = data;
 
-	$socket.on('testMessage', (message) => {
-		console.log('testMessage', message);
-	});
-
 	type Icon = {
 		[category: string]: typeof Wheat | typeof Beef | typeof LeafyGreen | typeof GlassWater;
 	};
@@ -38,7 +34,6 @@
 		Beverages: GlassWater
 	};
 
-	// TODO: we will have to store them in almost the same format as how we retrieve them from the database
 	let order: {
 		orderItems: {
 			foodId: number;

@@ -18,8 +18,6 @@ export const webSocketServer = {
 		io.on('connection', (socket) => {
 			console.log(`io-server -> socket ${socket.id} connected`);
 
-			socket.emit('testMessage', `Hello, [${socket.id}]`);
-
 			socket.on('disconnect', (reason) => {
 				console.log(`io-server -> socket ${socket.id} disconnected due to ${reason}`);
 			});
