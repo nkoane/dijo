@@ -33,8 +33,8 @@ dependencies:
     specifier: ^0.5.1
     version: 0.5.1(svelte@4.2.12)(sveltekit-superforms@2.10.6)
   lucide-svelte:
-    specifier: ^0.360.0
-    version: 0.360.0(svelte@4.2.12)
+    specifier: ^0.361.0
+    version: 0.361.0(svelte@4.2.12)
   oslo:
     specifier: ^1.1.3
     version: 1.1.3
@@ -3565,8 +3565,8 @@ packages:
     dependencies:
       oslo: 1.0.1
 
-  /lucide-svelte@0.360.0(svelte@4.2.12):
-    resolution: {integrity: sha512-Rs1opdeQZIQjyhMgqwQUJ3GdwrBOl6Z7HtbomzXN/rNWHqEKlgqsQvNh3kMSPoDHQiREqW1Sj/drYP5fw9J6BA==}
+  /lucide-svelte@0.361.0(svelte@4.2.12):
+    resolution: {integrity: sha512-WsAa4tfKYDd5Gitpj8WN/tfPmsvgviI/daWwFKwGdkD6puayLCs+wKWTtbKaxTwu3/h3ScprYPm0A8SfQT2DPA==}
     peerDependencies:
       svelte: ^3 || ^4 || ^5.0.0-next.42
     dependencies:
