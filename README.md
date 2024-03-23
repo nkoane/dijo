@@ -24,11 +24,21 @@ Install all relevant packages using pnpm:
 pnpm install
 ```
 
-Run the following to seed the db with a roles, categories and an adminstrative (root) user (their password will be printed to the console):
+Copy the `.env.example` file to `.env` and fill in the necessary details for `DATABASE_URL` and `PUBLIC_SOCKET_IO_ENDPOINT` and run primsa initailisation, migration and seeding (root password will be printed ont he console).
 
 ```bash
-pnpx tsx prisma/seed.ts
+cp .env.example .env
 ```
+
+And run primsa initailisation, migration and seeding (root password will be printed ont he console).
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
+```
+
+### For development
 
 Run the following to start the application (in development mode):
 
@@ -48,14 +58,6 @@ After building the application, you can start the application using the followin
 
 ```bash
 node server/index.js
-```
-
-### Environment variables
-
-Copy the `.env.example` file to `.env` and fill in the necessary details for `DATABASE_URL` and `PUBLIC_SOCKET_IO_ENDPOINT`:
-
-```bash
-cp .env.example .env
 ```
 
 ### How to use the application
