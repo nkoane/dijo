@@ -1,47 +1,79 @@
-# DIJO Starter Pack
+# DIJO
 
-Okay, this was a classwork task I used to demonstrate how to build a web application to students, but after some serious amount of boredom, I figured I could make it an actual application that people could use to manage their chisa-nyama (pop-up shop as Americans call it).
+**dijo**, _simply means **food**, in SeTswana_.
+
+## Pre-emble
+
+This was a classwork task I used to demonstrate how to build a web application to students, but after some serious amount of boredom, I figured I could make it an actual application that people could use to manage their chisa-nyama (pop-up shop as Americans call it).
 
 ## What is it?
 
-dijo an application that allows the owner of the chisa-nyama (pop-up shop) to place orders; and for the kitchen to see the orders coming in, and clear them as they are collected by customers.
+dijo an application that allows the street venders to manage the process of selling their goods: invetory (pricing, quantity and pricing on a day to day basis). This also involes handling the exchange of money.
 
-That's it, that's the whole application. I will add more functionality as I time allows.
+The key part is (if it is a chisa-nyama or a food stall) that it will inform the kitchen in real time as orders are placed; and the kitchen can prepare the food and mark it as ready for collection and/or delivery.
 
-### How to run the application
+## How to run the application
 
 This is still work in progress, so bare with me until a working prototype is ready.
 
-#### Prerequisites
+### Prerequisites
 
-Install all relevate packages using pnpm:
+Install all relevant packages using pnpm:
 
 ```bash
 pnpm install
 ```
 
-Run the following to seed the db with a roles, categories and an adminstrative user (their password will be randomly? generated and printed to the console):
+Run the following to seed the db with a roles, categories and an adminstrative (root) user (their password will be printed to the console):
 
 ```bash
 pnpx tsx prisma/seed.ts
 ```
 
-Run the following to start the application (in development mode, production is still a work in progress):
+Run the following to start the application (in development mode):
 
 ```bash
 pnpm dev
 ```
 
+### For production
+
+Run the following command to build the application:
+
+```bash
+pnpm build
+```
+
+After building the application, you can start the application using the following command (this is because socket-io and svelte-kit do not play well together, so we need to start the server separately)
+
+```bash
+node server/index.js
+```
+
+### Environment variables
+
+Copy the `.env.example` file to `.env` and fill in the necessary details for `DATABASE_URL` and `PUBLIC_SOCKET_IO_ENDPOINT`:
+
+```bash
+cp .env.example .env
+```
+
 ### How to use the application
 
-After starting the application, you can access the application at `http://localhost:5173`. You will be prompted to login, use the following credentials: root -> dijo-tse-monate
+After starting the application, you can access the application at `http://localhost:5173` (or whatever you have set it to be). You will be prompted to login, use the following credentials:
+
+```code
+username: root
+password: dijo-tse-monate
+```
 
 Afterwhich, you can access the dashboard, to add food categories, the food themselves. For now, the assumption is that all foods fall into the following categories:
 
+- General
 - Starch
 - Meat
 - Vegetables
-- Drinks
+- Beverages
 
 ## Questions?
 
