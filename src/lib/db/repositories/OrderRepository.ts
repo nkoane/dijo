@@ -1,9 +1,9 @@
 import type { OrderStatus } from '@prisma/client';
 import type { FoodDetail, OrderDetail, OrderItemDetail, Orders } from './../index';
 
-import { foodManagement } from '../models/food';
-import { foodCategoryManagement } from '../models/foodCategory';
-import { foodStatusManagement } from '../models/foodStatus';
+import { foodModel } from '../models/food';
+import { foodCategoryModel } from '../models/foodCategory';
+import { foodStatusModel } from '../models/foodStatus';
 import { orderManagement } from '../models/order';
 import { orderStatusManagement } from '../models/orderStatus';
 
@@ -36,10 +36,10 @@ class OrderRepository {
 			order.status = await orderStatusManagement.getById(order.statusId as number);
 			order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
 			for (const item of order.items) {
-				item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
+				item.food = (await foodModel.getById(item.foodId)) as FoodDetail;
 				if (item.food) {
-					item.food.status = await foodStatusManagement.getById(item.food.statusId as number);
-					item.food.category = await foodCategoryManagement.getById(item.food.categoryId);
+					item.food.status = await foodStatusModel.getById(item.food.statusId as number);
+					item.food.category = await foodCategoryModel.getById(item.food.categoryId);
 				}
 			}
 			return order;
@@ -64,10 +64,10 @@ class OrderRepository {
 					order.status = status;
 					order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
 					for (const item of order.items) {
-						item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
+						item.food = (await foodModel.getById(item.foodId)) as FoodDetail;
 						if (item.food) {
-							item.food.status = await foodStatusManagement.getById(item.food.statusId as number);
-							item.food.category = await foodCategoryManagement.getById(item.food.categoryId);
+							item.food.status = await foodStatusModel.getById(item.food.statusId as number);
+							item.food.category = await foodCategoryModel.getById(item.food.categoryId);
 						}
 					}
 				}

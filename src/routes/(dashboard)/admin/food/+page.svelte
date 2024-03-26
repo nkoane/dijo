@@ -1,6 +1,9 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
 	export let data, form;
+
+	$: {
+	}
 </script>
 
 <section class="mb-2 flex justify-between gap-2 border-b pb-4">

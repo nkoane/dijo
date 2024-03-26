@@ -116,4 +116,4 @@ class Foods {
 	}
 }
 
-export const foodManagement = Foods.getInstance();
+export const foodModel = Foods.getInstance();

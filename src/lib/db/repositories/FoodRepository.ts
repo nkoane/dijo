@@ -1,8 +1,8 @@
 import type { FoodDetail, FoodMenu } from './../index';
 
-import { foodManagement } from '../models/food';
-import { foodCategoryManagement } from '../models/foodCategory';
-import { foodStatusManagement } from '../models/foodStatus';
+import { foodModel } from '../models/food';
+import { foodCategoryModel } from '../models/foodCategory';
+import { foodStatusModel } from '../models/foodStatus';
 import type { FoodCategory, FoodStatus } from '@prisma/client';
 
 class FoodRepository {
@@ -12,10 +12,10 @@ class FoodRepository {
 	private menu: FoodMenu = {};
 
 	private constructor() {
-		foodStatusManagement.getAll().then((states) => {
+		foodStatusModel.getAll().then((states) => {
 			this.foodStates = states;
 		});
-		foodCategoryManagement.getAll().then((categories) => {
+		foodCategoryModel.getAll().then((categories) => {
 			this.foodCategories = categories;
 		});
 	}
@@ -30,7 +30,7 @@ class FoodRepository {
 
 	public async getMenu(state?: string): Promise<FoodMenu> {
 		for (const category of this.foodCategories) {
-			const foods = (await foodManagement.getBy({
+			const foods = (await foodModel.getBy({
 				categoryId: category.id,
 				state: state
 			})) as FoodDetail[];

@@ -19,7 +19,7 @@ class foodCategory {
 		});
 
 		if (!status) {
-			throw new Error(`Status ${id} not found`);
+			throw new Error(`Category with: [${id}] not found`);
 		}
 
 		return status;
@@ -31,7 +31,7 @@ class foodCategory {
 		});
 
 		if (!status) {
-			throw new Error(`Status ${category} not found`);
+			throw new Error(`Category with status [${category}] not found`);
 		}
 
 		return status;
@@ -48,4 +48,4 @@ class foodCategory {
 	}
 }
 
-export const foodCategoryManagement = foodCategory.getInstance();
+export const foodCategoryModel = foodCategory.getInstance();
