@@ -28,6 +28,12 @@ export const load = (async () => {
 
 export const actions: Actions = {
 	default: async ({ request }) => {
+		const formData = await request.formData();
+		console.log('(admin/food/page-server:formData -> ', formData);
+		// const { name, description, price, category, status, image } = request.body;
+		return fail(400, { message: 'This is not working' });
+
+		/*
 		const data = await request.formData();
 		const name = data.get('name') as string;
 		const description = data.get('description') as string;
@@ -76,6 +82,8 @@ export const actions: Actions = {
 			status: food.status as number,
 			image: food.image as string | null
 		});
+
+		*/
 
 		redirect(302, `/admin/food/${result.id}`);
 	}

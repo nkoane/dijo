@@ -79,9 +79,9 @@ class Foods {
 			name: string;
 			description?: string;
 			price: number;
-			category: number;
-			status: number;
-			image?: string | null;
+			categoryId: number;
+			statusId: number;
+			image?: string;
 		}
 	): Promise<Food> {
 		const updatedFood = await dbClient.food.update({
@@ -92,12 +92,12 @@ class Foods {
 				price: food.price,
 				category: {
 					connect: {
-						id: food.category
+						id: food.categoryId
 					}
 				},
 				status: {
 					connect: {
-						id: food.status
+						id: food.statusId
 					}
 				},
 				image: food.image ? food.image : ''

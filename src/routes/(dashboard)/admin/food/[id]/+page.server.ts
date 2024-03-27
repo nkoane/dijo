@@ -1,79 +1,78 @@
-import { foodManagement } from '$lib/db/models/food';
+import { foodModel } from '$lib/db/models/food';
+import { foodCategoryModel } from '$lib/db/models/foodCategory';
+import { foodStatusModel } from '$lib/db/models/foodStatus';
 import type { Actions } from '../$types';
 import type { PageServerLoad } from './$types';
 import { error, fail } from '@sveltejs/kit';
+import type { Food, FoodStatus, FoodCategory } from '@prisma/client';
+import { z } from 'zod';
 
-let foodId: number;
+let id: number;
+let categories: FoodCategory[];
+let statuses: FoodStatus[];
 
 export const load: PageServerLoad = async ({ params }) => {
-	const id = parseFloat(params.id);
+	id = parseFloat(params.id);
 
 	if (isNaN(id)) {
 		error(400, 'id must be a number');
 	}
 
-	const food = await foodManagement.getById(id);
+	const food = (await foodModel.getById(id)) as unknown as
+		| (Food & {
+				category: FoodCategory | undefined;
+				status: FoodStatus | undefined;
+		  })
+		| null;
 
 	if (!food) {
 		error(404, 'no such food item');
 	}
 
-	foodId = id;
+	statuses = await foodStatusModel.getAll();
+	categories = await foodCategoryModel.getAll();
 
-	const statuses = await foodManagement.getAllFoodStatus();
-	const categories = await foodManagement.getAllFoodCategory();
+	food.category = categories.find((category) => category.id == food.categoryId);
+	food.status = statuses.find((status) => status.id == food.statusId);
 
 	return { food, statuses, categories };
 };
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const data = await request.formData();
-		const name = data.get('name') as string;
-		const description = data.get('description') as string;
-		const price = data.get('price') as unknown as number;
-		const category = data.get('category') as unknown as number;
-		const status = data.get('status') as unknown as number;
-		const image = data.get('image') as string | null;
-
-		const food: { [key: string]: string | number | null } = {
-			name,
-			description,
-			price: parseFloat(price.toString()),
-			category: parseFloat(category.toString()),
-			status: parseFloat(status.toString()),
-			image: image ? image.toString() : null
+		const formData = await request.formData();
+		const data = Object.fromEntries(formData.entries()) as {
+			name: string;
+			price: string;
+			categoryId: string | number;
+			statusId: string | number;
+			description: string;
+			image: string;
 		};
 
-		const errors: { [key: string]: string | number | unknown } = {};
-		Object.keys(food).forEach((key) => {
-			if (key == 'image' || key == 'description') return;
-
-			if (food[key] == null || food[key] == '') {
-				errors[key] = `${key} is required`;
-			}
-
-			if (key == 'price' && food[key] != null) {
-				const price = food[key] as number;
-				if (isNaN(price)) {
-					errors[key] = `${key} must be a number`;
-				} else if (price < 0) {
-					errors[key] = `${key} must be greater than 0`;
-				}
-			}
+		const foodSchema = z.object({
+			name: z.string(),
+			price: z.coerce.number().min(0),
+			// todo: not sure WTF is this a problem
+			categoryId: z.enum(categories.map((category) => category.id.toString())),
+			statusId: z.enum(statuses.map((status) => status.id.toString())),
+			description: z.string().optional(),
+			image: z.string().optional()
 		});
 
-		if (Object.keys(errors).length > 0) {
-			return fail(400, { food, errors });
+		try {
+			const food = foodSchema.parse(data);
+
+			await foodModel.update(id, {
+				name: food.name,
+				description: food.description,
+				price: food.price,
+				categoryId: parseFloat(data.categoryId.toString()),
+				statusId: parseFloat(data.statusId.toString())
+			});
+		} catch (errors) {
+			console.error('admin/food/id/page-serve/actions -> error', error);
+			return fail(400, { data, errors });
 		}
-
-		await foodManagement.update(foodId, {
-			name: food.name as string,
-			description: food.description as string,
-			price: food.price as number,
-			category: food.category as number,
-			status: food.status as number,
-			image: food.image as string | ''
-		});
 	}
 };

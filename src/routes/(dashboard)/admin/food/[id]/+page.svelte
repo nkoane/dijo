@@ -4,6 +4,10 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	const food = data?.food;
+
+	$: {
+		console.log(food.id, form);
+	}
 </script>
 
 <h4>{food?.name}</h4>
@@ -40,7 +44,7 @@
 			></textarea>
 		</p>
 		<p>
-			<select name="status" id="status">
+			<select name="statusId" id="status">
 				{#each data?.statuses as status}
 					<option
 						value={status.id}
@@ -49,7 +53,7 @@
 							: food.statusId == status.id}>{status.state}</option>
 				{/each}
 			</select>
-			<select name="category" id="category">
+			<select name="categoryId" id="category">
 				{#each data?.categories as category}
 					<option
 						value={category.id}

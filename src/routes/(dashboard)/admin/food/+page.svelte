@@ -23,8 +23,8 @@
 						<tr>
 							<td><a href="food/{food.id}">{food.name}</a></td>
 							<td>R{food.price}</td>
-							<td>{food.category.name}</td>
-							<td>{food.status.state}</td>
+							<td>{food.category?.name}</td>
+							<td>{food.status?.state}</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -48,7 +48,7 @@
 				value={form?.food?.description ? form?.food.description.toString() : ''}></textarea>
 		</p>
 		<p>
-			<select name="status" id="status">
+			<select name="statusId" id="status">
 				{#each data?.statuses as status}
 					<option
 						value={status.id}
@@ -56,7 +56,7 @@
 						>{status.state}</option>
 				{/each}
 			</select>
-			<select name="category" id="category">
+			<select name="categoryId" id="category">
 				{#each data?.categories as category}
 					<option
 						value={category.id}
