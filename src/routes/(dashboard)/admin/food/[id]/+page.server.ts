@@ -63,12 +63,17 @@ export const actions: Actions = {
 		const result = foodSchema.safeParse(data);
 
 		if (!result.success) {
-			const errors = {};
-			Object.keys(data).forEach((key) => {
-				const error: { [key: string]: string[] } = result.error.format();
+			const errors = {
+				name: [],
+				price: [],
+				categoryId: [],
+				statusId: []
+			};
+			const formattedErrors = result.error.format();
 
-				if (error[key]) {
-					errors[key] = error[key]._errors;
+			Object.keys(data).forEach((objectKey) => {
+				if (formattedErrors[objectKey]) {
+					errors[objectKey] = formattedErrors[objectKey]._errors;
 				}
 			});
 			return fail(400, { food: data, errors: errors });
