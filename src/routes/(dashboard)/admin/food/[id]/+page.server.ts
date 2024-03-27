@@ -51,28 +51,37 @@ export const actions: Actions = {
 		};
 
 		const foodSchema = z.object({
-			name: z.string(),
+			name: z.string().trim().min(1),
 			price: z.coerce.number().min(0),
 			// todo: not sure WTF is this a problem
 			categoryId: z.enum(categories.map((category) => category.id.toString())),
 			statusId: z.enum(statuses.map((status) => status.id.toString())),
-			description: z.string().optional(),
+			description: z.string().trim().optional(),
 			image: z.string().optional()
 		});
 
-		try {
-			const food = foodSchema.parse(data);
+		const result = foodSchema.safeParse(data);
 
-			await foodModel.update(id, {
-				name: food.name,
-				description: food.description,
-				price: food.price,
-				categoryId: parseFloat(data.categoryId.toString()),
-				statusId: parseFloat(data.statusId.toString())
+		if (!result.success) {
+			const errors = {};
+			Object.keys(data).forEach((key) => {
+				const error: { [key: string]: string[] } = result.error.format();
+
+				if (error[key]) {
+					errors[key] = error[key]._errors;
+				}
 			});
-		} catch (errors) {
-			console.error('admin/food/id/page-serve/actions -> error', error);
-			return fail(400, { data, errors });
+			return fail(400, { food: data, errors: errors });
 		}
+
+		const food = result.data;
+
+		await foodModel.update(id, {
+			name: food.name,
+			description: food.description,
+			price: food.price,
+			categoryId: parseFloat(data.categoryId.toString()),
+			statusId: parseFloat(data.statusId.toString())
+		});
 	}
 };

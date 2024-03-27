@@ -6,7 +6,7 @@
 	const food = data?.food;
 
 	$: {
-		console.log(food.id, form);
+		console.log(food.id, form?.errors?.price);
 	}
 </script>
 
@@ -17,8 +17,8 @@
 		{#if food}
 			<ol class=" space-y-4">
 				<li>
-					<a href="food/{food.id}">{food.name}</a> | R{food.price} | {food.category.name} | {food
-						.status.state}
+					<a href="food/{food.id}">{food.name}</a>
+					<span>| R{food.price} | {food.category?.name} | {food.status?.state}</span>
 				</li>
 				<li class=" prose bg-white p-2">
 					{food.description}
@@ -29,13 +29,18 @@
 		{/if}
 	</div>
 	<form method="post" class="flex flex-col gap-4">
-		<p>
+		<p class={form?.errors?.name ? 'error mb-0' : ''}>
 			<input
 				type="text"
 				name="name"
 				id="name"
 				placeholder="name of food"
 				value={form?.food?.name ? form?.food.name.toString() : food.name} />
+			{#if form?.errors?.name}
+				<span>{form.errors.name}</span>
+			{/if}
+		</p>
+		<p>
 			<textarea
 				name="description"
 				id="description"
@@ -48,8 +53,8 @@
 				{#each data?.statuses as status}
 					<option
 						value={status.id}
-						selected={form?.food?.status
-							? form?.food.status == status.id
+						selected={form?.food?.statusId
+							? form?.food.statusId == status.id
 							: food.statusId == status.id}>{status.state}</option>
 				{/each}
 			</select>
@@ -57,19 +62,24 @@
 				{#each data?.categories as category}
 					<option
 						value={category.id}
-						selected={form?.food?.category
-							? form?.food.category == category.id
+						selected={form?.food?.categoryId
+							? form?.food.categoryId == category.id
 							: food.categoryId == category.id}>{category.name}</option>
 				{/each}
 			</select>
 		</p>
-		<p>
+		<p class={form?.errors?.price ? 'error mb-0' : ''}>
 			<input
 				type="number"
 				name="price"
 				id="price"
 				placeholder="price of food"
 				value={form?.food?.price ? form?.food.price.toString() : food.price} />
+			{#if form?.errors?.price}
+				<span>{form.errors.price}</span>
+			{/if}
+		</p>
+		<p>
 			<input type="file" name="image" id="image" placeholder="image of food" />
 		</p>
 
@@ -85,9 +95,21 @@
 	form p {
 		@apply flex flex-col gap-4;
 	}
+
 	form input,
 	form textarea {
 		@apply w-full rounded-md border border-gray-300 p-2;
+	}
+	form p.error {
+		@apply gap-1;
+	}
+	form p.error input,
+	form p.error textarea {
+		@apply mb-0 border-red-600;
+	}
+
+	form p.error span {
+		@apply mx-2 text-xs text-red-600;
 	}
 
 	form select {
