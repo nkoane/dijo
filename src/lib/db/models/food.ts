@@ -13,34 +13,25 @@ class Foods {
 		return Foods.instance;
 	}
 
-	public async create(food: {
-		name: string;
-		description?: string;
-		price: number;
-		category: number;
-		status: number;
-		image?: string | null;
-	}): Promise<Food> {
-		const newFood = await dbClient.food.create({
+	public async create(food: Omit<Food, 'id' | 'createdAt' | 'updatedAt'>): Promise<Food> {
+		return await dbClient.food.create({
 			data: {
 				name: food.name,
 				description: food.description ? food.description : '',
 				price: food.price,
 				category: {
 					connect: {
-						id: food.category
+						id: food.categoryId
 					}
 				},
 				status: {
 					connect: {
-						id: food.status
+						id: food.statusId
 					}
 				},
 				image: food.image ? food.image : ''
 			}
 		});
-
-		return newFood;
 	}
 
 	public async getById(id: number): Promise<Food> {
