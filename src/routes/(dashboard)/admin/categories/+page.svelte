@@ -6,8 +6,8 @@
 	}
 </script>
 
-<h3>Categories</h3>
-<div class="flex justify-between">
+<h3 class="mb-12">Categories</h3>
+<div class="flex justify-between bg-red-50 p-4">
 	<section>
 		{#if categories.length > 0}
 			<ol>
