@@ -52,8 +52,6 @@ export const actions = {
 			description: form.data.description ?? null
 		});
 
-		console.log(id, form.data);
-
 		return message(form, 'Category edited successfully!');
 	}
 } satisfies Actions;

@@ -1,12 +1,9 @@
 <script lang="ts">
 	import CategoryForm from '$lib/components/app/category/CategoryForm.svelte';
-	import { superForm } from 'sveltekit-superforms';
-	import type { PageData } from './$types';
-	export let data: PageData;
+	export let data;
+
 	const categories = data.categories;
 	const category = null;
-
-	const { form } = superForm(data.form);
 </script>
 
 <h3 class="mb-12">Categories</h3>
@@ -26,7 +23,7 @@
 						<tr class=" divide-x border">
 							<td><a href="/admin/categories/{category.id}">{category.name}</a></td>
 							<td>{category.description ?? ''}</td>
-							<td>{category.foods?.length ?? ''}</td>
+							<td>0?</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -35,7 +32,7 @@
 			<p>No categories found</p>
 		{/if}
 	</section>
-	<CategoryForm suform={form} category={category ?? null} />
+	<CategoryForm data={data.form} category={data?.category ?? null} />
 </div>
 
 <style lang="postcss">
