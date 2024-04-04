@@ -24,7 +24,7 @@
 				<tr class=" divide-x border">
 					<td><a href="/admin/categories/{category.id}">{category.name}</a></td>
 					<td>{category.description ?? ''}</td>
-					<td>{foods?.length ?? ''}</td>
+					<td>{foods?.length ?? '0'}</td>
 				</tr>
 			</tbody>
 		</table>

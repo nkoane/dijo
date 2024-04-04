@@ -23,7 +23,7 @@
 						<tr class=" divide-x border">
 							<td><a href="/admin/categories/{category.id}">{category.name}</a></td>
 							<td>{category.description ?? ''}</td>
-							<td>0?</td>
+							<td>{category.foods?.length ?? '0'}</td>
 						</tr>
 					{/each}
 				</tbody>

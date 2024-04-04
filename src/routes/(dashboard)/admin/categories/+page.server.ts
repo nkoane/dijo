@@ -4,7 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 import { foodCategoryModel } from '$lib/db/models/foodCategory';
 import { superValidate } from 'sveltekit-superforms';
-import type { FoodCategory } from '@prisma/client';
+import type { Food, FoodCategory } from '@prisma/client';
 import type { Actions } from '../$types';
 import { fail, redirect } from '@sveltejs/kit';
 
@@ -12,7 +12,12 @@ let category: FoodCategory;
 
 export const load = (async () => {
 	const form = await superValidate(zod(categorySchema));
-	const categories = await foodCategoryModel.getAll();
+	const categories = (await foodCategoryModel.getAll()) as (FoodCategory & { foods: Food[] })[];
+
+	categories.forEach(async (category) => {
+		category.foods = await foodCategoryModel.getFoods(category.id);
+	});
+
 	return {
 		categories,
 		form,

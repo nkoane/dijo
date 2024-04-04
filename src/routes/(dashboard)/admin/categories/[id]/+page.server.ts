@@ -31,7 +31,7 @@ export const load = (async ({ params }) => {
 		return {
 			form,
 			category,
-			foods: []
+			foods: await foodCategoryModel.getFoods(id)
 		};
 	} catch (errors) {
 		console.error('(dashboard) admin categories [id] +page.server.ts', errors);
