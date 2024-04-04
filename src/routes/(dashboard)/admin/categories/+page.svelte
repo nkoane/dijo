@@ -7,14 +7,27 @@
 </script>
 
 <h3 class="mb-12">Categories</h3>
-<div class="flex justify-between bg-red-50 p-4">
-	<section>
+<div class="flex justify-between gap-4 bg-red-50 p-4">
+	<section class="flex-grow">
 		{#if categories.length > 0}
-			<ol>
-				{#each categories as category}
-					<li>{category.name}</li>
-				{/each}
-			</ol>
+			<table class=" h-full w-full table-auto border-collapse border">
+				<thead class="divide-y">
+					<tr class="divide-x border">
+						<th>category</th>
+						<th>description</th>
+						<th>foods</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y">
+					{#each categories as category}
+						<tr class=" divide-x border">
+							<td><a href="/admin/category/{category.id}">{category.name}</a></td>
+							<td>{category.description ?? ''}</td>
+							<td>{category.foods?.length ?? ''}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		{:else}
 			<p>No categories found</p>
 		{/if}
@@ -32,6 +45,9 @@
 </div>
 
 <style lang="postcss">
+	table tbody tr td {
+		@apply pl-2;
+	}
 	form {
 		display: flex;
 		flex-direction: column;
@@ -44,6 +60,6 @@
 
 	form p input,
 	form p textarea {
-		@apply w-full rounded-sm bg-gray-100 p-2;
+		@apply w-full rounded-sm bg-white p-2;
 	}
 </style>
