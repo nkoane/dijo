@@ -1,9 +1,12 @@
 <script lang="ts">
-	export let data;
+	import CategoryForm from '$lib/components/app/category/CategoryForm.svelte';
+	import { superForm } from 'sveltekit-superforms';
+	import type { PageData } from './$types';
+	export let data: PageData;
 	const categories = data.categories;
-	$: {
-		console.log(data);
-	}
+	const category = null;
+
+	const { form } = superForm(data.form);
 </script>
 
 <h3 class="mb-12">Categories</h3>
@@ -21,7 +24,7 @@
 				<tbody class="divide-y">
 					{#each categories as category}
 						<tr class=" divide-x border">
-							<td><a href="/admin/category/{category.id}">{category.name}</a></td>
+							<td><a href="/admin/categories/{category.id}">{category.name}</a></td>
 							<td>{category.description ?? ''}</td>
 							<td>{category.foods?.length ?? ''}</td>
 						</tr>
@@ -32,34 +35,11 @@
 			<p>No categories found</p>
 		{/if}
 	</section>
-	<form method="post">
-		<p>
-			<label for="name">name</label>
-			<input type="text" id="name" name="name" />
-		</p>
-		<p>
-			<label for="description">description</label>
-			<textarea name="description" id="description"></textarea>
-		</p>
-	</form>
+	<CategoryForm suform={form} category={category ?? null} />
 </div>
 
 <style lang="postcss">
 	table tbody tr td {
 		@apply pl-2;
-	}
-	form {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	form p label {
-		@apply ml-2 text-sm;
-	}
-
-	form p input,
-	form p textarea {
-		@apply w-full rounded-sm bg-white p-2;
 	}
 </style>
