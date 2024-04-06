@@ -33,7 +33,7 @@ class UserRepository {
 		errors: string | null;
 	}> {
 		try {
-			const user = await userModel.getBy('username', username, true);
+			const user = (await userModel.getBy('username', username, true)) as User;
 
 			if ((await new Argon2id().verify(user.hashed_password, password)) === false) {
 				throw new Error(); //'Invalid credentials');
@@ -53,7 +53,7 @@ class UserRepository {
 	}
 
 	public async register({ username, password }: { username: string; password: string }): Promise<{
-		data?: User | null;
+		data?: UserSafe | null;
 		success: boolean;
 		errors: string | null;
 	}> {
@@ -67,7 +67,7 @@ class UserRepository {
 					hashed_password,
 					role: role.name
 				});
-				console.log(user);
+
 				if (!user) {
 					throw new Error('Failed to register');
 				}

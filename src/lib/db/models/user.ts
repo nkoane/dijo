@@ -29,17 +29,28 @@ class Users {
 		key: string,
 		value: string | number | Date,
 		withHashedPassword: boolean = false
-	): Promise<User> {
-		const person = await dbClient.user.findFirst({
-			where: { [key]: value }
-		});
+	): Promise<User | UserSafe> {
+		let person: User | UserSafe;
+		if (withHashedPassword === true) {
+			person = (await dbClient.user.findFirst({
+				where: { [key]: value }
+			})) as User;
+		} else {
+			person = (await dbClient.user.findFirst({
+				where: { [key]: value },
+				select: {
+					id: true,
+					username: true,
+					roleId: true,
+					stateId: true,
+					createdAt: true,
+					updatedAt: true
+				}
+			})) as UserSafe;
+		}
 
 		if (!person) {
 			throw new Error(`A person with that ${key}: [${value}], does not exist`);
-		}
-
-		if (withHashedPassword !== true) {
-			person.hashed_password = '';
 		}
 
 		return person;
@@ -93,8 +104,11 @@ class Users {
 		hashed_password: string;
 		role: string;
 		state?: string;
-	}): Promise<User> {
+	}): Promise<UserSafe> {
 		const user = await dbClient.user.create({
+			select: {
+				id: true
+			},
 			data: {
 				id: id,
 				username: username,
