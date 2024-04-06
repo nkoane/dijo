@@ -1,7 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { kitchen } from '$lib/db/controllers/kitchen';
-import { orderStatusManagement } from '$lib/db/models/orderStatus';
+import { orderStatusModel } from '$lib/db/models/orderStatus';
 
 export const load = (async ({ locals }) => {
 	if (!locals.user) {
@@ -13,7 +13,7 @@ export const load = (async ({ locals }) => {
 	}
 
 	const orders = await kitchen.getOrders();
-	const statuses = await orderStatusManagement.getAll();
+	const statuses = await orderStatusModel.getAll();
 
 	return {
 		orders,
