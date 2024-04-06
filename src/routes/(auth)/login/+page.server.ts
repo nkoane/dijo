@@ -3,30 +3,31 @@ import type { Actions, PageServerLoad } from './$types';
 import { lucia } from '$lib/server/auth';
 import { userRepository } from '$lib/db/repositories/UserRepository';
 import type { User } from '@prisma/client';
+import { superValidate } from 'sveltekit-superforms';
+import { loginSchema } from '$lib/schemas';
+import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = (async ({ locals }) => {
 	if (locals.user) {
 		error(403, 'You are already logged in');
 	}
+
+	const form = await superValidate(zod(loginSchema));
+
+	return {
+		form
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	default: async ({ request, cookies, url }) => {
-		const data = await request.formData();
-		const username = data.get('username');
-		const password = data.get('password');
+		const form = await superValidate(request, zod(loginSchema));
 
-		const isPasswordInvalid = typeof password !== 'string' || !password;
-		const isUsernameInvalid = typeof username !== 'string' || !username;
-
-		if (isPasswordInvalid || isUsernameInvalid) {
-			return fail(400, { invalid: { username: isUsernameInvalid, password: isPasswordInvalid } });
-		}
-
-		const result = await userRepository.login(username, password);
+		const result = await userRepository.login(form.data.username, form.data.password);
 
 		if (!result.success) {
-			return fail(400, { credentials: result.errors });
+			form.message = 'Invalid credentials';
+			return fail(400, { form });
 		}
 
 		const user = result.data as User;

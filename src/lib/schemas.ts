@@ -6,3 +6,8 @@ export const categorySchema = z.object({
 });
 
 export type CategorySchema = typeof categorySchema;
+
+export const loginSchema = z.object({
+	username: z.string().trim().min(4),
+	password: z.string().min(8)
+});

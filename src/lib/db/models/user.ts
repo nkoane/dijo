@@ -72,36 +72,6 @@ class Users {
 		});
 		return people;
 	}
-
-	/*
-
-
-	public async register({
-		userId,
-		username,
-		hashed_password,
-		role
-	}: {
-		userId: string;
-		username: string;
-		hashed_password: string;
-		role: Roles;
-	}): Promise<UserSafe> {
-		const person = await dbClient.user.create({
-			data: {
-				id: userId,
-				username,
-				hashed_password: hashed_password,
-				role: { connect: { name: role } }
-			}
-		});
-
-		if (!person) {
-			throw new Error(`Failed to register/create a person with that username: [${username}]`);
-		}
-
-		return person;
-	} */
 }
 
 export const userModel = Users.getInstance();

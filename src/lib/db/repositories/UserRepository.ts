@@ -26,7 +26,14 @@ class UserRepository {
 		return UserRepository.instance;
 	}
 
-	public async login(username: string, password: string) {
+	public async login(
+		username: string,
+		password: string
+	): Promise<{
+		data?: User | null;
+		success: boolean;
+		errors: string | null;
+	}> {
 		try {
 			const user = await userModel.getBy('username', username, true);
 
@@ -35,7 +42,7 @@ class UserRepository {
 			}
 
 			if (user.stateId !== this.states.find((status) => status.state === 'active')?.id) {
-				throw new Error('Account not activated');
+				return { success: false, errors: 'Account not activated' };
 			}
 
 			return { data: user, success: true, errors: null };
@@ -48,26 +55,6 @@ class UserRepository {
 	}
 
 	/*
-	public async login(username: string): Promise<UserSafe> {
-		const person = await dbClient.user.findUnique({
-			where: { username },
-			select: {
-				id: true,
-				username: true,
-				roleId: true,
-				stateId: true,
-				hashed_password: true,
-				createdAt: true,
-				updatedAt: true
-			}
-		});
-
-		if (!person) {
-			throw new Error(`A person with that username: [${username}], does not exist`);
-		}
-
-		return person;
-	}
 
 	public async register({
 		userId,
