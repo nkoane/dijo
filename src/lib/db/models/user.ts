@@ -1,4 +1,5 @@
 import { dbClient } from './../client';
+import type { User } from '@prisma/client';
 
 export enum Roles {
 	ADMIN = 'admin',
@@ -9,43 +10,101 @@ export enum Roles {
 	CUSTOMER = 'customer'
 }
 
-interface appUserModelInterface {
-	id: string;
-	roleId: number;
-	hashed_password: string;
-	role: {
-		id: number;
-		name: string;
-	};
-}
+export type UserSafe = Omit<User, 'hashed_password'>;
 
-class User {
-	private static instance: User;
+class Users {
+	private static instance: Users;
 
 	private constructor() {}
 
-	public static getInstance(): User {
-		if (!User.instance) {
-			User.instance = new User();
+	public static getInstance(): Users {
+		if (!Users.instance) {
+			Users.instance = new Users();
 		}
-		return User.instance;
+		return Users.instance;
 	}
 
-	public async findByUsername({
-		username
-	}: {
-		username: string;
-	}): Promise<appUserModelInterface | null> {
+	public async getById(id: string): Promise<UserSafe> {
+		const person = await dbClient.user.findUnique({
+			where: { id },
+			select: {
+				id: true,
+				username: true,
+				roleId: true,
+				createdAt: true,
+				updatedAt: true
+			}
+		});
+
+		if (!person) {
+			throw new Error(`A person with that id: [${id}], does not exist`);
+		}
+
+		return person;
+	}
+
+	public async getBy(key: string, value: string | number | Date): Promise<UserSafe> {
+		const person = await dbClient.user.findFirst({
+			where: { [key]: value },
+			select: {
+				id: true,
+				username: true,
+				roleId: true,
+				createdAt: true,
+				updatedAt: true
+			}
+		});
+
+		if (!person) {
+			throw new Error(`A person with that ${key}: [${value}], does not exist`);
+		}
+
+		return person;
+	}
+
+	public async getAll(query?: { key: string; value: string | number | Date }): Promise<UserSafe[]> {
+		const people = await dbClient.user.findMany({
+			where: query ? { [query.key]: query.value } : {},
+			select: {
+				id: true,
+				username: true,
+				roleId: true,
+				createdAt: true,
+				updatedAt: true
+			}
+		});
+		return people;
+	}
+
+	public async getAllBy(): Promise<UserSafe[]> {
+		const people = await dbClient.user.findMany({
+			select: {
+				id: true,
+				username: true,
+				roleId: true,
+				createdAt: true,
+				updatedAt: true
+			}
+		});
+		return people;
+	}
+
+	public async login(username: string): Promise<UserSafe> {
 		const person = await dbClient.user.findUnique({
 			where: { username },
 			select: {
 				id: true,
+				username: true,
 				roleId: true,
 				hashed_password: true,
-				role: true
+				createdAt: true,
+				updatedAt: true
 			}
-			// include: { role: true }
 		});
+
+		if (!person) {
+			throw new Error(`A person with that username: [${username}], does not exist`);
+		}
 
 		return person;
 	}
@@ -60,7 +119,7 @@ class User {
 		username: string;
 		hashed_password: string;
 		role: Roles;
-	}): Promise<appUserModelInterface | null> {
+	}): Promise<UserSafe> {
 		const person = await dbClient.user.create({
 			data: {
 				id: userId,
@@ -70,12 +129,12 @@ class User {
 			}
 		});
 
-		if (person) {
-			return this.findByUsername({ username });
+		if (!person) {
+			throw new Error(`Failed to register/create a person with that username: [${username}]`);
 		}
 
-		return null;
+		return person;
 	}
 }
 
-export const userManagement = User.getInstance();
+export const userManagement = Users.getInstance();
