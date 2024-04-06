@@ -23,10 +23,14 @@ export const actions: Actions = {
 	default: async ({ request, cookies, url }) => {
 		const form = await superValidate(request, zod(loginSchema));
 
-		const result = await userRepository.login(form.data.username, form.data.password);
+		if (form.valid === false) {
+			return fail(400, { form });
+		}
+
+		const result = await userRepository.login(form.data);
 
 		if (!result.success) {
-			form.message = 'Invalid credentials';
+			form.message = result.errors;
 			return fail(400, { form });
 		}
 

@@ -11,3 +11,13 @@ export const loginSchema = z.object({
 	username: z.string().trim().min(4),
 	password: z.string().min(8)
 });
+
+export const registerSchema = z.object({
+	username: z
+		.string()
+		.trim()
+		.min(4)
+		.regex(/^[a-zA-Z0-9_-]+$/),
+	password: z.string().min(8),
+	confirmPassword: z.string().min(8)
+});

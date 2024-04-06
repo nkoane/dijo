@@ -23,6 +23,7 @@ class Users {
 		}
 		return Users.instance;
 	}
+	// @todo we need to sanitise the response; remove the hashed_password
 
 	public async getBy(
 		key: string,
@@ -42,6 +43,13 @@ class Users {
 		}
 
 		return person;
+	}
+
+	public async doesUserExist(username: string): Promise<boolean> {
+		const user = await dbClient.user.findFirst({
+			where: { username }
+		});
+		return !!user;
 	}
 
 	public async getAll(query?: { key: string; value: string | number | Date }): Promise<UserSafe[]> {
@@ -71,6 +79,32 @@ class Users {
 			}
 		});
 		return people;
+	}
+
+	public async create({
+		id,
+		username,
+		hashed_password,
+		role,
+		state
+	}: {
+		id: string;
+		username: string;
+		hashed_password: string;
+		role: string;
+		state?: string;
+	}): Promise<User> {
+		const user = await dbClient.user.create({
+			data: {
+				id: id,
+				username: username,
+				hashed_password: hashed_password,
+				role: { connect: { name: role } },
+				state: { connect: { state: state } }
+			}
+		});
+
+		return this.getBy('id', user.id, false);
 	}
 }
 
