@@ -111,4 +111,4 @@ class Orders {
 	}
 }
 
-export const orderManagement = Orders.getInstance();
+export const orderModel = Orders.getInstance();

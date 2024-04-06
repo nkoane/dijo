@@ -48,4 +48,4 @@ class orderStatus {
 	}
 }
 
-export const orderStatusManagement = orderStatus.getInstance();
+export const orderStatusModel = orderStatus.getInstance();

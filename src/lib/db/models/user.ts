@@ -31,6 +31,7 @@ class Users {
 				id: true,
 				username: true,
 				roleId: true,
+				stateId: true,
 				createdAt: true,
 				updatedAt: true
 			}
@@ -50,6 +51,7 @@ class Users {
 				id: true,
 				username: true,
 				roleId: true,
+				stateId: true,
 				createdAt: true,
 				updatedAt: true
 			}
@@ -69,6 +71,7 @@ class Users {
 				id: true,
 				username: true,
 				roleId: true,
+				stateId: true,
 				createdAt: true,
 				updatedAt: true
 			}
@@ -82,6 +85,7 @@ class Users {
 				id: true,
 				username: true,
 				roleId: true,
+				stateId: true,
 				createdAt: true,
 				updatedAt: true
 			}
@@ -96,6 +100,7 @@ class Users {
 				id: true,
 				username: true,
 				roleId: true,
+				stateId: true,
 				hashed_password: true,
 				createdAt: true,
 				updatedAt: true
@@ -137,4 +142,4 @@ class Users {
 	}
 }
 
-export const userManagement = Users.getInstance();
+export const userModel = Users.getInstance();
