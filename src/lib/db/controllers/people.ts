@@ -1,5 +1,7 @@
 //
 
+import { userRepository } from '../repositories/UserRepository';
+
 class People {
 	private static instance: People;
 
@@ -18,6 +20,11 @@ class People {
 
 	public async register() {
 		// ...
+	}
+
+	public async getAll() {
+		const users = await userRepository.getAll();
+		return users;
 	}
 }
 

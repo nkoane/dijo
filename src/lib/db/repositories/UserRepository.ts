@@ -5,6 +5,8 @@ import { userRoleModel } from '../models/userRole';
 import { Argon2id } from 'oslo/password';
 import { generateId } from 'lucia';
 
+export type UserDetail = UserSafe & { role?: UserRole; status?: UserStatus };
+
 class UserRepository {
 	private static instance: UserRepository;
 
@@ -25,6 +27,24 @@ class UserRepository {
 			UserRepository.instance = new UserRepository();
 		}
 		return UserRepository.instance;
+	}
+
+	public async getAll(): Promise<UserDetail[]> {
+		const users = (await userModel.getAll()) as unknown as UserDetail[];
+
+		for (const user of users) {
+			user.role = this.roles.find((role) => role.id === user.roleId);
+			user.status = this.states.find((state) => state.id === user.stateId);
+		}
+		return users;
+	}
+
+	public async getAllRoles(except?: number): Promise<UserRole[]> {
+		return this.roles.filter((role) => (except ? role.id !== except : true));
+	}
+
+	public async getAllStates(except?: number): Promise<UserStatus[]> {
+		return this.states.filter((state) => (except ? state.id !== except : true));
 	}
 
 	public async login({ username, password }: { username: string; password: string }): Promise<{

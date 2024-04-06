@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { userRoleModel } from './db/models/userRole';
 
 export const categorySchema = z.object({
 	name: z.string().trim().min(1),
