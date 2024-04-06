@@ -1,21 +1,4 @@
 <script lang="ts">
-	/*
-	import type { CategorySchema } from '$lib/schemas';
-
-	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
-	import type { PageData } from '../../../../routes/$types';
-	import type { FoodCategory } from '@prisma/client';
-
-	export let data: SuperValidated<Infer<CategorySchema>>;
-
-	$: console.log('-------> category-form: data', data);
-	export let category: FoodCategory;
-
-	const { form, errors } = superForm(data.form);
-
-	//$: console.log('Category Form Svelte, super-form', form, errors, constraints, message);
-	*/
-
 	import type { SuperValidated, Infer } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import type { CategorySchema } from '$lib/schemas';

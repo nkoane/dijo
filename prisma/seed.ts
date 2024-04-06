@@ -58,11 +58,19 @@ const seedUserStates = async () => {
 
 const seedFoodCategories = async () => {
 	const categoriesAlreadyExist = await dbClient.foodCategory.findMany();
-	const categories = ['Starch', 'Meat', 'Vegetables', 'Drinks', 'Basic'];
+	const categories = [
+		{ name: 'basic', description: 'random things, possibly illegal too, lol.' },
+		{ name: 'starch', description: 'all those un-taxed things' },
+		{ name: 'meat', description: 'we have the meats' },
+		{ name: 'vegetables', description: 'it is greener on the other side' },
+		{ name: 'drinks', description: 'things to wash it down with' },
+		{ name: 'perishables', description: 'things that go bad quickly' }
+	];
 
 	for (let i = 0; i < categoriesAlreadyExist.length; i++) {
 		const category = categoriesAlreadyExist[i];
-		const index = categories.indexOf(category.name);
+		const index = categories.findIndex((c) => c.name === category.name);
+
 		if (index > -1) {
 			categories.splice(index, 1);
 		}
@@ -75,9 +83,7 @@ const seedFoodCategories = async () => {
 
 	for (let i = 0; i < categories.length; i++) {
 		const result = await dbClient.foodCategory.create({
-			data: {
-				name: categories[i]
-			}
+			data: categories[i]
 		});
 		console.log('result: new category: ', result);
 	}

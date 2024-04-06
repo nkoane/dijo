@@ -56,7 +56,6 @@
 	let timerInterval: number | undefined = undefined;
 
 	onDestroy(() => {
-		// console.log('dismounting, and clearing interval');
 		clearInterval(timerInterval);
 	});
 
@@ -67,7 +66,6 @@
 			}, 1000) as unknown as number;
 		}
 		return () => {
-			//console.log('returning from onMount then clearing interval');
 			clearInterval(timerInterval);
 		};
 	});

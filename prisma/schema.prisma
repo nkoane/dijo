@@ -54,7 +54,7 @@ model Food {
   image       String       @default("")
   OrderItems  OrderItem[]
   category    FoodCategory @relation(fields: [categoryId], references: [id])
-  categoryId  Int
+  categoryId  Int          @default(1)
   status      FoodStatus   @relation(fields: [statusId], references: [id])
   statusId    Int          @default(1)
   createdAt   DateTime     @default(now())
