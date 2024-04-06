@@ -6,6 +6,10 @@ class userStatus {
 
 	private constructor() {}
 
+	private getTable(): typeof dbClient.userStatus {
+		return dbClient.userStatus;
+	}
+
 	public static getInstance(): userStatus {
 		if (!userStatus.instance) {
 			userStatus.instance = new userStatus();
@@ -14,7 +18,7 @@ class userStatus {
 	}
 
 	public async getById(id: number): Promise<UserStatus> {
-		const status = await dbClient.foodStatus.findUnique({
+		const status = await this.getTable().findUnique({
 			where: { id }
 		});
 
@@ -26,7 +30,7 @@ class userStatus {
 	}
 
 	public async getByState(state: string): Promise<UserStatus> {
-		const status = await dbClient.foodStatus.findFirst({
+		const status = await this.getTable().findFirst({
 			where: { state }
 		});
 
@@ -38,13 +42,11 @@ class userStatus {
 	}
 
 	public async getAll(): Promise<UserStatus[]> {
-		const statuses = await dbClient.foodStatus.findMany({
+		return await this.getTable().findMany({
 			orderBy: {
 				id: 'asc'
 			}
 		});
-
-		return statuses;
 	}
 }
 

@@ -24,41 +24,21 @@ class Users {
 		return Users.instance;
 	}
 
-	public async getById(id: string): Promise<UserSafe> {
-		const person = await dbClient.user.findUnique({
-			where: { id },
-			select: {
-				id: true,
-				username: true,
-				roleId: true,
-				stateId: true,
-				createdAt: true,
-				updatedAt: true
-			}
-		});
-
-		if (!person) {
-			throw new Error(`A person with that id: [${id}], does not exist`);
-		}
-
-		return person;
-	}
-
-	public async getBy(key: string, value: string | number | Date): Promise<UserSafe> {
+	public async getBy(
+		key: string,
+		value: string | number | Date,
+		withHashedPassword: boolean = false
+	): Promise<User> {
 		const person = await dbClient.user.findFirst({
-			where: { [key]: value },
-			select: {
-				id: true,
-				username: true,
-				roleId: true,
-				stateId: true,
-				createdAt: true,
-				updatedAt: true
-			}
+			where: { [key]: value }
 		});
 
 		if (!person) {
 			throw new Error(`A person with that ${key}: [${value}], does not exist`);
+		}
+
+		if (withHashedPassword !== true) {
+			person.hashed_password = '';
 		}
 
 		return person;
@@ -93,26 +73,8 @@ class Users {
 		return people;
 	}
 
-	public async login(username: string): Promise<UserSafe> {
-		const person = await dbClient.user.findUnique({
-			where: { username },
-			select: {
-				id: true,
-				username: true,
-				roleId: true,
-				stateId: true,
-				hashed_password: true,
-				createdAt: true,
-				updatedAt: true
-			}
-		});
+	/*
 
-		if (!person) {
-			throw new Error(`A person with that username: [${username}], does not exist`);
-		}
-
-		return person;
-	}
 
 	public async register({
 		userId,
@@ -139,7 +101,7 @@ class Users {
 		}
 
 		return person;
-	}
+	} */
 }
 
 export const userModel = Users.getInstance();

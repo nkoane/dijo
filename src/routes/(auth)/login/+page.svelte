@@ -8,7 +8,7 @@
 <form method="POST">
 	{#if form?.credentials}
 		<p class="mb-3 flex-grow rounded font-bold text-red-600">
-			You have entered incorrect credentials.
+			Oh-oh! {form?.credentials}.
 		</p>
 	{/if}
 	<div class="justify-content flex items-start gap-4 bg-green-100 p-3">
