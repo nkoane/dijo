@@ -45,7 +45,7 @@
 
 <h3 class="my-3">Orders: {data?.total}</h3>
 {#if Object.keys(orders).length === 0}
-	<p>No orders.</p>
+	<p>No <em>new</em> orders.</p>
 {:else}
 	<nav id="kitchen-nav" class="flex w-full gap-2 bg-gray-50">
 		{#each Object.keys(orders) as orderStatus, orderIndex (orderStatus)}

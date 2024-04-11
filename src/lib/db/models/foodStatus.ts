@@ -48,4 +48,4 @@ class foodStatus {
 	}
 }
 
-export const foodStatusManagement = foodStatus.getInstance();
+export const foodStatusModel = foodStatus.getInstance();

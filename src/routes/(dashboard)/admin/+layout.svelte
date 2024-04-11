@@ -2,7 +2,7 @@
 	<div class="flex items-center justify-between pb-4">
 		<h2>dash</h2>
 		<nav>
-			<a href="/admin/people">people</a>
+			<a href="/admin/staff">staff</a>
 			<a href="/admin/food">food</a>
 			<a href="/admin/categories">categories</a>
 		</nav>

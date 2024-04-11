@@ -1,5 +1,5 @@
 import { dbClient } from './../client';
-import type { FoodCategory } from '@prisma/client';
+import type { Food, FoodCategory } from '@prisma/client';
 
 class foodCategory {
 	private static instance: foodCategory;
@@ -14,15 +14,15 @@ class foodCategory {
 	}
 
 	public async getById(id: number): Promise<FoodCategory> {
-		const status = await dbClient.foodCategory.findUnique({
+		const category = await dbClient.foodCategory.findUnique({
 			where: { id }
 		});
 
-		if (!status) {
-			throw new Error(`Status ${id} not found`);
+		if (!category) {
+			throw new Error(`Category with: [${id}] not found`);
 		}
 
-		return status;
+		return category;
 	}
 
 	public async getByState(category: string): Promise<FoodCategory> {
@@ -31,7 +31,7 @@ class foodCategory {
 		});
 
 		if (!status) {
-			throw new Error(`Status ${category} not found`);
+			throw new Error(`Category with status [${category}] not found`);
 		}
 
 		return status;
@@ -46,6 +46,40 @@ class foodCategory {
 
 		return statuses;
 	}
+
+	public async getFoods(id: number): Promise<Food[]> {
+		const foods = (await dbClient.food.findMany({
+			where: {
+				categoryId: id
+			}
+		})) as Food[];
+
+		return foods;
+	}
+
+	public async create(
+		category: Omit<FoodCategory, 'id' | 'createdAt' | 'updatedAt'>
+	): Promise<FoodCategory> {
+		return await dbClient.foodCategory.create({
+			data: {
+				name: category.name,
+				description: category.description ? category.description : ''
+			}
+		});
+	}
+
+	public async update(
+		id: number,
+		category: Omit<FoodCategory, 'id' | 'createdAt' | 'updatedAt'>
+	): Promise<FoodCategory> {
+		return await dbClient.foodCategory.update({
+			where: { id },
+			data: {
+				name: category.name,
+				description: category.description ? category.description : ''
+			}
+		});
+	}
 }
 
-export const foodCategoryManagement = foodCategory.getInstance();
+export const foodCategoryModel = foodCategory.getInstance();

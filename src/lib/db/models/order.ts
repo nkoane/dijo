@@ -3,7 +3,6 @@ import type { Order, OrderItem, OrderStatus } from '@prisma/client';
 
 class Orders {
 	private static instance: Orders;
-	private orderStatuses: OrderStatus[] = [];
 
 	private constructor() {}
 
@@ -112,4 +111,4 @@ class Orders {
 	}
 }
 
-export const orderManagement = Orders.getInstance();
+export const orderModel = Orders.getInstance();

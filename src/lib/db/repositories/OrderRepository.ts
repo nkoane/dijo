@@ -1,11 +1,11 @@
 import type { OrderStatus } from '@prisma/client';
 import type { FoodDetail, OrderDetail, OrderItemDetail, Orders } from './../index';
 
-import { foodManagement } from '../models/food';
-import { foodCategoryManagement } from '../models/foodCategory';
-import { foodStatusManagement } from '../models/foodStatus';
-import { orderManagement } from '../models/order';
-import { orderStatusManagement } from '../models/orderStatus';
+import { foodModel } from '../models/food';
+import { foodCategoryModel } from '../models/foodCategory';
+import { foodStatusModel } from '../models/foodStatus';
+import { orderModel } from '../models/order';
+import { orderStatusModel } from '../models/orderStatus';
 
 class OrderRepository {
 	private static instance: OrderRepository;
@@ -23,7 +23,7 @@ class OrderRepository {
 
 	public async getOrderStates(): Promise<OrderStatus[]> {
 		if (this.orderStates.length == 0) {
-			this.orderStates = await orderStatusManagement.getAll();
+			this.orderStates = await orderStatusModel.getAll();
 		}
 
 		return this.orderStates;
@@ -31,15 +31,15 @@ class OrderRepository {
 
 	public async getOrder(id: number): Promise<OrderDetail | null> {
 		try {
-			const order = (await orderManagement.getById(id)) as OrderDetail;
+			const order = (await orderModel.getById(id)) as OrderDetail;
 
-			order.status = await orderStatusManagement.getById(order.statusId as number);
-			order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
+			order.status = await orderStatusModel.getById(order.statusId as number);
+			order.items = (await orderModel.getOrderItems(order.id)) as OrderItemDetail[];
 			for (const item of order.items) {
-				item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
+				item.food = (await foodModel.getById(item.foodId)) as FoodDetail;
 				if (item.food) {
-					item.food.status = await foodStatusManagement.getById(item.food.statusId as number);
-					item.food.category = await foodCategoryManagement.getById(item.food.categoryId);
+					item.food.status = await foodStatusModel.getById(item.food.statusId as number);
+					item.food.category = await foodCategoryModel.getById(item.food.categoryId);
 				}
 			}
 			return order;
@@ -58,16 +58,16 @@ class OrderRepository {
 			: this.orderStates;
 
 		for (const status of statuses) {
-			const statusOrders = (await orderManagement.getByStatus(status.id)) as OrderDetail[];
+			const statusOrders = (await orderModel.getByStatus(status.id)) as OrderDetail[];
 			if (statusOrders.length != 0) {
 				for (const order of statusOrders) {
 					order.status = status;
-					order.items = (await orderManagement.getOrderItems(order.id)) as OrderItemDetail[];
+					order.items = (await orderModel.getOrderItems(order.id)) as OrderItemDetail[];
 					for (const item of order.items) {
-						item.food = (await foodManagement.getById(item.foodId)) as FoodDetail;
+						item.food = (await foodModel.getById(item.foodId)) as FoodDetail;
 						if (item.food) {
-							item.food.status = await foodStatusManagement.getById(item.food.statusId as number);
-							item.food.category = await foodCategoryManagement.getById(item.food.categoryId);
+							item.food.status = await foodStatusModel.getById(item.food.statusId as number);
+							item.food.category = await foodCategoryModel.getById(item.food.categoryId);
 						}
 					}
 				}
@@ -83,10 +83,10 @@ class OrderRepository {
 		state: string
 	): Promise<{ data?: unknown; errors?: unknown }> {
 		try {
-			const order = await orderManagement.getById(orderId);
-			const status = await orderStatusManagement.getByState(state);
+			const order = await orderModel.getById(orderId);
+			const status = await orderStatusModel.getByState(state);
 			return {
-				data: await orderManagement.updateStatus(order.id, status.id)
+				data: await orderModel.updateStatus(order.id, status.id)
 			};
 		} catch (error) {
 			return {
@@ -106,7 +106,7 @@ class OrderRepository {
 
 		try {
 			return {
-				data: await orderManagement.create(order.orderItems, order.cost, order.state)
+				data: await orderModel.create(order.orderItems, order.cost, order.state)
 			};
 		} catch (error) {
 			return {

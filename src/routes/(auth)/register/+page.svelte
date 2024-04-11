@@ -1,11 +1,19 @@
 <script lang="ts">
-	export let form;
+	import { superForm } from 'sveltekit-superforms';
+
+	export let data;
+
+	const { form, errors, message } = superForm(data.form);
 </script>
 
 <h2 class="mb-4 text-2xl font-bold">Register</h2>
 <section class="flex gap-4">
 	<div class="flex-grow rounded-md p-4 text-gray-400">
-		<p>Somthing, something ain't right.</p>
+		{#if $message}
+			<p class="mb-3 flex-grow rounded font-bold text-red-600">
+				Oh-oh! {$message}.
+			</p>
+		{/if}
 	</div>
 	<form method="POST" class="min-w-96">
 		<p>
@@ -15,12 +23,9 @@
 				name="username"
 				autocomplete="off"
 				placeholder="Choose a username"
-				value={form?.username ?? ''} />
-			{#if form?.invalid.username}
-				<span class="text-sm text-red-500"
-					>{typeof form?.invalid.username == 'string'
-						? form?.invalid.username
-						: 'Invalid username'}</span>
+				bind:value={$form.username} />
+			{#if $errors.username}
+				<span>{$errors.username}</span>
 			{/if}
 		</p>
 
@@ -30,20 +35,22 @@
 				id="password"
 				name="password"
 				autocomplete="off"
-				placeholder="Choose a password" />
-			{#if form?.invalid.password}
-				<span>Invalid password</span>
+				placeholder="Choose a password"
+				bind:value={$form.password} />
+			{#if $errors.password}
+				<span>{$errors.password}</span>
 			{/if}
 		</p>
 		<p>
 			<input
 				type="password"
-				id="verify_password"
-				name="verify_password"
+				id="confirmPassword"
+				name="confirmPassword"
 				autocomplete="off"
-				placeholder="Verify your password" />
-			{#if form?.invalid.verify_password}
-				<span>Passwords don't match</span>
+				placeholder="Confirm your password"
+				bind:value={$form.confirmPassword} />
+			{#if $errors.confirmPassword}
+				<span>{$errors.confirmPassword}</span>
 			{/if}
 		</p>
 

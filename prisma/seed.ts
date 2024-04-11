@@ -29,13 +29,48 @@ const seedUserRoles = async () => {
 	}
 };
 
+const seedUserStates = async () => {
+	const currentStates = await dbClient.userStatus.findMany();
+	const states = ['registering', 'active', 'inactive', 'banned'];
+
+	for (let i = 0; i < currentStates.length; i++) {
+		const state = currentStates[i];
+		const index = states.indexOf(state.state);
+		if (index > -1) {
+			states.splice(index, 1);
+		}
+	}
+
+	if (states.length === 0) {
+		console.log('user state already exist');
+		return;
+	}
+
+	for (let i = 0; i < states.length; i++) {
+		const result = await dbClient.userStatus.create({
+			data: {
+				state: states[i]
+			}
+		});
+		console.log('result: new state: ', result);
+	}
+};
+
 const seedFoodCategories = async () => {
 	const categoriesAlreadyExist = await dbClient.foodCategory.findMany();
-	const categories = ['Starch', 'Meat', 'Vegetables', 'Drinks'];
+	const categories = [
+		{ name: 'basic', description: 'random things, possibly illegal too, lol.' },
+		{ name: 'starch', description: 'all those un-taxed things' },
+		{ name: 'meat', description: 'we have the meats' },
+		{ name: 'vegetables', description: 'it is greener on the other side' },
+		{ name: 'drinks', description: 'things to wash it down with' },
+		{ name: 'perishables', description: 'things that go bad quickly' }
+	];
 
 	for (let i = 0; i < categoriesAlreadyExist.length; i++) {
 		const category = categoriesAlreadyExist[i];
-		const index = categories.indexOf(category.name);
+		const index = categories.findIndex((c) => c.name === category.name);
+
 		if (index > -1) {
 			categories.splice(index, 1);
 		}
@@ -48,9 +83,7 @@ const seedFoodCategories = async () => {
 
 	for (let i = 0; i < categories.length; i++) {
 		const result = await dbClient.foodCategory.create({
-			data: {
-				name: categories[i]
-			}
+			data: categories[i]
 		});
 		console.log('result: new category: ', result);
 	}
@@ -120,6 +153,17 @@ const seedFoodStatus = async () => {
 	}
 };
 
+const resetUserSessions = async () => {
+	const sessions = await dbClient.userSession.findMany();
+	if (sessions.length === 0) {
+		console.log('user sessions are already empty');
+		return;
+	}
+
+	await dbClient.userSession.deleteMany();
+	console.log('user sessions have been cleared');
+};
+
 const seedAdminUser = async (reset: boolean = false, password?: string) => {
 	const rootAlreadyExists = await dbClient.user.findFirst({
 		where: {
@@ -139,7 +183,8 @@ const seedAdminUser = async (reset: boolean = false, password?: string) => {
 					id: rootAlreadyExists.id
 				},
 				data: {
-					hashed_password: await new Argon2id().hash(password)
+					hashed_password: await new Argon2id().hash(password),
+					state: { connect: { state: 'active' } }
 				}
 			});
 			console.log('admin user, root — with password', password, ' has been reset');
@@ -152,6 +197,7 @@ const seedAdminUser = async (reset: boolean = false, password?: string) => {
 			id: generateId(15),
 			username: 'root',
 			hashed_password: await new Argon2id().hash(password),
+			state: { connect: { state: 'active' } },
 			role: { connect: { name: 'admin' } }
 		}
 	});
@@ -165,11 +211,23 @@ export async function seed() {
 		'seeding: user roles, food categories, order statuses, food statuses, admin user',
 		args
 	);
+	// user stuff;
+
 	await seedUserRoles();
+	await seedUserStates();
+
+	// food stuff
 	await seedFoodCategories();
-	await seedOrderStatus();
 	await seedFoodStatus();
+
+	// order stuff
+	await seedOrderStatus();
+
+	// admin user
 	await seedAdminUser(args.includes('reset-admin-password'), args[1] ?? null);
+
+	// reset user sessions
+	await resetUserSessions();
 }
 
 await seed();
