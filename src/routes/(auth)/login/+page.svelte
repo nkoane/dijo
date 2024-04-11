@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	export let form;
+	import { superForm } from 'sveltekit-superforms';
+	export let data;
+
+	const { errors, message } = superForm(data.form);
 </script>
 
 <h2 class="mb-4 text-3xl font-bold">Login</h2>
 
 <form method="POST">
-	{#if form?.credentials}
+	{#if $message}
 		<p class="mb-3 flex-grow rounded font-bold text-red-600">
-			You have entered incorrect credentials.
+			Oh-oh! {$message}.
 		</p>
 	{/if}
 	<div class="justify-content flex items-start gap-4 bg-green-100 p-3">
@@ -19,8 +22,9 @@
 				id="username"
 				placeholder="Your username?"
 				autocomplete="username" />
-			{#if form?.invalid?.username}
-				<span>Invalid username</span>
+
+			{#if $errors.username}
+				<span>{$errors.username}</span>
 			{/if}
 		</p>
 		<p>
@@ -30,8 +34,9 @@
 				id="password"
 				placeholder="Your password?"
 				autocomplete="current-password" />
-			{#if form?.invalid?.password}
-				<span>Invalid password</span>
+
+			{#if $errors.password}
+				<span>{$errors.password}</span>
 			{/if}
 		</p>
 		<Button type="submit">GO</Button>

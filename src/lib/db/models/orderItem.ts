@@ -44,4 +44,4 @@ class orderItem {
 	}
 }
 
-export const orderItemManagement = orderItem.getInstance();
+export const orderItemModel = orderItem.getInstance();

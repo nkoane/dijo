@@ -14,8 +14,8 @@ let category: FoodCategory;
 export const load = (async ({ params }) => {
 	id = parseFloat(params.id);
 
-	if (isNaN(id)) {
-		error(400, 'id must be a number');
+	if (isNaN(id) || !id) {
+		error(404, 'id must be a number');
 	}
 
 	try {
@@ -34,7 +34,6 @@ export const load = (async ({ params }) => {
 			foods: await foodCategoryModel.getFoods(id)
 		};
 	} catch (errors) {
-		console.error('(dashboard) admin categories [id] +page.server.ts', errors);
 		error(404, 'no such category');
 	}
 }) satisfies PageServerLoad;
