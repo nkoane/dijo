@@ -14,8 +14,8 @@ let category: FoodCategory;
 export const load = (async ({ params }) => {
 	id = parseFloat(params.id);
 
-	if (isNaN(id)) {
-		error(400, 'id must be a number');
+	if (isNaN(id) || !id) {
+		error(404, 'id must be a number');
 	}
 
 	try {

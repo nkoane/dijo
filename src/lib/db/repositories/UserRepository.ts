@@ -47,6 +47,15 @@ class UserRepository {
 		return this.states.filter((state) => (except ? state.id !== except : true));
 	}
 
+	public async get(id: string) {
+		const person = (await userModel.getBy('id', id)) as unknown as UserDetail;
+		if (person) {
+			person.role = this.roles.find((role) => role.id === person.roleId);
+			person.status = this.states.find((state) => state.id === person.stateId);
+		}
+		return person;
+	}
+
 	public async login({ username, password }: { username: string; password: string }): Promise<{
 		data?: User | null;
 		success: boolean;
@@ -68,6 +77,48 @@ class UserRepository {
 			return {
 				success: false,
 				errors: 'Invalid credential' // error instanceof Error ? error.message : 'Failed to login'
+			};
+		}
+	}
+
+	public async create(person: {
+		username: string;
+		password: string;
+		role: string;
+		state: string;
+	}): Promise<{ data?: UserSafe | null; success: boolean; errors: string | null }> {
+		if ((await userModel.doesUserExist(person.username)) === false) {
+			const hashed_password = await new Argon2id().hash(person.password);
+			try {
+				const user = await userModel.create({
+					id: generateId(15),
+					username: person.username,
+					hashed_password,
+					role: person.role,
+					state: person.state
+				});
+
+				if (!user) {
+					throw new Error('Failed to create');
+				}
+
+				return {
+					data: user,
+					success: true,
+					errors: null
+				};
+			} catch (error) {
+				return {
+					data: null,
+					success: false,
+					errors: 'Failed to register'
+				};
+			}
+		} else {
+			return {
+				data: null,
+				success: false,
+				errors: 'User already exists'
 			};
 		}
 	}

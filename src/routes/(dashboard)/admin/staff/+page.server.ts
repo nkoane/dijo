@@ -1,21 +1,22 @@
 import { people } from '$lib/db/controllers/people';
-import { userRoleModel } from '$lib/db/models/userRole';
 import { userRepository } from '$lib/db/repositories/UserRepository';
-import type { c } from 'vite/dist/node/types.d-aGj9QkWt';
 import type { Actions, PageServerLoad } from './$types';
 
 import { superValidate } from 'sveltekit-superforms';
 import { getStaffSchema, type StaffSchema } from '$lib/schemas';
 import { zod } from 'sveltekit-superforms/adapters';
-import { z } from 'zod';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
+import type { UserRole, UserStatus } from '@prisma/client';
+import { userModel } from '$lib/db/models/user';
 
 let staffSchema: StaffSchema;
+let roles: UserRole[];
+let states: UserStatus[];
 
 export const load = (async ({ locals }) => {
 	const staff = await people.getAll();
-	const roles = await userRepository.getAllRoles(locals.user?.roleId);
-	const states = await userRepository.getAllStates();
+	roles = await userRepository.getAllRoles(locals.user?.roleId);
+	states = await userRepository.getAllStates();
 
 	staffSchema = getStaffSchema(roles, states);
 
@@ -32,20 +33,23 @@ export const load = (async ({ locals }) => {
 export const actions = {
 	default: async ({ request }) => {
 		const form = await superValidate(request, zod(staffSchema));
-		console.log(form);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		console.log('we are good to go with the form', form.data);
+		const person = form.data;
 
-		/*
-		const staff = await foodCategoryModel.create({
-			...form.data,
-			description: form.data.description || null
+		const result = await userRepository.create({
+			username: person.username,
+			password: person.password,
+			role: roles.find((role) => role.id.toString() === person.roleId)!.name,
+			state: states.find((state) => state.id.toString() === person.stateId)!.state
 		});
 
-		redirect(302, `/admin/staff/${staff.id}`);
-		*/
+		if (!result.success) {
+			return fail(500, { form, message: result.errors });
+		}
+
+		redirect(302, `/admin/staff/${result.data?.id}`);
 	}
 } satisfies Actions;

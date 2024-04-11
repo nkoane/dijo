@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { userRoleModel } from './db/models/userRole';
 import type { UserRole, UserStatus } from '@prisma/client';
+import { userModel } from './db/models/user';
 
 export const categorySchema = z.object({
 	name: z.string().trim().min(1),
@@ -52,7 +53,18 @@ export const getStaffSchema = (roles: UserRole[], states: UserStatus[]) => {
 		.refine((data) => data.password === data.confirm, {
 			message: "Passwords don't match",
 			path: ['confirm']
-		});
+		})
+		.refine(
+			async (data) => {
+				if (!data.username) return true;
+				return !(await userModel.doesUserExist(data.username));
+			},
+			{
+				message: 'Username already exists',
+				path: ['username']
+			}
+		);
+
 	return staffSchema;
 };
 
