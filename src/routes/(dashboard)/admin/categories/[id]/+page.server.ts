@@ -34,7 +34,6 @@ export const load = (async ({ params }) => {
 			foods: await foodCategoryModel.getFoods(id)
 		};
 	} catch (errors) {
-		console.error('(dashboard) admin categories [id] +page.server.ts', errors);
 		error(404, 'no such category');
 	}
 }) satisfies PageServerLoad;

@@ -2,19 +2,19 @@
 	import type { StaffSchema } from '$lib/schemas';
 	import type { SuperValidated, Infer } from 'sveltekit-superforms';
 	import type { UserRole, UserStatus } from '@prisma/client';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms';
 	import type { UserDetail } from '$lib/db/repositories/UserRepository';
 
 	export let roles: UserRole[];
 	export let states: UserStatus[];
 
 	export let data: SuperValidated<Infer<StaffSchema>>;
-	export let staff: UserDetail | undefined;
+	export let person: UserDetail | null;
 
 	const { form, errors } = superForm(data);
 </script>
 
-<form action="/admin/staff" method="post">
+<form method="post">
 	<p>
 		<input type="text" name="username" placeholder="Username" bind:value={$form.username} />
 		{#if $errors?.username}
@@ -71,7 +71,7 @@
 			<span class="my-2 block bg-red-200 text-xs">Uhmm, invalid role</span>
 		{/if}
 	</p>
-	<p><button type="submit">{!staff ? 'Create' : 'Alter'}</button></p>
+	<p><button type="submit">{!person ? 'Create' : 'Alter'}</button></p>
 </form>
 
 <style lang="postcss">

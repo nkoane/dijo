@@ -56,6 +56,21 @@ class Users {
 		return person;
 	}
 
+	public async isTheUsernameAvailable(username: string, id?: string): Promise<boolean> {
+		const user = await dbClient.user.findFirst({
+			where: { username }
+		});
+
+		if (user) {
+			if (id && user.id === id) {
+				return true;
+			}
+			return false;
+		}
+
+		return true;
+	}
+
 	public async doesUserExist(username: string): Promise<boolean> {
 		const user = await dbClient.user.findFirst({
 			where: { username }
@@ -116,6 +131,23 @@ class Users {
 				role: { connect: { name: role } },
 				state: { connect: { state: state } }
 			}
+		});
+
+		return this.getBy('id', user.id, false);
+	}
+
+	public async update(
+		id: string,
+		data: {
+			username?: string;
+			hashed_password?: string;
+			roleId?: number;
+			stateId?: number;
+		}
+	): Promise<UserSafe> {
+		const user = await dbClient.user.update({
+			where: { id },
+			data: data
 		});
 
 		return this.getBy('id', user.id, false);

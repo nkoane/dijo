@@ -81,14 +81,67 @@ class UserRepository {
 		}
 	}
 
+	public async modify(
+		id: string,
+		person: {
+			username?: string;
+			password?: string;
+			roleId?: string;
+			stateId?: string;
+		}
+	): Promise<{
+		data?: UserSafe | null;
+		success: boolean;
+		errors: string | null;
+	}> {
+		const user = await userModel.getBy('id', id);
+		if (!user) {
+			return {
+				data: null,
+				success: false,
+				errors: 'User not found'
+			};
+		}
+
+		const data: { username?: string; hashed_password?: string; roleId?: number; stateId?: number } =
+			{};
+
+		if (person.username) data.username = person.username;
+		if (person.password) data.hashed_password = await new Argon2id().hash(person.password);
+		if (person.roleId) data.roleId = parseInt(person.roleId);
+		if (person.stateId) data.stateId = parseInt(person.stateId);
+
+		if (Object.keys(data).length !== 0) {
+			const result = await userModel.update(id, data);
+			if (!result) {
+				return {
+					data: null,
+					success: false,
+					errors: 'Failed to modify'
+				};
+			}
+			return {
+				data: result,
+				success: true,
+				errors: null
+			};
+		}
+
+		return {
+			data: undefined,
+			success: true,
+			errors: null
+		};
+	}
+
 	public async create(person: {
 		username: string;
-		password: string;
+		password?: string;
 		role: string;
 		state: string;
 	}): Promise<{ data?: UserSafe | null; success: boolean; errors: string | null }> {
 		if ((await userModel.doesUserExist(person.username)) === false) {
-			const hashed_password = await new Argon2id().hash(person.password);
+			const hashed_password = await new Argon2id().hash(person.password ?? generateId(254));
 			try {
 				const user = await userModel.create({
 					id: generateId(15),

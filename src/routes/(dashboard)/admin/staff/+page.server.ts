@@ -15,9 +15,8 @@ let states: UserStatus[];
 
 export const load = (async ({ locals }) => {
 	const staff = await people.getAll();
-	roles = await userRepository.getAllRoles(locals.user?.roleId);
+	roles = (await userRepository.getAllRoles(locals.user?.roleId)).sort((a, b) => b.id - a.id);
 	states = await userRepository.getAllStates();
-
 	staffSchema = getStaffSchema(roles, states);
 
 	const form = await superValidate(zod(staffSchema));
