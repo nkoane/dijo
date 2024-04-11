@@ -1,12 +1,12 @@
-import type { Actions, PageServerLoad } from './$types';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
+import type { Actions, PageServerLoad } from './$types';
 
+import { userRepository } from '$lib/db/repositories/UserRepository';
 import { registerSchema } from '$lib/schemas';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { userRepository } from '$lib/db/repositories/UserRepository';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {
@@ -36,6 +36,8 @@ export const actions: Actions = {
 		}
 
 		const result = await userRepository.register(form.data);
+
+		console.log('auth.register', result);
 
 		if (!result.success) {
 			form.message = result.errors;
