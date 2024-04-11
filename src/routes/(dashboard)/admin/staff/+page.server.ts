@@ -5,25 +5,19 @@ import type { c } from 'vite/dist/node/types.d-aGj9QkWt';
 import type { Actions, PageServerLoad } from './$types';
 
 import { superValidate } from 'sveltekit-superforms';
-//import { staffSchema } from '$lib/schemas';
+import { getStaffSchema, type StaffSchema } from '$lib/schemas';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 import { fail } from '@sveltejs/kit';
 
-const userRoles = await userRoleModel.getAll();
-const userStates = await userRepository.getAllStates();
-
-const staffSchema = z.object({
-	firstName: z.string().trim().min(4),
-	lastName: z.string().trim().min(8),
-	roleId: z.enum(userRoles.map((role) => role.id.toString())),
-	stateId: z.enum(userStates.map((state) => state.id.toString()))
-});
+let staffSchema: StaffSchema;
 
 export const load = (async ({ locals }) => {
 	const staff = await people.getAll();
 	const roles = await userRepository.getAllRoles(locals.user?.roleId);
 	const states = await userRepository.getAllStates();
+
+	staffSchema = getStaffSchema(roles, states);
 
 	const form = await superValidate(zod(staffSchema));
 
@@ -43,13 +37,15 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		console.log('we are good to go with the form', form.data);
+
 		/*
 		const staff = await foodCategoryModel.create({
 			...form.data,
 			description: form.data.description || null
 		});
 
-		redirect(302, `/admin/categories/${staff.id}`);
+		redirect(302, `/admin/staff/${staff.id}`);
 		*/
 	}
 } satisfies Actions;

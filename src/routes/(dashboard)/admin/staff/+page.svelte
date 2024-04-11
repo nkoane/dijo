@@ -12,7 +12,7 @@
 		return new Date(date).toLocaleTimeString();
 	}
 
-	const { form } = superForm(data.form);
+	const { form, errors } = superForm(data.form);
 </script>
 
 <h3>staff</h3>
@@ -58,22 +58,55 @@
 		{/if}
 	</section>
 	<form action="/admin/staff" method="post">
-		<p><input type="text" name="username" placeholder="Username" /></p>
-		<p><input type="password" name="password" placeholder="Password" /></p>
+		<p>
+			<input type="text" name="username" placeholder="Username" bind:value={$form.username} />
+			{#if $errors?.username}
+				{#each $errors.username as message}
+					<span class="my-2 block bg-red-200 text-xs">{message}</span>
+				{/each}
+			{/if}
+		</p>
+		<p>
+			<input type="password" name="password" placeholder="Password" bind:value={$form.password} />
+			{#if $errors?.password}
+				{#each $errors.password as message}
+					<span class="my-2 block bg-red-200 text-xs">{message}</span>
+				{/each}
+			{/if}
+		</p>
+		<p>
+			<input
+				type="password"
+				name="confirm"
+				placeholder="Confirm password"
+				bind:value={$form.confirm} />
+			{#if $errors?.confirm}
+				{#each $errors.confirm as message}
+					<span class="my-2 block bg-red-200 text-xs">{message}</span>
+				{/each}
+			{/if}
+		</p>
 
 		<p>
 			<select name="roleId" id="role">
 				{#each roles as role (role.id)}
-					<option value={role.id}>{role.name}</option>
+					<option selected={role.id == parseInt($form.roleId)} value={role.id}>{role.name}</option>
 				{/each}
 			</select>
+			{#if $errors?.roleId}
+				<span class="my-2 block bg-red-200 text-xs">Uhmm, invalid role</span>
+			{/if}
 		</p>
 		<p>
-			<select name="statusId" id="status">
+			<select name="stateId" id="status">
 				{#each states as status (status.id)}
-					<option value={status.id}>{status.state}</option>
+					<option selected={status.id == parseInt($form.stateId)} value={status.id}
+						>{status.state}</option>
 				{/each}
 			</select>
+			{#if $errors?.stateId}
+				<span class="my-2 block bg-red-200 text-xs">Uhmm, invalid role</span>
+			{/if}
 		</p>
 		<p><button type="submit">Add</button></p>
 	</form>
