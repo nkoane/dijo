@@ -1,20 +1,20 @@
-import { superValidate, message } from 'sveltekit-superforms';
-import type { PageServerLoad } from './$types';
 import { categorySchema } from '$lib/schemas';
+import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import type { PageServerLoad } from './$types';
 
 import { foodCategoryModel } from '$lib/db/models/foodCategory';
-import { error, fail } from '@sveltejs/kit';
 import type { FoodCategory } from '@prisma/client';
+import { error, fail } from '@sveltejs/kit';
 import type { Actions } from '../$types';
 
 let id: number;
 let category: FoodCategory;
 
 export const load = (async ({ params }) => {
-	id = parseFloat(params.id);
+	id = Number.parseFloat(params.id);
 
-	if (isNaN(id) || !id) {
+	if (Number.isNaN(id) || !id) {
 		error(404, 'id must be a number');
 	}
 

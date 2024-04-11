@@ -1,16 +1,16 @@
-import type { Actions, PageServerLoad } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
-import { foodStatusModel } from '$lib/db/models/foodStatus';
-import { foodCategoryModel } from '$lib/db/models/foodCategory';
 import { foodModel } from '$lib/db/models/food';
+import { foodCategoryModel } from '$lib/db/models/foodCategory';
+import { foodStatusModel } from '$lib/db/models/foodStatus';
 import type { Food, FoodCategory, FoodStatus } from '@prisma/client';
+import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import type { Actions, PageServerLoad } from './$types';
 
 let categories: FoodCategory[];
-let statuses: FoodStatus[];
+let states: FoodStatus[];
 
 export const load = (async () => {
-	statuses = await foodStatusModel.getAll();
+	states = await foodStatusModel.getAll();
 	categories = await foodCategoryModel.getAll();
 
 	const foods = (await foodModel.getAll()) as unknown as (Food & {
@@ -18,13 +18,24 @@ export const load = (async () => {
 		status: FoodStatus | undefined;
 	})[];
 
+	/*
 	foods.forEach(async (food) => {
-		food.category = categories.find((category) => category.id == food.categoryId);
+		food.category = categories.find(
+			(category) => category.id == food.categoryId
+		);
 		food.status = statuses.find((status) => status.id == food.statusId);
 	});
+	*/
+
+	for (const food of foods) {
+		food.category = categories.find(
+			(category) => category.id === food.categoryId
+		);
+		food.status = states.find((status) => status.id === food.statusId);
+	}
 
 	return {
-		statuses,
+		states,
 		categories,
 		foods
 	};
@@ -46,9 +57,16 @@ export const actions: Actions = {
 		const foodSchema = z.object({
 			name: z.string().trim().min(1),
 			price: z.coerce.number().min(0),
-			// todo: not sure WTF is this a problem
-			categoryId: z.enum(categories.map((category) => category.id.toString())),
-			statusId: z.enum(statuses.map((status) => status.id.toString())),
+			categoryId: z.enum([
+				categories[0].id.toString(),
+				...categories
+					.splice(1, categories.length)
+					.map((category) => category.id.toString())
+			]),
+			statusId: z.enum([
+				states[0].id.toString(),
+				...states.splice(1, states.length).map((status) => status.id.toString())
+			]),
 			description: z.string().trim().optional(),
 			image: z.string().optional()
 		});
@@ -56,14 +74,7 @@ export const actions: Actions = {
 		const result = foodSchema.safeParse(data);
 
 		if (!result.success) {
-			const errors: { [key: string]: string[] } = {};
-			const formattedErrors = result.error.format();
-
-			Object.keys(data).forEach((objectKey) => {
-				if (formattedErrors[objectKey]) {
-					errors[objectKey] = formattedErrors[objectKey]._errors;
-				}
-			});
+			const errors = result.error.formErrors.fieldErrors;
 			return fail(400, { food: data, errors: errors });
 		}
 
@@ -73,12 +84,12 @@ export const actions: Actions = {
 			name: food.name,
 			description: food.description ?? '',
 			price: food.price,
-			categoryId: parseFloat(data.categoryId.toString()),
-			statusId: parseFloat(data.statusId.toString()),
+			categoryId: Number.parseFloat(data.categoryId.toString()),
+			statusId: Number.parseFloat(data.statusId.toString()),
 			image: food.image ?? ''
 		});
 
-		redirect(302, `/admin/food`);
+		redirect(302, '/admin/food');
 		// redirect(302, `/admin/food/${theFood.id}`);
 	}
 };

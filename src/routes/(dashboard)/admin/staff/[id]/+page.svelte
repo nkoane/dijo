@@ -1,7 +1,8 @@
 <script lang="ts">
 	import StaffForm from '$lib/components/app/people/StaffForm.svelte';
+	import type { PageData } from './$types';
 
-	export let data;
+	export let data: PageData;
 
 	const { states, roles, person } = data;
 </script>

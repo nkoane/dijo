@@ -1,9 +1,9 @@
+import type { FoodMenu } from '$lib/db';
+import { menu } from '$lib/db/controllers/menu';
+import type { Order } from '@prisma/client';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Actions } from './$types';
-import { menu } from '$lib/db/controllers/menu';
-import type { FoodMenu } from '$lib/db';
-import type { Order } from '@prisma/client';
 
 let foodMenu: FoodMenu = {};
 
@@ -36,30 +36,37 @@ export const actions = {
 			state: 'paid'
 		};
 
-		Array.from(formData.entries()).forEach(([key, value]) => {
-			const foodId = parseInt(key.replace(/[^0-9]+/g, ''));
-			const quantity = parseInt(value as string);
+		for (const [key, value] of formData.entries()) {
+			const foodId = Number.parseInt(key.replace(/[^0-9]+/g, ''));
+			const quantity = Number.parseInt(value as string);
 
-			if (isNaN(foodId) || isNaN(quantity)) {
+			if (Number.isNaN(foodId) || Number.isNaN(quantity)) {
 				fail(400, { success: false, message: 'Invalid order item' });
 			}
 			if (quantity > 0) {
 				const food = Object.values(foodMenu)
 					.flat()
 					.find((food) => food.id === foodId);
-				if (food == undefined) {
+				if (food === undefined) {
 					fail(400, { success: false, message: `Invalid food ${foodId} item` });
 				} else {
-					order.orderItems.push({ foodId: foodId, quantity: quantity, cost: food.price });
+					order.orderItems.push({
+						foodId: foodId,
+						quantity: quantity,
+						cost: food.price
+					});
 				}
 			}
-		});
+		}
 
 		if (order.orderItems.length === 0) {
 			fail(400, { success: false, message: 'No order items' });
 		}
 
-		order.cost = order.orderItems.reduce((acc, item) => acc + item.cost * item.quantity, 0);
+		order.cost = order.orderItems.reduce(
+			(acc, item) => acc + item.cost * item.quantity,
+			0
+		);
 		order.state = 'paid';
 
 		const { data, errors } = await menu.placeOrder(order);

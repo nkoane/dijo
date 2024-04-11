@@ -1,19 +1,17 @@
 <script lang="ts">
-	import '../app.pcss';
-	import { Flame, FlameKindling, Soup } from 'lucide-svelte';
 	import { page } from '$app/stores';
-	import { Toaster } from 'svelte-french-toast';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
-	import { createAvatar, type Result } from '@dicebear/core';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { lorelei } from '@dicebear/collection';
-	import socket from '$lib/stores/socket.js';
+	import { createAvatar } from '@dicebear/core';
+	import { Soup } from 'lucide-svelte';
+	import { Toaster } from 'svelte-french-toast';
+	import '../app.pcss';
 
 	const user = $page.data.user;
 
 	const avatar = createAvatar(lorelei, {
 		seed: user ? user.username : 'stranger'
-		// ... other options
 	}).toDataUriSync();
 </script>
 

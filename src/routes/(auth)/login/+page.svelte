@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { superForm } from 'sveltekit-superforms';
-	export let data;
+	import type { PageData } from './$types';
+	export let data: PageData;
 
 	const { errors, message } = superForm(data.form);
 </script>

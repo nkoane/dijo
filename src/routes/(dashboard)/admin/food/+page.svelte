@@ -1,7 +1,8 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	export let data, form;
 	import FoodForm from '$lib/components/app/food/FoodForm.svelte';
+	import type { ActionData, PageData } from './$types';
+
+	export let data: PageData, form: ActionData; // ActionData
 
 	let foods = data?.foods || [];
 	const sortingBy: string = '';
@@ -19,10 +20,16 @@
 					if (a.category && b.category) {
 						return a.category.name.localeCompare(b.category.name);
 					}
+					return 0;
 				});
 				break;
 			case 'status':
-				foods = foods.sort((a, b) => a.status.state.localeCompare(b.status.state));
+				foods = foods.sort((a, b) => {
+					if (a.status && b.status) {
+						return a.status.state.localeCompare(b.status.state);
+					}
+					return 0;
+				});
 				break;
 			default:
 				foods = foods.sort((a, b) => a.id - b.id);
@@ -37,15 +44,20 @@
 			<table>
 				<thead>
 					<tr>
-						<th><a data-sort="name" href="#sort-by-name" on:click={sort}>name</a></th>
+						<th
+							><a data-sort="name" href="#sort-by-name" on:click={sort}>name</a
+							></th>
 						<th>
-							<a data-sort="price" href="#sort-by-price" on:click={sort}>price</a>
+							<a data-sort="price" href="#sort-by-price" on:click={sort}
+								>price</a>
 						</th>
 						<th>
-							<a data-sort="category" href="#sort-by-category" on:click={sort}>category</a>
+							<a data-sort="category" href="#sort-by-category" on:click={sort}
+								>category</a>
 						</th>
 						<th>
-							<a data-sort="status" href="#sort-by-status" on:click={sort}>status</a>
+							<a data-sort="status" href="#sort-by-status" on:click={sort}
+								>status</a>
 						</th>
 					</tr>
 				</thead>
@@ -64,7 +76,7 @@
 			<p>No food found</p>
 		{/if}
 	</div>
-	<FoodForm {data} {form} />
+	<FoodForm states={data.states} {form} />
 </section>
 
 <style lang="postcss">

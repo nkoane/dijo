@@ -1,9 +1,9 @@
 import type { User, UserRole, UserStatus } from '@prisma/client';
-import { userModel, type UserSafe } from '../models/user';
-import { userStatusModel } from '../models/userStatus';
-import { userRoleModel } from '../models/userRole';
-import { Argon2id } from 'oslo/password';
 import { generateId } from 'lucia';
+import { Argon2id } from 'oslo/password';
+import { type UserSafe, userModel } from '../models/user';
+import { userRoleModel } from '../models/userRole';
+import { userStatusModel } from '../models/userStatus';
 
 export type UserDetail = UserSafe & { role?: UserRole; status?: UserStatus };
 
@@ -56,7 +56,13 @@ class UserRepository {
 		return person;
 	}
 
-	public async login({ username, password }: { username: string; password: string }): Promise<{
+	public async login({
+		username,
+		password
+	}: {
+		username: string;
+		password: string;
+	}): Promise<{
 		data?: User | null;
 		success: boolean;
 		errors: string | null;
@@ -64,11 +70,16 @@ class UserRepository {
 		try {
 			const user = (await userModel.getBy('username', username, true)) as User;
 
-			if ((await new Argon2id().verify(user.hashed_password, password)) === false) {
+			if (
+				(await new Argon2id().verify(user.hashed_password, password)) === false
+			) {
 				throw new Error(); //'Invalid credentials');
 			}
 
-			if (user.stateId !== this.states.find((status) => status.state === 'active')?.id) {
+			if (
+				user.stateId !==
+				this.states.find((status) => status.state === 'active')?.id
+			) {
 				return { success: false, errors: 'Account not activated' };
 			}
 
@@ -103,11 +114,16 @@ class UserRepository {
 			};
 		}
 
-		const data: { username?: string; hashed_password?: string; roleId?: number; stateId?: number } =
-			{};
+		const data: {
+			username?: string;
+			hashed_password?: string;
+			roleId?: number;
+			stateId?: number;
+		} = {};
 
 		if (person.username) data.username = person.username;
-		if (person.password) data.hashed_password = await new Argon2id().hash(person.password);
+		if (person.password)
+			data.hashed_password = await new Argon2id().hash(person.password);
 		if (person.roleId) data.roleId = parseInt(person.roleId);
 		if (person.stateId) data.stateId = parseInt(person.stateId);
 
@@ -137,18 +153,24 @@ class UserRepository {
 	public async create(person: {
 		username: string;
 		password?: string;
-		role: string;
-		state: string;
-	}): Promise<{ data?: UserSafe | null; success: boolean; errors: string | null }> {
+		roleId: number;
+		stateId: number;
+	}): Promise<{
+		data?: UserSafe | null;
+		success: boolean;
+		errors: string | null;
+	}> {
 		if ((await userModel.doesUserExist(person.username)) === false) {
-			const hashed_password = await new Argon2id().hash(person.password ?? generateId(254));
+			const hashed_password = await new Argon2id().hash(
+				person.password ?? generateId(254)
+			);
 			try {
 				const user = await userModel.create({
 					id: generateId(15),
 					username: person.username,
 					hashed_password,
-					role: person.role,
-					state: person.state
+					roleId: person.roleId,
+					stateId: person.stateId
 				});
 
 				if (!user) {
@@ -176,7 +198,13 @@ class UserRepository {
 		}
 	}
 
-	public async register({ username, password }: { username: string; password: string }): Promise<{
+	public async register({
+		username,
+		password
+	}: {
+		username: string;
+		password: string;
+	}): Promise<{
 		data?: UserSafe | null;
 		success: boolean;
 		errors: string | null;

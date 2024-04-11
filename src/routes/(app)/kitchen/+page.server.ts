@@ -29,7 +29,7 @@ export const actions = {
 	cancel: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'cancelled');
 
@@ -42,7 +42,7 @@ export const actions = {
 	refund: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'refunded');
 
@@ -55,7 +55,7 @@ export const actions = {
 	pay: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'paid');
 
@@ -68,7 +68,7 @@ export const actions = {
 	prepare: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'preparing');
 
@@ -84,7 +84,7 @@ export const actions = {
 	ready: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'ready');
 
@@ -97,7 +97,7 @@ export const actions = {
 	collect: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'collected');
 
@@ -110,7 +110,7 @@ export const actions = {
 	deliver: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'delivered');
 
@@ -123,7 +123,7 @@ export const actions = {
 	complete: async ({ request }) => {
 		const formData = await request.formData();
 
-		const orderId = parseInt(formData.get('orderId') as unknown as string, 10);
+		const orderId = Number.parseInt(formData.get('orderId') as unknown as string, 10);
 
 		const { data, errors } = await kitchen.updateOrder(orderId, 'completed');
 
