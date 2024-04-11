@@ -1,5 +1,5 @@
 import { lucia } from '$lib/server/auth';
-import { redirect, type Handle } from '@sveltejs/kit';
+import { type Handle, redirect } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	/*
@@ -14,7 +14,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	} else {
 		const { session, user } = await lucia.validateSession(sessionId);
 
-		if (session && session.fresh) {
+		if (session?.fresh) {
 			const sessionCookie = lucia.createSessionCookie(sessionId);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: '.',
@@ -35,16 +35,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	if (event.url.pathname.startsWith('/profile') && !event.locals.user) {
-		throw redirect(303, '/login?r=' + event.url.pathname);
+		throw redirect(303, `/login?r=${event.url.pathname}`);
 	}
 
 	if (event.url.pathname.startsWith('/admin')) {
 		if (!event.locals.user) {
-			throw redirect(303, '/login?r=' + event.url.pathname);
+			throw redirect(303, `/login?r=${event.url.pathname}`);
 		}
 
 		if (event.locals.user.roleId !== 1) {
-			throw redirect(303, '/admin?r=' + event.url.pathname);
+			throw redirect(303, `/admin?r=${event.url.pathname}`);
 		}
 	}
 
