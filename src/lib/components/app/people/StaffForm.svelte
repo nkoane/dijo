@@ -75,10 +75,6 @@
 </form>
 
 <style lang="postcss">
-	table tbody tr td {
-		@apply px-2;
-	}
-
 	form {
 		@apply flex w-1/4 flex-col gap-2;
 	}
