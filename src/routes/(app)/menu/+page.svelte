@@ -52,9 +52,9 @@
 	} = {
 		orderItems: [],
 		cost: 0,
-		paid: 20,
+		paid: 0,
 		isItPaid: function (): boolean {
-			return this.change() >= 0;
+			return this.change() >= 0 && this.orderItems.length > 0;
 		},
 		change: function (): number {
 			return this.paid - this.cost;
