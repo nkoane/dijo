@@ -37,12 +37,13 @@ class FoodRepository {
 
 			if (foods.length > 0) {
 				for (const food of foods) {
-					food.status = this.foodStates.find((s) => s.id === food.statusId) as FoodStatus;
+					food.status = this.foodStates.find(
+						(s) => s.id === food.statusId
+					) as FoodStatus;
 					food.category = category;
 				}
+				this.menu[category.name] = foods;
 			}
-
-			this.menu[category.name] = foods;
 		}
 		return this.menu;
 	}
