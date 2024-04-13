@@ -17,7 +17,8 @@
 		"format": "prettier --write .",
 		"db:generate": "pnpm dlx prisma generate",
 		"db:migrate": "pnpm dlx prisma migrate dev --name initial-deployment",
-		"db:seed": "pnpm dlx tsx ./prisma/seed.ts"
+		"db:seed": "pnpm dlx tsx ./prisma/seed.ts",
+		"start": "node server/index.js"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.6.4",
