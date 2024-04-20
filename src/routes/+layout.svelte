@@ -19,7 +19,7 @@
 	<title>dijo</title>
 </svelte:head>
 <Toaster />
-<main class="mx-auto mt-8 w-10/12">
+<main class="mx-auto mt-8 w-10/12 bg-blue-50">
 	<header class="mb-4 flex items-center justify-between gap-2 bg-gray-50 p-4">
 		<a
 			id="logo"
