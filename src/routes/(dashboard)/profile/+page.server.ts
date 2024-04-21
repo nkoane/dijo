@@ -1,9 +1,9 @@
-import { redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
 import {
-	userRepository,
-	type UserDetail
+	type UserDetail,
+	userRepository
 } from '$lib/db/repositories/UserRepository';
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
 export const load = (async ({ locals }) => {
 	if (!locals.user) {
