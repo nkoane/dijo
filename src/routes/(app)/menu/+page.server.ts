@@ -75,6 +75,8 @@ export const actions = {
 			return fail(400, { errors, message: 'I have a bad feeling about this.' });
 		}
 
+		// wonderful, if there is no errors; we need to fire off a server-side event
+		// to notify; but first, lets go test it somewhere
 		return {
 			order: await menu.getOrder((data as Order).id)
 		};
