@@ -4,7 +4,14 @@ import { Argon2id } from 'oslo/password';
 
 const seedUserRoles = async () => {
 	const rolesAlreadyExist = await dbClient.userRole.findMany();
-	const roles = ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'customer'];
+	const roles = [
+		'admin',
+		'manager',
+		'cashier',
+		'kitchen',
+		'waiter',
+		'customer'
+	];
 
 	for (let i = 0; i < rolesAlreadyExist.length; i++) {
 		const role = rolesAlreadyExist[i];
@@ -176,7 +183,10 @@ const seedAdminUser = async (reset = false, password?: string) => {
 	if (rootAlreadyExists) {
 		console.log('admin user, root already exists');
 		if (reset === true) {
-			console.log('we are bout to change the admin password with', reset_password);
+			console.log(
+				'we are bout to change the admin password with',
+				reset_password
+			);
 
 			await dbClient.user.update({
 				where: {
@@ -187,7 +197,11 @@ const seedAdminUser = async (reset = false, password?: string) => {
 					state: { connect: { state: 'active' } }
 				}
 			});
-			console.log('admin user, root — with password', reset_password, ' has been reset');
+			console.log(
+				'admin user, root — with password',
+				reset_password,
+				' has been reset'
+			);
 		}
 		return;
 	}
@@ -202,7 +216,11 @@ const seedAdminUser = async (reset = false, password?: string) => {
 		}
 	});
 
-	console.log('admin user, root — with password', reset_password, ' has been created');
+	console.log(
+		'admin user, root — with password',
+		reset_password,
+		' has been created'
+	);
 };
 
 export async function seed() {

@@ -1,14 +1,10 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import type { FoodDetail, OrderItemDetail } from '$lib/db/index.js';
-	import { io } from 'socket.io-client';
+	import type { FoodDetail } from '$lib/db/index.js';
 
 	import socket from '$lib/stores/socket.js';
 	import {
 		Beef,
 		GlassWater,
-		Key,
 		LeafyGreen,
 		SquareArrowRight,
 		SquareMinus,

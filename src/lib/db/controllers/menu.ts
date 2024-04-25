@@ -23,7 +23,7 @@ class Menu {
 		cost: number;
 		state: string;
 	}) {
-    // @todo right here, we need fire off a server-event with the order, and the kithen must listen it.
+		// @todo right here, we need fire off a server-event with the order, and the kithen must listen it.
 
 		return await orderRepository.createOrder(order);
 	}

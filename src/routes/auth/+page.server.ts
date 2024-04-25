@@ -1,6 +1,6 @@
 import { userRepository } from '$lib/db/repositories/UserRepository';
 import { loginSchema, registerSchema } from '$lib/schemas';
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
