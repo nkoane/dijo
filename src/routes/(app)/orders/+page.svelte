@@ -10,7 +10,7 @@
 	onMount(() => {
 		const anchors = document.querySelectorAll('nav#kitchen-nav a');
 
-		anchors.forEach((anchor, index) => {
+		anchors.forEach((anchor, _) => {
 			if (location.hash === (anchor as HTMLAnchorElement).hash) {
 				anchors.forEach((a, i) => a.classList.remove('selected'));
 				anchor.classList.add('selected');

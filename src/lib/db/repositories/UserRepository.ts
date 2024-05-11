@@ -124,8 +124,8 @@ class UserRepository {
 		if (person.username) data.username = person.username;
 		if (person.password)
 			data.hashed_password = await new Argon2id().hash(person.password);
-		if (person.roleId) data.roleId = parseInt(person.roleId);
-		if (person.stateId) data.stateId = parseInt(person.stateId);
+		if (person.roleId) data.roleId = Number.parseInt(person.roleId);
+		if (person.stateId) data.stateId = Number.parseInt(person.stateId);
 
 		if (Object.keys(data).length !== 0) {
 			const result = await userModel.update(id, data);
@@ -211,13 +211,14 @@ class UserRepository {
 	}> {
 		if ((await userModel.doesUserExist(username)) === false) {
 			const hashed_password = await new Argon2id().hash(password);
-			const role = await userRoleModel.getByRole('customer');
 			try {
 				const user = await userModel.create({
 					id: generateId(15),
 					username,
 					hashed_password,
-					role: role.name
+					roleId: this.roles.find((role) => role.name === 'customer')?.id ?? -1,
+					stateId:
+						this.states.find((state) => state.state === 'registering')?.id ?? -1
 				});
 
 				if (!user) {
@@ -230,6 +231,7 @@ class UserRepository {
 					errors: null
 				};
 			} catch (error) {
+				console.error(error);
 				return {
 					data: null,
 					success: false,
@@ -240,7 +242,7 @@ class UserRepository {
 			return {
 				data: null,
 				success: false,
-				errors: 'User already exists'
+				errors: 'user already exists'
 			};
 		}
 	}

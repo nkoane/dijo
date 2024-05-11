@@ -19,7 +19,7 @@
 	<title>dijo</title>
 </svelte:head>
 <Toaster />
-<main class="mx-auto mt-8 w-10/12">
+<main class="mx-auto mt-8 w-10/12 bg-blue-50">
 	<header class="mb-4 flex items-center justify-between gap-2 bg-gray-50 p-4">
 		<a
 			id="logo"
@@ -32,7 +32,7 @@
 			<ul class="flex items-center gap-4 uppercase">
 				{#if user}
 					{#if user.roleId < 5}
-						<li><a href="/kitchen">Kitchen</a></li>
+						<li><a href="/kitchen">Kök</a></li>
 						{#if user.roleId < 4}
 							<li><a href="/menu">Menu</a></li>
 							<li><a href="/orders">Orders</a></li>

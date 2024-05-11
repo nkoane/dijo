@@ -18,7 +18,7 @@
 	},
 	"files": {
 		"ignore": [
-			"src/components/ui",
+			"src/components",
 			"build",
 			".svelte-kit",
 			".git",

@@ -40,7 +40,7 @@
 
 <section class="mb-2 flex justify-between gap-2 border-b pb-4">
 	<div class="flex-grow rounded-md bg-gray-100 p-2">
-		{#if foods.length}
+		{#if foods.length > 0}
 			<table>
 				<thead>
 					<tr>
@@ -76,7 +76,11 @@
 			<p>No food found</p>
 		{/if}
 	</div>
-	<FoodForm states={data.states} {form} />
+	<FoodForm
+		states={data.states}
+		categories={data.categories}
+		food={null}
+		{form} />
 </section>
 
 <style lang="postcss">

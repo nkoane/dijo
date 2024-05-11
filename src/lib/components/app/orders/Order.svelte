@@ -5,7 +5,9 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	export let order: OrderDetail;
-	const getFormOrderAction = (state: string): { action: string; label: string }[] => {
+	const getFormOrderAction = (
+		state: string
+	): { action: string; label: string }[] => {
 		switch (state) {
 			case 'placed':
 				return [
@@ -33,7 +35,8 @@
 	};
 
 	const getTimeDifference = (): string => {
-		const diff: number = new Date().getTime() - new Date(order.updatedAt).getTime();
+		const diff: number =
+			new Date().getTime() - new Date(order.updatedAt).getTime();
 		const seconds = Math.floor(diff / 1000);
 		const minutes = Math.floor(seconds / 60);
 		const hours = Math.floor(minutes / 60);
@@ -60,7 +63,11 @@
 	});
 
 	onMount(() => {
-		if (['placed', 'paid', 'preparing', 'ready'].find((state) => state === order.status.state)) {
+		if (
+			['placed', 'paid', 'preparing', 'ready'].find(
+				(state) => state === order.status.state
+			)
+		) {
 			timerInterval = setInterval(() => {
 				durationCounter = getTimeDifference();
 			}, 1000) as unknown as number;

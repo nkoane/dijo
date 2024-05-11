@@ -16,7 +16,11 @@
 
 <form method="post">
 	<p>
-		<input type="text" name="username" placeholder="Username" bind:value={$form.username} />
+		<input
+			type="text"
+			name="username"
+			placeholder="Username"
+			bind:value={$form.username} />
 		{#if $errors?.username}
 			{#each $errors.username as message}
 				<span class="my-2 block bg-red-200 text-xs">{message}</span>
@@ -53,7 +57,8 @@
 	<p>
 		<select name="roleId" id="role">
 			{#each roles as role (role.id)}
-				<option selected={role.id == parseInt($form.roleId)} value={role.id}>{role.name}</option>
+				<option selected={role.id == parseInt($form.roleId)} value={role.id}
+					>{role.name}</option>
 			{/each}
 		</select>
 		{#if $errors?.roleId}
@@ -63,8 +68,9 @@
 	<p>
 		<select name="stateId" id="status">
 			{#each states as status (status.id)}
-				<option selected={status.id == parseInt($form.stateId)} value={status.id}
-					>{status.state}</option>
+				<option
+					selected={status.id == parseInt($form.stateId)}
+					value={status.id}>{status.state}</option>
 			{/each}
 		</select>
 		{#if $errors?.stateId}

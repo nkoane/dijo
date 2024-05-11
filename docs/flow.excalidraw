@@ -1,0 +1,48 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor",
+  "elements": [
+    {
+      "id": "1cYMDmetJhqBZCrQ-Ex9o",
+      "type": "text",
+      "x": 294.8671875,
+      "y": 139.7109375,
+      "width": 102.17990112304688,
+      "height": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": null,
+      "seed": 2132118760,
+      "version": 56,
+      "versionNonce": 834158744,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1713672546458,
+      "link": null,
+      "locked": false,
+      "text": "application\nflow,\nwe need\nmermaid.",
+      "fontSize": 20,
+      "fontFamily": 1,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "baseline": 93,
+      "containerId": null,
+      "originalText": "application\nflow,\nwe need\nmermaid.",
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

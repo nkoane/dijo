@@ -1,14 +1,10 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import type { FoodDetail, OrderItemDetail } from '$lib/db/index.js';
-	import { io } from 'socket.io-client';
+	import type { FoodDetail } from '$lib/db/index.js';
 
 	import socket from '$lib/stores/socket.js';
 	import {
 		Beef,
 		GlassWater,
-		Key,
 		LeafyGreen,
 		SquareArrowRight,
 		SquareMinus,
@@ -47,13 +43,15 @@
 		}[];
 		cost: number;
 		paid: number;
-		isItPaid: boolean;
+		isItPaid(): boolean;
 		change: () => number;
 	} = {
 		orderItems: [],
 		cost: 0,
-		paid: 20,
-		isItPaid: false,
+		paid: 0,
+		isItPaid: function (): boolean {
+			return this.change() >= 0 && this.orderItems.length > 0;
+		},
 		change: function (): number {
 			return this.paid - this.cost;
 		}
@@ -125,10 +123,6 @@
 
 		order.cost = order.orderItems.reduce((acc, item) => acc + item.cost, 0);
 	};
-
-	if (order.cost > 0) {
-		order.isItPaid = order.change() >= 0;
-	}
 
 	if (form?.order) {
 		$socket.emit('menu-order-placed', { order: form.order });
@@ -247,7 +241,7 @@
 				class="place flex justify-end border-b-4 border-white px-4 font-bold">
 				<button
 					type="submit"
-					disabled={!order.isItPaid}
+					disabled={!order.isItPaid()}
 					id="order-food"
 					class="my-2 flex gap-2 uppercase disabled:cursor-not-allowed disabled:text-gray-400">
 					<span>order</span>

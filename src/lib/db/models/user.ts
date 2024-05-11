@@ -28,7 +28,7 @@ class Users {
 	public async getBy(
 		key: string,
 		value: string | number | Date,
-		withHashedPassword: boolean = false
+		withHashedPassword = false
 	): Promise<User | UserSafe> {
 		let person: User | UserSafe;
 		if (withHashedPassword === true) {
@@ -50,7 +50,7 @@ class Users {
 		}
 
 		if (!person) {
-			throw new Error(`A person with that ${key}: [${value}], does not exist`);
+			throw new Error(`a person with that ${key}: [${value}], does not exist`);
 		}
 
 		return person;
@@ -134,7 +134,7 @@ class Users {
 				id: id,
 				username: username,
 				hashed_password: hashed_password,
-				roleId: stateId,
+				roleId: roleId,
 				stateId: stateId
 			}
 		});

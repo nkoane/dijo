@@ -13,7 +13,9 @@ class Foods {
 		return Foods.instance;
 	}
 
-	public async create(food: Omit<Food, 'id' | 'createdAt' | 'updatedAt'>): Promise<Food> {
+	public async create(
+		food: Omit<Food, 'id' | 'createdAt' | 'updatedAt'>
+	): Promise<Food> {
 		return await dbClient.food.create({
 			data: {
 				name: food.name,
@@ -52,7 +54,11 @@ class Foods {
 		return foods;
 	}
 
-	public async getBy(options: { categoryId?: number; statusId?: number; state?: string }) {
+	public async getBy(options: {
+		categoryId?: number;
+		statusId?: number;
+		state?: string;
+	}) {
 		const foods = await dbClient.food.findMany({
 			where: {
 				categoryId: options.categoryId,

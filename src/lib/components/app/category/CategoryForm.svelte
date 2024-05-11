@@ -23,7 +23,10 @@
 		</p>
 		<p>
 			<label for="description">description</label>
-			<textarea name="description" id="description" bind:value={$form.description}></textarea>
+			<textarea
+				name="description"
+				id="description"
+				bind:value={$form.description}></textarea>
 		</p>
 		<p><button>{category ? 'Edit' : 'Add'}</button></p>
 	</form>
