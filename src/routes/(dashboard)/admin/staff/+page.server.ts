@@ -2,12 +2,11 @@ import { people } from '$lib/db/controllers/people';
 import { userRepository } from '$lib/db/repositories/UserRepository';
 import type { Actions, PageServerLoad } from './$types';
 
-import { superValidate } from 'sveltekit-superforms';
-import { getStaffSchema, type StaffSchema } from '$lib/schemas';
-import { zod } from 'sveltekit-superforms/adapters';
-import { fail, redirect } from '@sveltejs/kit';
+import { type StaffSchema, getStaffSchema } from '$lib/schemas';
 import type { UserRole, UserStatus } from '@prisma/client';
-import { userModel } from '$lib/db/models/user';
+import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 
 let staffSchema: StaffSchema;
 let roles: UserRole[];
@@ -15,7 +14,9 @@ let states: UserStatus[];
 
 export const load = (async ({ locals }) => {
 	const staff = await people.getAll();
-	roles = (await userRepository.getAllRoles(locals.user?.roleId)).sort((a, b) => b.id - a.id);
+	roles = (await userRepository.getAllRoles(locals.user?.roleId)).sort(
+		(a, b) => b.id - a.id
+	);
 	states = await userRepository.getAllStates();
 	staffSchema = getStaffSchema(roles, states);
 
@@ -41,8 +42,8 @@ export const actions = {
 		const result = await userRepository.create({
 			username: person.username,
 			password: person.password,
-			role: roles.find((role) => role.id.toString() === person.roleId)!.name,
-			state: states.find((state) => state.id.toString() === person.stateId)!.state
+			roleId: Number.parseInt(person.roleId),
+			stateId: Number.parseInt(person.stateId)
 		});
 
 		if (!result.success) {

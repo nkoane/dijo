@@ -1,6 +1,5 @@
-import { z } from 'zod';
-import { userRoleModel } from './db/models/userRole';
 import type { UserRole, UserStatus } from '@prisma/client';
+import { z } from 'zod';
 import { userModel } from './db/models/user';
 
 export const categorySchema = z.object({
@@ -40,7 +39,11 @@ export const getStaffSchema = (roles: UserRole[], states: UserStatus[]) => {
 					/^[a-zA-Z0-9_-]+$/,
 					'username can only contain letters, numbers, underscores, and hyphens'
 				),
-			password: z.string().trim().min(8, 'password must be at least 8 characters long').optional(),
+			password: z
+				.string()
+				.trim()
+				.min(8, 'password must be at least 8 characters long')
+				.optional(),
 			confirm: z.string().trim().min(8).optional(),
 			roleId: z.enum([
 				roles[0].id.toString(),
@@ -60,7 +63,7 @@ export const getStaffSchema = (roles: UserRole[], states: UserStatus[]) => {
 				return true;
 			},
 			{
-				message: "Passwords don't match",
+				message: "passwords don't match",
 				path: ['confirm']
 			}
 		)
@@ -76,7 +79,7 @@ export const getStaffSchema = (roles: UserRole[], states: UserStatus[]) => {
 				return isTheUsernameAvailable;
 			},
 			{
-				message: 'Username already exists',
+				message: 'username already exists',
 				path: ['username']
 			}
 		);

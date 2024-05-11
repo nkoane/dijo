@@ -1,16 +1,17 @@
 <script lang="ts">
+	import OrdersTable from '$lib/components/app/orders/Orders.svelte';
 	import type { Orders } from '$lib/db/index.js';
 	import { onMount } from 'svelte';
-	import OrdersTable from '$lib/components/app/orders/Orders.svelte';
+	import type { PageData } from './$types';
 
-	export let data;
-	let orders: Orders = data?.orders || {};
+	export let data: PageData;
+	const orders: Orders = data?.orders || {};
 
 	onMount(() => {
 		const anchors = document.querySelectorAll('nav#kitchen-nav a');
 
-		anchors.forEach((anchor, index) => {
-			if (location.hash == (anchor as HTMLAnchorElement).hash) {
+		anchors.forEach((anchor, _) => {
+			if (location.hash === (anchor as HTMLAnchorElement).hash) {
 				anchors.forEach((a, i) => a.classList.remove('selected'));
 				anchor.classList.add('selected');
 			}

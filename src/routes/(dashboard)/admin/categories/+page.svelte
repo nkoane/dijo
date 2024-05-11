@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CategoryForm from '$lib/components/app/category/CategoryForm.svelte';
-	export let data;
+	import type { PageData } from '../$types';
+	export let data: PageData;
 
 	const categories = data.categories;
 	const category = null;
@@ -21,7 +22,9 @@
 				<tbody class="divide-y">
 					{#each categories as category}
 						<tr class=" divide-x border">
-							<td><a href="/admin/categories/{category.id}">{category.name}</a></td>
+							<td
+								><a href="/admin/categories/{category.id}">{category.name}</a
+								></td>
 							<td>{category.description ?? ''}</td>
 							<td>{category.foods?.length ?? '0'}</td>
 						</tr>

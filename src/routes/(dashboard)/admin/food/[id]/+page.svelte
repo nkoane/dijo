@@ -1,8 +1,9 @@
 <script lang="ts">
-	export let data;
-	export let form;
 	import FoodForm from '$lib/components/app/food/FoodForm.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import type { ActionData, PageData } from './$types';
+
+	export let data: PageData;
+	export let form: ActionData;
 
 	const food = data?.food;
 </script>
@@ -24,5 +25,5 @@
 			<p>No food found</p>
 		{/if}
 	</div>
-	<FoodForm {data} {form} />
+	<FoodForm categories={data.categories} states={data.states} {form} {food} />
 </section>

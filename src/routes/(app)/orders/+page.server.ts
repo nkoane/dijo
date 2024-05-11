@@ -18,6 +18,9 @@ export const load = (async ({ locals }) => {
 	return {
 		orders,
 		statuses,
-		totalOrders: Object.keys(orders).reduce((acc, key) => acc + orders[key].length, 0)
+		totalOrders: Object.keys(orders).reduce(
+			(acc, key) => acc + orders[key].length,
+			0
+		)
 	};
 }) satisfies PageServerLoad;

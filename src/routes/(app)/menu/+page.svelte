@@ -1,30 +1,30 @@
 <script lang="ts">
-	import { io } from 'socket.io-client';
-	import { goto } from '$app/navigation';
-	import { enhance, applyAction } from '$app/forms';
-	import type { FoodDetail, OrderItemDetail } from '$lib/db/index.js';
+	import type { FoodDetail } from '$lib/db/index.js';
 
 	import socket from '$lib/stores/socket.js';
-
 	import {
-		Wheat,
 		Beef,
-		LeafyGreen,
 		GlassWater,
+		LeafyGreen,
 		SquareArrowRight,
-		SquarePlus,
 		SquareMinus,
+		SquarePlus,
 		Trash,
-		Key
+		Wheat
 	} from 'lucide-svelte';
+	import type { ActionData, PageData } from './$types';
 
-	export let data;
-	export let form;
+	export let data: PageData;
+	export let form: ActionData;
 
 	const { menu } = data;
 
 	type Icon = {
-		[category: string]: typeof Wheat | typeof Beef | typeof LeafyGreen | typeof GlassWater;
+		[category: string]:
+			| typeof Wheat
+			| typeof Beef
+			| typeof LeafyGreen
+			| typeof GlassWater;
 	};
 
 	const categoryIcons: Icon = {
@@ -34,7 +34,7 @@
 		Beverages: GlassWater
 	};
 
-	let order: {
+	const order: {
 		orderItems: {
 			foodId: number;
 			quantity: number;
@@ -43,39 +43,41 @@
 		}[];
 		cost: number;
 		paid: number;
-		isItPaid: boolean;
+		isItPaid(): boolean;
 		change: () => number;
 	} = {
 		orderItems: [],
 		cost: 0,
-		paid: 20,
-		isItPaid: false,
+		paid: 0,
+		isItPaid: function (): boolean {
+			return this.change() >= 0 && this.orderItems.length > 0;
+		},
 		change: function (): number {
 			return this.paid - this.cost;
 		}
 	};
 
 	const addOrRemoveFoodItem = (ev: SubmitEvent) => {
-		if (ev.submitter == undefined) {
+		if (ev.submitter === undefined) {
 			alert('no submitter item selected');
 			return;
 		}
 
-		const foodId = parseInt(ev.submitter.dataset.foodId as string, 10);
-		const action = ev.submitter.dataset.foodAction as string;
+		const foodId = Number.parseInt(ev.submitter?.dataset.foodId as string, 10);
+		const action = ev.submitter?.dataset.foodAction as string;
 
 		const food = Object.values(menu)
 			.flat()
 			.find((food) => food.id === foodId);
 
-		if (food == undefined) {
+		if (food === undefined) {
 			alert('no food item found');
 			return;
 		}
 		let orderItem = order.orderItems.find((item) => item.foodId === foodId);
 
-		if (orderItem == undefined) {
-			if (action == 'decrease' || action == 'trash') return;
+		if (orderItem === undefined) {
+			if (action === 'decrease' || action === 'trash') return;
 
 			orderItem = {
 				foodId: food.id,
@@ -86,23 +88,34 @@
 			order.orderItems = [...order.orderItems, orderItem];
 		}
 
-		if (action == 'trash') {
-			order.orderItems = order.orderItems.filter((item) => item.foodId !== foodId);
+		if (action === 'trash') {
+			order.orderItems = order.orderItems.filter(
+				(item) => item.foodId !== foodId
+			);
 		}
 
-		if (action == 'increase' || action == 'decrease') {
-			orderItem.quantity = action == 'increase' ? orderItem.quantity + 1 : orderItem.quantity - 1;
+		if (action === 'increase' || action === 'decrease') {
+			orderItem.quantity =
+				action === 'increase' ? orderItem.quantity + 1 : orderItem.quantity - 1;
 			orderItem.cost = orderItem.quantity * food.price;
 
-			if (action == 'decrease' && orderItem.quantity == 0) {
-				order.orderItems = order.orderItems.filter((item) => item.foodId !== foodId);
+			if (action === 'decrease' && orderItem.quantity === 0) {
+				order.orderItems = order.orderItems.filter(
+					(item) => item.foodId !== foodId
+				);
 			}
 		}
-		if (order.orderItems.length != 0) {
+		if (order.orderItems.length !== 0) {
 			order.orderItems = order.orderItems
 				.filter((item) => item !== undefined)
 				.map(
-					(item) => item as { foodId: number; quantity: number; cost: number; food: FoodDetail }
+					(item) =>
+						item as {
+							foodId: number;
+							quantity: number;
+							cost: number;
+							food: FoodDetail;
+						}
 				);
 		} else {
 			order.paid = 0;
@@ -111,11 +124,7 @@
 		order.cost = order.orderItems.reduce((acc, item) => acc + item.cost, 0);
 	};
 
-	$: if (order.cost > 0) {
-		order.isItPaid = order.change() >= 0;
-	}
-
-	$: if (form?.order) {
+	if (form?.order) {
 		$socket.emit('menu-order-placed', { order: form.order });
 	}
 </script>
@@ -126,7 +135,9 @@
 		<form method="post" on:submit|preventDefault={addOrRemoveFoodItem}>
 			{#each Object.keys(menu) as category}
 				<dl class="bg-gray-50 px-4">
-					<dt class="mb-2 border-b border-t py-2 text-xl font-bold">{category}</dt>
+					<dt class="mb-2 border-b border-t py-2 text-xl font-bold">
+						{category}
+					</dt>
 					<dd class="flex gap-2">
 						{#each menu[category] as food}
 							<ul class="flex w-full justify-between">
@@ -135,11 +146,18 @@
 									<p>{food.description}</p>
 									<p>R{food.price}</p>
 								</li>
-								<li class=" flex flex-col justify-between bg-blue-100 px-2 py-2">
-									<button type="submit" data-food-action="decrease" data-food-id={food.id}>
+								<li
+									class=" flex flex-col justify-between bg-blue-100 px-2 py-2">
+									<button
+										type="submit"
+										data-food-action="decrease"
+										data-food-id={food.id}>
 										<SquareMinus size="32" strokeWidth="1" />
 									</button>
-									<button type="submit" data-food-action="increase" data-food-id={food.id}>
+									<button
+										type="submit"
+										data-food-action="increase"
+										data-food-id={food.id}>
 										<SquarePlus size="32" strokeWidth="1" />
 									</button>
 								</li>
@@ -212,14 +230,18 @@
 		<form method="post">
 			{#if order.orderItems.length > 0}
 				{#each order.orderItems as item}
-					<input type="hidden" name="item-food-{item.food.id}" value={item.quantity} />
+					<input
+						type="hidden"
+						name="item-food-{item.food.id}"
+						value={item.quantity} />
 				{/each}
 			{/if}
 
-			<div class="place flex justify-end border-b-4 border-white px-4 font-bold">
+			<div
+				class="place flex justify-end border-b-4 border-white px-4 font-bold">
 				<button
 					type="submit"
-					disabled={!order.isItPaid}
+					disabled={!order.isItPaid()}
 					id="order-food"
 					class="my-2 flex gap-2 uppercase disabled:cursor-not-allowed disabled:text-gray-400">
 					<span>order</span>

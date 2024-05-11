@@ -1,5 +1,10 @@
 import type { OrderStatus } from '@prisma/client';
-import type { FoodDetail, OrderDetail, OrderItemDetail, Orders } from './../index';
+import type {
+	FoodDetail,
+	OrderDetail,
+	OrderItemDetail,
+	Orders
+} from './../index';
 
 import { foodModel } from '../models/food';
 import { foodCategoryModel } from '../models/foodCategory';
@@ -22,7 +27,7 @@ class OrderRepository {
 	}
 
 	public async getOrderStates(): Promise<OrderStatus[]> {
-		if (this.orderStates.length == 0) {
+		if (this.orderStates.length === 0) {
 			this.orderStates = await orderStatusModel.getAll();
 		}
 
@@ -34,12 +39,18 @@ class OrderRepository {
 			const order = (await orderModel.getById(id)) as OrderDetail;
 
 			order.status = await orderStatusModel.getById(order.statusId as number);
-			order.items = (await orderModel.getOrderItems(order.id)) as OrderItemDetail[];
+			order.items = (await orderModel.getOrderItems(
+				order.id
+			)) as OrderItemDetail[];
 			for (const item of order.items) {
 				item.food = (await foodModel.getById(item.foodId)) as FoodDetail;
 				if (item.food) {
-					item.food.status = await foodStatusModel.getById(item.food.statusId as number);
-					item.food.category = await foodCategoryModel.getById(item.food.categoryId);
+					item.food.status = await foodStatusModel.getById(
+						item.food.statusId as number
+					);
+					item.food.category = await foodCategoryModel.getById(
+						item.food.categoryId
+					);
 				}
 			}
 			return order;
@@ -58,16 +69,24 @@ class OrderRepository {
 			: this.orderStates;
 
 		for (const status of statuses) {
-			const statusOrders = (await orderModel.getByStatus(status.id)) as OrderDetail[];
-			if (statusOrders.length != 0) {
+			const statusOrders = (await orderModel.getByStatus(
+				status.id
+			)) as OrderDetail[];
+			if (statusOrders.length !== 0) {
 				for (const order of statusOrders) {
 					order.status = status;
-					order.items = (await orderModel.getOrderItems(order.id)) as OrderItemDetail[];
+					order.items = (await orderModel.getOrderItems(
+						order.id
+					)) as OrderItemDetail[];
 					for (const item of order.items) {
 						item.food = (await foodModel.getById(item.foodId)) as FoodDetail;
 						if (item.food) {
-							item.food.status = await foodStatusModel.getById(item.food.statusId as number);
-							item.food.category = await foodCategoryModel.getById(item.food.categoryId);
+							item.food.status = await foodStatusModel.getById(
+								item.food.statusId as number
+							);
+							item.food.category = await foodCategoryModel.getById(
+								item.food.categoryId
+							);
 						}
 					}
 				}

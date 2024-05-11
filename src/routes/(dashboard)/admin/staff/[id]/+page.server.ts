@@ -1,10 +1,13 @@
+import {
+	type UserDetail,
+	userRepository
+} from '$lib/db/repositories/UserRepository';
+import { type StaffSchema, getStaffSchema } from '$lib/schemas';
+import type { UserRole, UserStatus } from '@prisma/client';
 import { error, fail, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
-import { userRepository, type UserDetail } from '$lib/db/repositories/UserRepository';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { getStaffSchema, type StaffSchema } from '$lib/schemas';
-import type { UserRole, UserStatus } from '@prisma/client';
+import type { Actions, PageServerLoad } from './$types';
 
 let id: string;
 let person: UserDetail;
@@ -17,13 +20,15 @@ export const load = (async ({ params, locals }) => {
 
 	if (!id) {
 		error(404, 'id does not exist');
-	} else if (id == locals.user?.id.toString()) {
+	} else if (id === locals.user?.id.toString()) {
 		redirect(302, '/profile');
 	}
 
 	try {
 		person = await userRepository.get(id);
-		roles = (await userRepository.getAllRoles(locals.user?.roleId)).sort((a, b) => b.id - a.id);
+		roles = (await userRepository.getAllRoles(locals.user?.roleId)).sort(
+			(a, b) => b.id - a.id
+		);
 		states = await userRepository.getAllStates();
 
 		staffSchema = getStaffSchema(roles, states);

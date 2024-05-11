@@ -4,7 +4,14 @@ import { Argon2id } from 'oslo/password';
 
 const seedUserRoles = async () => {
 	const rolesAlreadyExist = await dbClient.userRole.findMany();
-	const roles = ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'customer'];
+	const roles = [
+		'admin',
+		'manager',
+		'cashier',
+		'kitchen',
+		'waiter',
+		'customer'
+	];
 
 	for (let i = 0; i < rolesAlreadyExist.length; i++) {
 		const role = rolesAlreadyExist[i];
@@ -164,30 +171,37 @@ const resetUserSessions = async () => {
 	console.log('user sessions have been cleared');
 };
 
-const seedAdminUser = async (reset: boolean = false, password?: string) => {
+const seedAdminUser = async (reset = false, password?: string) => {
 	const rootAlreadyExists = await dbClient.user.findFirst({
 		where: {
 			username: 'root'
 		}
 	});
 
-	password = password ?? 'dijo-tse-monate';
+	const reset_password = password ?? 'dijo-tse-monate';
 
 	if (rootAlreadyExists) {
 		console.log('admin user, root already exists');
 		if (reset === true) {
-			console.log('we are bout to change the admin password with', password);
+			console.log(
+				'we are bout to change the admin password with',
+				reset_password
+			);
 
 			await dbClient.user.update({
 				where: {
 					id: rootAlreadyExists.id
 				},
 				data: {
-					hashed_password: await new Argon2id().hash(password),
+					hashed_password: await new Argon2id().hash(reset_password),
 					state: { connect: { state: 'active' } }
 				}
 			});
-			console.log('admin user, root — with password', password, ' has been reset');
+			console.log(
+				'admin user, root — with password',
+				reset_password,
+				' has been reset'
+			);
 		}
 		return;
 	}
@@ -196,13 +210,17 @@ const seedAdminUser = async (reset: boolean = false, password?: string) => {
 		data: {
 			id: generateId(15),
 			username: 'root',
-			hashed_password: await new Argon2id().hash(password),
+			hashed_password: await new Argon2id().hash(reset_password),
 			state: { connect: { state: 'active' } },
 			role: { connect: { name: 'admin' } }
 		}
 	});
 
-	console.log('admin user, root — with password', password, ' has been created');
+	console.log(
+		'admin user, root — with password',
+		reset_password,
+		' has been created'
+	);
 };
 
 export async function seed() {

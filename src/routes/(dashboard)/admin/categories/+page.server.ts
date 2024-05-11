@@ -12,7 +12,9 @@ let category: FoodCategory;
 
 export const load = (async () => {
 	const form = await superValidate(zod(categorySchema));
-	const categories = (await foodCategoryModel.getAll()) as (FoodCategory & { foods: Food[] })[];
+	const categories = (await foodCategoryModel.getAll()) as (FoodCategory & {
+		foods: Food[];
+	})[];
 
 	for (const category of categories) {
 		category.foods = await foodCategoryModel.getFoods(category.id);

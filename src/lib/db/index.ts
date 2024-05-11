@@ -1,8 +1,18 @@
-import type { Food, FoodCategory, FoodStatus, Order, OrderItem, OrderStatus } from '@prisma/client';
+import type {
+	Food,
+	FoodCategory,
+	FoodStatus,
+	Order,
+	OrderItem,
+	OrderStatus
+} from '@prisma/client';
 
 export type FoodDetail = Food & { status: FoodStatus; category: FoodCategory };
 export type OrderItemDetail = OrderItem & { food: FoodDetail };
-export type OrderDetail = Order & { items: OrderItemDetail[]; status: OrderStatus };
+export type OrderDetail = Order & {
+	items: OrderItemDetail[];
+	status: OrderStatus;
+};
 export type Orders = { [key: string]: OrderDetail[] };
 
 export type FoodMenu = { [key: string]: FoodDetail[] };
@@ -13,7 +23,13 @@ export function createTimeDifference(
 ): {
 	id: number;
 	date: Date;
-	diff: { seconds: number; minutes: number; hours: number; days: number; value: number };
+	diff: {
+		seconds: number;
+		minutes: number;
+		hours: number;
+		days: number;
+		value: number;
+	};
 	words: string;
 } {
 	const diff = new Date().getTime() - new Date(date).getTime();

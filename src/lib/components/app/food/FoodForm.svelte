@@ -1,10 +1,15 @@
 <script lang="ts">
-	import type { PageData, ActionData } from './$types';
 	import Button from '$lib/components/ui/button/button.svelte';
-	export let data: PageData;
+	import type { Food, FoodCategory, FoodStatus } from '@prisma/client';
+	import type { ActionData } from '/$types';
 	export let form: ActionData;
 
-	const food = data?.food || {};
+	export let food: Food | null;
+
+	export let states: FoodStatus[];
+	export let categories: FoodCategory[];
+
+	//const food = data?.food || {};
 </script>
 
 <form method="post" class="flex flex-col gap-4">
@@ -14,7 +19,9 @@
 			name="name"
 			id="name"
 			placeholder="name of food"
-			value={form?.food?.name ? form?.food.name.toString() : food.name ?? ''} />
+			value={form?.food?.name
+				? form?.food.name.toString()
+				: food?.name ?? ''} />
 		{#if form?.errors?.name}
 			<span>{form.errors.name}</span>
 		{/if}
@@ -24,28 +31,35 @@
 			name="description"
 			id="description"
 			placeholder="description of food"
-			value={form?.food?.description ? form?.food.description.toString() : food.description ?? ''}
-		></textarea>
+			value={form?.food?.description
+				? form?.food.description.toString()
+				: food?.description ?? ''}></textarea>
 	</p>
 	<p>
 		<select name="statusId" id="status">
-			{#each data?.statuses as status}
+			{#each states as status}
 				<option
 					value={status.id}
 					selected={form?.food?.statusId
 						? form?.food.statusId == status.id
-						: food.statusId == status.id}>{status.state}</option>
+						: food?.statusId == status.id}>{status.state}</option>
 			{/each}
 		</select>
+		{#if form?.errors?.statusId}
+			<span>{form.errors.statusId}</span>
+		{/if}
 		<select name="categoryId" id="category">
-			{#each data?.categories as category}
+			{#each categories as category}
 				<option
 					value={category.id}
 					selected={form?.food?.categoryId
 						? form?.food.categoryId == category.id
-						: food.categoryId == category.id}>{category.name}</option>
+						: food?.categoryId == category.id}>{category.name}</option>
 			{/each}
 		</select>
+		{#if form?.errors?.categoryId}
+			<span>{form.errors.categoryId}</span>
+		{/if}
 	</p>
 	<p class={form?.errors?.price ? 'error mb-0' : ''}>
 		<input
@@ -53,7 +67,9 @@
 			name="price"
 			id="price"
 			placeholder="price of food"
-			value={form?.food?.price ? form?.food.price.toString() : food.price ?? 0} />
+			value={form?.food?.price
+				? form?.food.price.toString()
+				: food?.price ?? 0} />
 		{#if form?.errors?.price}
 			<span>{form.errors.price}</span>
 		{/if}
@@ -62,7 +78,7 @@
 		<input type="file" name="image" id="image" placeholder="image of food" />
 	</p>
 
-	<Button type="submit">{data?.food?.id ? 'Edit' : 'Create'}</Button>
+	<Button type="submit">{food?.id ? 'Edit' : 'Create'}</Button>
 </form>
 
 <style lang="postcss">

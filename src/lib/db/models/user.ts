@@ -1,5 +1,5 @@
-import { dbClient } from './../client';
 import type { User } from '@prisma/client';
+import { dbClient } from './../client';
 
 export enum Roles {
 	ADMIN = 'admin',
@@ -28,7 +28,7 @@ class Users {
 	public async getBy(
 		key: string,
 		value: string | number | Date,
-		withHashedPassword: boolean = false
+		withHashedPassword = false
 	): Promise<User | UserSafe> {
 		let person: User | UserSafe;
 		if (withHashedPassword === true) {
@@ -50,13 +50,16 @@ class Users {
 		}
 
 		if (!person) {
-			throw new Error(`A person with that ${key}: [${value}], does not exist`);
+			throw new Error(`a person with that ${key}: [${value}], does not exist`);
 		}
 
 		return person;
 	}
 
-	public async isTheUsernameAvailable(username: string, id?: string): Promise<boolean> {
+	public async isTheUsernameAvailable(
+		username: string,
+		id?: string
+	): Promise<boolean> {
 		const user = await dbClient.user.findFirst({
 			where: { username }
 		});
@@ -78,7 +81,10 @@ class Users {
 		return !!user;
 	}
 
-	public async getAll(query?: { key: string; value: string | number | Date }): Promise<UserSafe[]> {
+	public async getAll(query?: {
+		key: string;
+		value: string | number | Date;
+	}): Promise<UserSafe[]> {
 		const people = await dbClient.user.findMany({
 			where: query ? { [query.key]: query.value } : {},
 			select: {
@@ -111,14 +117,14 @@ class Users {
 		id,
 		username,
 		hashed_password,
-		role,
-		state
+		roleId,
+		stateId
 	}: {
 		id: string;
 		username: string;
 		hashed_password: string;
-		role: string;
-		state?: string;
+		roleId: number;
+		stateId: number;
 	}): Promise<UserSafe> {
 		const user = await dbClient.user.create({
 			select: {
@@ -128,8 +134,8 @@ class Users {
 				id: id,
 				username: username,
 				hashed_password: hashed_password,
-				role: { connect: { name: role } },
-				state: { connect: { state: state } }
+				roleId: roleId,
+				stateId: stateId
 			}
 		});
 
