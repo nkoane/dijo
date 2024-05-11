@@ -11,4 +11,5 @@ vite.config.ts.timestamp-*
 
 # ignoring the db;
 dev.db
-primsa/dev.db
+primsa/dev.db*.vim
+*.vim
