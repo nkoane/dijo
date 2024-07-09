@@ -12,7 +12,7 @@
 
 	const avatar = createAvatar(lorelei, {
 		seed: user ? user.username : 'stranger'
-	}).toDataUriSync();
+	}).toDataUri();
 </script>
 
 <svelte:head>
